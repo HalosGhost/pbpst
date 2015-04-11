@@ -3,5 +3,7 @@
 signed
 main (void) {
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
+
+// vim: set ts=4 sw=4 et:
