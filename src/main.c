@@ -1,5 +1,7 @@
+#include <stdlib.h> // EXIT_SUCCESS
+
 signed
 main (void) {
 
-	return 0;
+	return EXIT_SUCCESS;
 }
