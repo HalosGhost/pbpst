@@ -1,3 +1,3 @@
-CFLAGS += -g -O2 -fPIE -fstack-protector-all -Weverything -std=c11
-LDFLAGS += -Wl,-z,relro,-z,now
+CFLAGS += -g -O2 -fPIE -pie -fstack-protector-all -Weverything -std=c11
+LDFLAGS += -Wl,-z,relro,-z,now -lcurl
 CC = clang
