@@ -12,16 +12,31 @@
 #define BUFFER_SIZE 256
 #define FILE_MAX 62914560 // 60 MiB
 
+static const char * version_str = "ptpst 0.0.1\n";
+
 static struct option cmds [] = {
     { "sync",     no_argument,       0, 'S' },
     { "remove",   no_argument,       0, 'R' },
     { "update",   no_argument,       0, 'U' },
     { "provider", required_argument, 0, 'p' },
     { "help",     no_argument,       0, 'h' },
-    { "verbose",  no_argument,       0, 'v' },
-    { "version",  no_argument,       0, 0   },
+    { "verbose",  no_argument,       0, 256 },
+    { "version",  no_argument,       0, 257 },
     { 0,          0,                 0, 0   }
 };
+
+static const char * cmds_help =
+    "Usage: ptpst [option ...]\n"
+    "ptpst -- a simple tool to pastebin from the command-line\n\n"
+    "Options:\n"
+    "  -S, --sync         Create a paste\n"
+    "  -R, --remove       Delete a paste\n"
+    "  -U, --update       Update a paste\n\n"
+    "  -h, --help         List this help and exit\n"
+    "  -p, --provider     Specify an alternative pb host\n"
+    "      --verbose      Output verbosely\n"
+    "      --version      List the version and exit\n\n"
+    "Report bugs to <halosghost@archlinux.info>\n";
 
 static struct option sync_opts [] = {
     { "shorten", required_argument, 0, 's' },
