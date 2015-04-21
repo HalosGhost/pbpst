@@ -18,7 +18,7 @@ static struct option cmds [] = {
     { "sync",     no_argument,       0, 'S' },
     { "remove",   no_argument,       0, 'R' },
     { "update",   no_argument,       0, 'U' },
-    { "provider", required_argument, 0, 'p' },
+    { "provider", required_argument, 0, 'P' },
     { "help",     no_argument,       0, 'h' },
     { "verbose",  no_argument,       0, 256 },
     { "version",  no_argument,       0, 257 },
@@ -26,35 +26,58 @@ static struct option cmds [] = {
 };
 
 static const char * cmds_help =
-    "Usage: ptpst [option ...]\n"
+    "Usage: ptpst <operation> [option ...]\n"
     "ptpst -- a simple tool to pastebin from the command-line\n\n"
+    "Operations:\n"
+    "  -S, --sync          Create a paste\n"
+    "  -R, --remove        Delete a paste\n"
+    "  -U, --update        Update a paste\n\n"
     "Options:\n"
-    "  -S, --sync         Create a paste\n"
-    "  -R, --remove       Delete a paste\n"
-    "  -U, --update       Update a paste\n\n"
-    "  -h, --help         List this help and exit\n"
-    "  -p, --provider     Specify an alternative pb host\n"
-    "      --verbose      Output verbosely\n"
-    "      --version      List the version and exit\n\n"
-    "Report bugs to <halosghost@archlinux.info>\n";
+    "  -h, --help          List this help and exit\n"
+    "  -P, --provider      Specify an alternative pb host\n"
+    "      --verbose       Output verbosely\n"
+    "      --version       List the version and exit\n\n"
+    "Run `ptpst -h` with an operation for help with that operation\n";
 
 static struct option sync_opts [] = {
     { "shorten", required_argument, 0, 's' },
     { "file",    required_argument, 0, 'f' },
     { "lexer",   required_argument, 0, 'l' },
     { "line",    required_argument, 0, 'L' },
-    { "private", no_argument,       0, 'P' },
+    { "private", no_argument,       0, 'p' },
     { "render",  no_argument,       0, 'r' },
-    { "vanity",  required_argument, 0, 'V' },
+    { "vanity",  required_argument, 0, 'v' },
     { "help",    no_argument,       0, 'h' },
     { 0,         0,                 0, 0   }
 };
+
+static const char * sync_help =
+    "Usage: ptpst {-S --sync} [option ...]\n\n"
+    "Options:\n"
+    "  -s, --shorten=URL   Created a redirect pointing to URL\n"
+    "  -f, --file=FILE     Use FILE for content of paste\n"
+    "  -l, --lexer=LANG    Lex paste with LANG\n"
+    "  -L, --line=LINE     Highlight LINE\n"
+    "  -p, --private       Create a less-guessable Id\n"
+    "  -r, --render        Render paste from rst to HTML\n"
+    "  -v, --vanity=NAME   Use NAME as a custom Id\n\n"
+    "  -h, --help          List this help and exit\n"
+    "  -P, --provider      Specify an alternative pb host\n"
+    "      --verbose       Output verbosely\n";
 
 static struct option rem_opts [] = {
     { "uuid", required_argument, 0, 'u' },
     { "help", no_argument,       0, 'h' },
     { 0,      0,                 0, 0   },
 };
+
+static const char * rem_help =
+    "Usage: ptpst {-R --remove} [option ...]\n\n"
+    "Options:\n"
+    "  -u, --uuid=UUID     Use UUID as authentication credential\n\n"
+    "  -h, --help          List this help and exit\n"
+    "  -P, --provider      Specify an alternative pb host\n"
+    "      --verbose       Output verbosely\n";
 
 static struct option upd_opts [] = {
     { "shorten", required_argument, 0, 's' },
@@ -63,8 +86,23 @@ static struct option upd_opts [] = {
     { "line",    required_argument, 0, 'L' },
     { "render",  no_argument,       0, 'r' },
     { "uuid",    required_argument, 0, 'u' },
+    { "vanity",  required_argument, 0, 'v' },
     { "help",    no_argument,       0, 'h' },
     { 0,         0,                 0, 0   }
 };
+
+static const char * upd_help =
+    "Usage: ptpst {-U --update} [option ...]\n\n"
+    "Options:\n"
+    "  -s, --shorten=URL   Created a redirect pointing to URL\n"
+    "  -f, --file=FILE     Use FILE for content of paste\n"
+    "  -l, --lexer=LANG    Lex paste with LANG\n"
+    "  -L, --line=LINE     Highlight LINE\n"
+    "  -r, --render        Render paste from rst to HTML\n"
+    "  -u, --uuid=UUID     Use UUID as authentication credential\n"
+    "  -v, --vanity=NAME   Use NAME as a custom Id\n\n"
+    "  -h, --help          List this help and exit\n"
+    "  -P, --provider      Specify an alternative pb host\n"
+    "      --verbose       Output verbosely\n";
 
 // vim: set ts=4 sw=4 et:
