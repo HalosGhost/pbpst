@@ -18,47 +18,43 @@ main (signed argc, char * argv []) {
         return EXIT_FAILURE;
     }
 
-    struct cmd_bools cb = { false, false, false, false };
+    enum ptpst_cmd {
+        NONE, SYNC, REMOVE, UPDATE //, DATABASE
+    };
 
-    for ( signed c = 0, oi = 0; c != -1;
-          c = getopt_long(argc, argv, "SRUP:hv", cmds, &oi) ) {
+    enum ptpst_cmd cmd = NONE;
+    for ( signed oi = 0, c = getopt_long(argc, argv, "SRUP:hvsflLpru", os, &oi);
+          c != -1; c = getopt_long(argc, argv, "SRUP:hvsflLpru", os, &oi) ) {
 
         switch ( c ) {
             case 'S':
-                cb.sync = true;
-                break;
+                if ( cmd != NONE ) { goto fail_multiple_cmds; }
+                cmd = SYNC; break;
 
             case 'R':
-                cb.rem = true;
-                break;
+                if ( cmd != NONE ) { goto fail_multiple_cmds; }
+                cmd = REMOVE; break;
 
             case 'U':
-                cb.upd = true;
-                break;
+                if ( cmd != NONE ) { goto fail_multiple_cmds; }
+                cmd = UPDATE; break;
 
-            case 'P': case 256:
-                fprintf(stderr, "Not Yet Implemented: `-%c`\n", c);
-                return EXIT_FAILURE;
-
-            case 257:
-                printf(version_str);
-                return EXIT_SUCCESS;
+            case 257: printf(version_str); return EXIT_SUCCESS;
 
             case 'h':
-                cb.hlp = true;
-                break;
+                printf(cmd == SYNC   ? sync_help :
+                       cmd == REMOVE ? rem_help  :
+                       cmd == UPDATE ? upd_help  : cmds_help);
+                return EXIT_SUCCESS;
+
+            default:
+                fputs("Not Yet Implemented\n", stderr);
+                return EXIT_FAILURE;
         }
-    }
-
-    if ( (cb.sync && cb.rem) || (cb.sync && cb.upd) || (cb.rem && cb.upd) ) {
-        fputs("Only one operation can be run at once\n", stderr);
-        return EXIT_FAILURE;
-    }
-
-    if ( cb.hlp ) {
-        printf(cb.sync ? sync_help :
-               cb.rem  ? rem_help  :
-               cb.upd  ? upd_help  : cmds_help);
     } return EXIT_SUCCESS;
+
+    fail_multiple_cmds:
+        fputs("Error: you can only run one operation at once\n", stderr);
+        return EXIT_FAILURE;
 }
 // vim: set ts=4 sw=4 et:

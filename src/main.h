@@ -14,10 +14,26 @@
 
 static const char * version_str = "ptpst 0.0.1\n";
 
-static struct option cmds [] = {
+static struct option os [] = {
+    /* commands */
     { "sync",     no_argument,       0, 'S' },
     { "remove",   no_argument,       0, 'R' },
     { "update",   no_argument,       0, 'U' },
+
+    /* sync/upd options */
+    { "shorten",  required_argument, 0, 's' },
+    { "file",     required_argument, 0, 'f' },
+    { "lexer",    required_argument, 0, 'l' },
+    { "line",     required_argument, 0, 'L' },
+    { "private",  no_argument,       0, 'p' }, // sync-only
+    { "render",   no_argument,       0, 'r' },
+    { "vanity",   required_argument, 0, 'v' },
+    { "help",     no_argument,       0, 'h' },
+
+    /* for rem and upd */
+    { "uuid",     required_argument, 0, 'u' },
+
+    /* generic options */
     { "provider", required_argument, 0, 'P' },
     { "help",     no_argument,       0, 'h' },
     { "verbose",  no_argument,       0, 256 },
@@ -39,18 +55,6 @@ static const char * cmds_help =
     "      --version       List the version and exit\n\n"
     "Run `ptpst -h` with an operation for help with that operation\n";
 
-static struct option sync_opts [] = {
-    { "shorten", required_argument, 0, 's' },
-    { "file",    required_argument, 0, 'f' },
-    { "lexer",   required_argument, 0, 'l' },
-    { "line",    required_argument, 0, 'L' },
-    { "private", no_argument,       0, 'p' },
-    { "render",  no_argument,       0, 'r' },
-    { "vanity",  required_argument, 0, 'v' },
-    { "help",    no_argument,       0, 'h' },
-    { 0,         0,                 0, 0   }
-};
-
 static const char * sync_help =
     "Usage: ptpst {-S --sync} [option ...]\n\n"
     "Options:\n"
@@ -65,12 +69,6 @@ static const char * sync_help =
     "  -P, --provider      Specify an alternative pb host\n"
     "      --verbose       Output verbosely\n";
 
-static struct option rem_opts [] = {
-    { "uuid", required_argument, 0, 'u' },
-    { "help", no_argument,       0, 'h' },
-    { 0,      0,                 0, 0   },
-};
-
 static const char * rem_help =
     "Usage: ptpst {-R --remove} [option ...]\n\n"
     "Options:\n"
@@ -78,18 +76,6 @@ static const char * rem_help =
     "  -h, --help          List this help and exit\n"
     "  -P, --provider      Specify an alternative pb host\n"
     "      --verbose       Output verbosely\n";
-
-static struct option upd_opts [] = {
-    { "shorten", required_argument, 0, 's' },
-    { "file",    required_argument, 0, 'f' },
-    { "lexer",   required_argument, 0, 'l' },
-    { "line",    required_argument, 0, 'L' },
-    { "render",  no_argument,       0, 'r' },
-    { "uuid",    required_argument, 0, 'u' },
-    { "vanity",  required_argument, 0, 'v' },
-    { "help",    no_argument,       0, 'h' },
-    { 0,         0,                 0, 0   }
-};
 
 static const char * upd_help =
     "Usage: ptpst {-U --update} [option ...]\n\n"
