@@ -14,7 +14,7 @@ signed
 main (signed argc, char * argv []) {
 
     if ( argc <= 1 ) {
-        fprintf(stderr, cmds_help);
+        fprintf(stderr, "%s%s%s", cmds_help, gen_help, more_info);
         return EXIT_FAILURE;
     }
 
@@ -42,10 +42,13 @@ main (signed argc, char * argv []) {
             case 257: printf(version_str); return EXIT_SUCCESS;
 
             case 'h':
-                printf(cmd == SYNC   ? sync_help :
-                       cmd == REMOVE ? rem_help  :
-                       cmd == UPDATE ? upd_help  : cmds_help);
-                return EXIT_SUCCESS;
+                switch ( cmd ) {
+                    case SYNC:   printf("%s%s",   sync_help, gen_help); break;
+                    case REMOVE: printf("%s%s",   rem_help,  gen_help); break;
+                    case UPDATE: printf("%s%s",   upd_help,  gen_help); break;
+                    case NONE:   printf("%s%s%s", cmds_help, gen_help,
+                                        more_info);                     break;
+                } return EXIT_SUCCESS;
 
             default:
                 fputs("Not Yet Implemented\n", stderr);
