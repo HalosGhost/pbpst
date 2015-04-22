@@ -6,10 +6,6 @@
 
 #include "main.h"
 
-struct cmd_bools {
-    bool sync: 2, rem: 2, upd: 2, hlp: 2;
-};
-
 signed
 main (signed argc, char * argv []) {
 
