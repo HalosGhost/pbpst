@@ -6,6 +6,11 @@
 
 #include "main.h"
 
+struct ptpst_state {
+    enum { NONE, SYNC, REMOVE, UPDATE/*, DATABASE */ } cmd;
+    bool help;
+};
+
 signed
 main (signed argc, char * argv []) {
 
@@ -14,43 +19,44 @@ main (signed argc, char * argv []) {
         return EXIT_FAILURE;
     }
 
-    enum ptpst_cmd {
-        NONE, SYNC, REMOVE, UPDATE //, DATABASE
-    };
-
-    enum ptpst_cmd cmd = NONE;
+    struct ptpst_state state = { .cmd = NONE, .help = false };
     for ( signed oi = 0, c = getopt_long(argc, argv, "SRUP:hvsflLpru", os, &oi);
           c != -1; c = getopt_long(argc, argv, "SRUP:hvsflLpru", os, &oi) ) {
 
         switch ( c ) {
             case 'S':
-                if ( cmd != NONE ) { goto fail_multiple_cmds; }
-                cmd = SYNC; break;
+                if ( state.cmd != NONE ) { goto fail_multiple_cmds; }
+                state.cmd = SYNC; break;
 
             case 'R':
-                if ( cmd != NONE ) { goto fail_multiple_cmds; }
-                cmd = REMOVE; break;
+                if ( state.cmd != NONE ) { goto fail_multiple_cmds; }
+                state.cmd = REMOVE; break;
 
             case 'U':
-                if ( cmd != NONE ) { goto fail_multiple_cmds; }
-                cmd = UPDATE; break;
+                if ( state.cmd != NONE ) { goto fail_multiple_cmds; }
+                state.cmd = UPDATE; break;
 
             case 257: printf(version_str); return EXIT_SUCCESS;
 
-            case 'h':
-                switch ( cmd ) {
-                    case SYNC:   printf("%s%s",   sync_help, gen_help); break;
-                    case REMOVE: printf("%s%s",   rem_help,  gen_help); break;
-                    case UPDATE: printf("%s%s",   upd_help,  gen_help); break;
-                    case NONE:   printf("%s%s%s", cmds_help, gen_help,
-                                        more_info);                     break;
-                } return EXIT_SUCCESS;
+            case 'h': state.help = true; break;
 
             default:
                 fputs("Not Yet Implemented\n", stderr);
                 return EXIT_FAILURE;
         }
-    } return EXIT_SUCCESS;
+    }
+
+    if ( state.help ) {
+        switch ( state.cmd ) {
+            case SYNC:   printf("%s%s",   sync_help, gen_help); break;
+            case REMOVE: printf("%s%s",   rem_help,  gen_help); break;
+            case UPDATE: printf("%s%s",   upd_help,  gen_help); break;
+            case NONE:   printf("%s%s%s", cmds_help, gen_help,
+                                more_info);                     break;
+        } return EXIT_SUCCESS;
+    }
+
+    return EXIT_SUCCESS;
 
     fail_multiple_cmds:
         fputs("Error: you can only run one operation at once\n", stderr);
