@@ -25,9 +25,9 @@ main (signed argc, char * argv []) {
                                  .provider = 0, .cmd = NON, .line_hl = 0,
                                  .help = false, .priv = false, .rend = false };
 
-    const char valid_opts [] = "SRUP:hv:s:f:l:L:pru:";
-    for ( signed oi = 0, c = getopt_long(argc, argv, valid_opts, os, &oi);
-          c != -1; c = getopt_long(argc, argv, valid_opts, os, &oi) ) {
+    const char vos [] = "SRUP:hv:s:f:l:L:pru:";
+    for ( signed oi = 0, c = getopt_long(argc, argv, vos, os, &oi);
+          c != -1; c = getopt_long(argc, argv, vos, os, &oi) ) {
 
         switch ( c ) {
             case 'S':
