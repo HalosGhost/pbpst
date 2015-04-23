@@ -6,9 +6,11 @@
 
 #include "main.h"
 
+enum pb_cmd { NON = 0, SNC = 'S', RMV = 'R', UPD = 'U' }; // DBS
+
 struct ptpst_state {
     char * path, * lexer, * vanity, * uuid, * provider;
-    enum { NON, SNC, RMV, UPD } cmd; // DBS
+    enum pb_cmd cmd;
     uint32_t line_hl;
     uint64_t help: 16, priv: 16, rend: 32;
 };
@@ -30,17 +32,9 @@ main (signed argc, char * argv []) {
           c != -1; c = getopt_long(argc, argv, vos, os, &oi) ) {
 
         switch ( c ) {
-            case 'S':
-                if ( state.cmd != NON ) { goto fail_multiple_cmds; }
-                state.cmd = SNC; break;
-
-            case 'R':
-                if ( state.cmd != NON ) { goto fail_multiple_cmds; }
-                state.cmd = RMV; break;
-
-            case 'U':
-                if ( state.cmd != NON ) { goto fail_multiple_cmds; }
-                state.cmd = UPD; break;
+            case 'S': case 'R': case 'U':
+                if ( state.cmd ) { goto fail_multiple_cmds; }
+                state.cmd = (enum pb_cmd )c; break;
 
             case 'L': sscanf(optarg, "%" SCNu32, &state.line_hl); break;
             case 'r': state.rend = true; break;
