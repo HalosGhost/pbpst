@@ -10,7 +10,7 @@
 #include <unistd.h>    // close()
 
 #define BUFFER_SIZE 256
-#define FILE_MAX 62914560 // 60 MiB
+#define FILE_MAX 67108864 // 64 MiB
 
 static const char version_str [] = "ptpst 0.0.1\n";
 
