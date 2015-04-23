@@ -1,7 +1,8 @@
 #include <getopt.h>    // getopt_long()
-#include <stdio.h>     // fprintf(), fputs()
+#include <stdio.h>     // fprintf(), fputs(), sscanf_s()
 #include <stdbool.h>   // bool
 #include <stdint.h>    // explicitly-sized integral types
+#include <inttypes.h>  // SCNu32
 #include <stdlib.h>    // EXIT_SUCCESS
 #include <curl/curl.h> // curl_easy_*()
 #include <sys/stat.h>  // fstat()

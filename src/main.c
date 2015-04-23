@@ -7,8 +7,10 @@
 #include "main.h"
 
 struct ptpst_state {
-    enum { NON, SNC, RMV, UPD/*, DBS */ } cmd;
-    bool help;
+    char * path, * lexer, * vanity, * uuid, * provider;
+    enum { NON, SNC, RMV, UPD } cmd; // DBS
+    uint32_t line_hl;
+    uint64_t help: 16, priv: 16, render: 32;
 };
 
 signed
