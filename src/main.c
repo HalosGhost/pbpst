@@ -10,7 +10,7 @@ struct ptpst_state {
     char * path, * lexer, * vanity, * uuid, * provider;
     enum { NON, SNC, RMV, UPD } cmd; // DBS
     uint32_t line_hl;
-    uint64_t help: 16, priv: 16, render: 32;
+    uint64_t help: 16, priv: 16, rend: 32;
 };
 
 signed
@@ -21,9 +21,13 @@ main (signed argc, char * argv []) {
         return EXIT_FAILURE;
     }
 
-    struct ptpst_state state = { .cmd = NON, .help = false };
-    for ( signed oi = 0, c = getopt_long(argc, argv, "SRUP:hvsflLpru", os, &oi);
-          c != -1; c = getopt_long(argc, argv, "SRUP:hvsflLpru", os, &oi) ) {
+    struct ptpst_state state = { .path = 0, .lexer = 0, .vanity = 0, .uuid = 0,
+                                 .provider = 0, .cmd = NON, .line_hl = 0,
+                                 .help = false, .priv = false, .rend = false };
+
+    const char valid_opts [] = "SRUP:hv:s:f:l:L:pru:";
+    for ( signed oi = 0, c = getopt_long(argc, argv, valid_opts, os, &oi);
+          c != -1; c = getopt_long(argc, argv, valid_opts, os, &oi) ) {
 
         switch ( c ) {
             case 'S':
@@ -38,9 +42,11 @@ main (signed argc, char * argv []) {
                 if ( state.cmd != NON ) { goto fail_multiple_cmds; }
                 state.cmd = UPD; break;
 
-            case 257: printf(version_str); return EXIT_SUCCESS;
-
+            case 'L': sscanf(optarg, "%" SCNu32, &state.line_hl); break;
+            case 'r': state.rend = true; break;
+            case 'p': state.priv = true; break;
             case 'h': state.help = true; break;
+            case 257: printf(version_str); return EXIT_SUCCESS;
 
             default:
                 fputs("Not Yet Implemented\n", stderr);
