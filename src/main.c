@@ -18,6 +18,8 @@ struct ptpst_state {
 signed
 main (signed argc, char * argv []) {
 
+    signed exit_status = EXIT_SUCCESS;
+
     if ( argc <= 1 ) {
         fprintf(stderr, "%s%s%s", cmds_help, gen_help, more_info);
         return EXIT_FAILURE;
@@ -35,8 +37,12 @@ main (signed argc, char * argv []) {
 
         switch ( c ) {
             case 'S': case 'R': case 'U':
-                if ( state.cmd ) { goto fail_multiple_cmds; }
-                state.cmd = (enum pb_cmd )c; break;
+                if ( state.cmd ) {
+                    fputs("Error: you can only run one operation at once\n",
+                          stderr);
+                    exit_status = EXIT_FAILURE;
+                    goto cleanup;
+                } state.cmd = (enum pb_cmd )c; break;
 
             case 's':
                 if ( !state.url && !state.path ) {
@@ -78,7 +84,7 @@ main (signed argc, char * argv []) {
             case 'r': state.rend = true; break;
             case 'p': state.priv = true; break;
             case 'h': state.help = true; break;
-            case 257: printf(version_str); return EXIT_SUCCESS;
+            case 257: printf(version_str); goto cleanup;
         }
     }
 
@@ -88,20 +94,16 @@ main (signed argc, char * argv []) {
             case RMV: printf("%s%s",   rem_help,  gen_help);            break;
             case UPD: printf("%s%s",   upd_help,  gen_help);            break;
             case NON: printf("%s%s%s", cmds_help, gen_help, more_info); break;
-        } goto success_cleanup;
+        } goto cleanup;
     }
 
-    success_cleanup:
+    cleanup:
         if ( state.url )      { free(state.url);      }
         if ( state.path )     { free(state.path);     }
         if ( state.lexer )    { free(state.lexer);    }
         if ( state.vanity )   { free(state.vanity);   }
         if ( state.uuid )     { free(state.uuid);     }
         if ( state.provider ) { free(state.provider); }
-        return EXIT_SUCCESS;
-
-    fail_multiple_cmds:
-        fputs("Error: you can only run one operation at once\n", stderr);
-        return EXIT_FAILURE;
+        return exit_status;
 }
 // vim: set ts=4 sw=4 et:
