@@ -9,9 +9,9 @@
 enum pb_cmd { NON = 0, SNC = 'S', RMV = 'R', UPD = 'U' }; // DBS
 
 struct ptpst_state {
-    char * path, * lexer, * vanity, * uuid, * provider;
+    char * path, * url, * lexer, * vanity, * uuid, * provider;
     enum pb_cmd cmd;
-    uint32_t line_hl;
+    uint32_t ln;
     uint64_t help: 16, priv: 16, rend: 32;
 };
 
@@ -23,28 +23,62 @@ main (signed argc, char * argv []) {
         return EXIT_FAILURE;
     }
 
-    struct ptpst_state state = { .path = 0, .lexer = 0, .vanity = 0, .uuid = 0,
-                                 .provider = 0, .cmd = NON, .line_hl = 0,
+    struct ptpst_state state = { .path = 0, .url = 0, .lexer = 0, .vanity = 0,
+                                 .uuid = 0, .provider = 0, .cmd = NON, .ln = 0,
                                  .help = false, .priv = false, .rend = false };
 
     const char vos [] = "SRUP:hv:s:f:l:L:pru:";
     for ( signed oi = 0, c = getopt_long(argc, argv, vos, os, &oi);
           c != -1; c = getopt_long(argc, argv, vos, os, &oi) ) {
 
+        size_t l = optarg ? strlen(optarg) : 0;
+
         switch ( c ) {
             case 'S': case 'R': case 'U':
                 if ( state.cmd ) { goto fail_multiple_cmds; }
                 state.cmd = (enum pb_cmd )c; break;
 
-            case 'L': sscanf(optarg, "%" SCNu32, &state.line_hl); break;
+            case 's':
+                if ( !state.url && !state.path ) {
+                    state.url = (char * )malloc(l + 1);
+                    strncpy(state.url, optarg, l);
+                }
+
+            case 'f':
+                if ( !state.path && !state.url ) {
+                    state.path = (char * )malloc(l + 1);
+                    strncpy(state.path, optarg, l);
+                }
+
+            case 'l':
+                if ( !state.lexer ) {
+                    state.lexer = (char * )malloc(l + 1);
+                    strncpy(state.lexer, optarg, l);
+                }
+
+            case 'v':
+                if ( !state.vanity ) {
+                    state.vanity = (char * )malloc(l + 1);
+                    strncpy(state.vanity, optarg, l);
+                }
+
+            case 'u':
+                if ( !state.uuid ) {
+                    state.uuid = (char * )malloc(l + 1);
+                    strncpy(state.uuid, optarg, l);
+                }
+
+            case 'P':
+                if ( !state.provider ) {
+                    state.provider = (char * )malloc(l + 1);
+                    strncpy(state.provider, optarg, l);
+                } break;
+
+            case 'L': sscanf(optarg, "%" SCNu32, &state.ln); break;
             case 'r': state.rend = true; break;
             case 'p': state.priv = true; break;
             case 'h': state.help = true; break;
             case 257: printf(version_str); return EXIT_SUCCESS;
-
-            default:
-                fputs("Not Yet Implemented\n", stderr);
-                return EXIT_FAILURE;
         }
     }
 
@@ -54,10 +88,17 @@ main (signed argc, char * argv []) {
             case RMV: printf("%s%s",   rem_help,  gen_help);            break;
             case UPD: printf("%s%s",   upd_help,  gen_help);            break;
             case NON: printf("%s%s%s", cmds_help, gen_help, more_info); break;
-        } return EXIT_SUCCESS;
+        } goto success_cleanup;
     }
 
-    return EXIT_SUCCESS;
+    success_cleanup:
+        if ( state.url )      { free(state.url);      }
+        if ( state.path )     { free(state.path);     }
+        if ( state.lexer )    { free(state.lexer);    }
+        if ( state.vanity )   { free(state.vanity);   }
+        if ( state.uuid )     { free(state.uuid);     }
+        if ( state.provider ) { free(state.provider); }
+        return EXIT_SUCCESS;
 
     fail_multiple_cmds:
         fputs("Error: you can only run one operation at once\n", stderr);
