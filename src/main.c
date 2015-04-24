@@ -42,31 +42,31 @@ main (signed argc, char * argv []) {
                 if ( !state.url && !state.path ) {
                     state.url = (char * )malloc(l + 1);
                     strncpy(state.url, optarg, l);
-                }
+                } break;
 
             case 'f':
                 if ( !state.path && !state.url ) {
                     state.path = (char * )malloc(l + 1);
                     strncpy(state.path, optarg, l);
-                }
+               } break;
 
             case 'l':
                 if ( !state.lexer ) {
                     state.lexer = (char * )malloc(l + 1);
                     strncpy(state.lexer, optarg, l);
-                }
+                } break;
 
             case 'v':
                 if ( !state.vanity ) {
                     state.vanity = (char * )malloc(l + 1);
                     strncpy(state.vanity, optarg, l);
-                }
+                } break;
 
             case 'u':
                 if ( !state.uuid ) {
                     state.uuid = (char * )malloc(l + 1);
                     strncpy(state.uuid, optarg, l);
-                }
+                } break;
 
             case 'P':
                 if ( !state.provider ) {
