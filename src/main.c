@@ -62,12 +62,31 @@ main (signed argc, char * argv []) {
         }
     }
 
-    /**
-     * TODO:
-     **
-     * validate that all options passed are legitimate for the operation
-     * write and call the libcurl functions to actually interact with pb
-     */
+    switch ( state.cmd ) {
+        case SNC:
+            if ( (state.url && (state.path || state.lexer  || state.rend ||
+                                state.ln   || state.priv)) || state.uuid ) {
+                fprintf(stderr, "Error: erroneous option. See `%s -Sh`\n",
+                        argv[0]); goto cleanup;
+            } break;
+
+        case RMV:
+            if ( state.path || state.url  || state.lexer || state.vanity ||
+                 state.ln   || state.priv || state.rend ) {
+                fprintf(stderr, "Error: erroneous option. See `%s -Rh`\n",
+                        argv[0]); goto cleanup;
+            } break;
+
+        case UPD:
+            if ( (state.path && state.url) || state.priv ) {
+                fprintf(stderr, "Error: erroneous option. See `%s -Uh`\n",
+                        argv[0]); goto cleanup;
+            } break;
+
+        case NON:
+            printf("%s%s%s", cmds_help, gen_help, more_info);
+            goto cleanup;
+    }
 
     if ( state.help ) {
         switch ( state.cmd ) {
@@ -77,6 +96,12 @@ main (signed argc, char * argv []) {
             case NON: printf("%s%s%s", cmds_help, gen_help, more_info); break;
         } goto cleanup;
     }
+
+    /**
+     * TODO:
+     **
+     * write and call the libcurl functions to actually interact with pb
+     */
 
     cleanup:
         if ( state.url )      { free(state.url);      }
