@@ -43,6 +43,7 @@ static struct option os [] = {
 };
 
 static const char gen_help [] =
+    "\n"
     "  -h, --help          List this help and exit\n"
     "  -P, --provider      Specify an alternative pb host\n"
     "      --verbose       Output verbosely\n"
@@ -55,7 +56,7 @@ static const char cmds_help [] =
     "  -S, --sync          Create a paste\n"
     "  -R, --remove        Delete a paste\n"
     "  -U, --update        Update a paste\n\n"
-    "Options:\n";
+    "Options:";
 
 static const char more_info [] =
     "\nRun `ptpst -h` with an operation for help with that operation\n";
@@ -69,12 +70,12 @@ static const char sync_help [] =
     "  -L, --line=LINE     Highlight LINE\n"
     "  -p, --private       Create a less-guessable Id\n"
     "  -r, --render        Render paste from rst to HTML\n"
-    "  -v, --vanity=NAME   Use NAME as a custom Id\n\n";
+    "  -v, --vanity=NAME   Use NAME as a custom Id\n";
 
 static const char rem_help [] =
     "Usage: ptpst {-R --remove} [option ...]\n\n"
     "Options:\n"
-    "  -u, --uuid=UUID     Use UUID as authentication credential\n\n";
+    "  -u, --uuid=UUID     Use UUID as authentication credential\n";
 
 static const char upd_help [] =
     "Usage: ptpst {-U --update} [option ...]\n\n"
@@ -85,6 +86,6 @@ static const char upd_help [] =
     "  -L, --line=LINE     Highlight LINE\n"
     "  -r, --render        Render paste from rst to HTML\n"
     "  -u, --uuid=UUID     Use UUID as authentication credential\n"
-    "  -v, --vanity=NAME   Use NAME as a custom Id\n\n";
+    "  -v, --vanity=NAME   Use NAME as a custom Id\n";
 
 // vim: set ts=4 sw=4 et:
