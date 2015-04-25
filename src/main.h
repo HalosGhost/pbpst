@@ -64,11 +64,11 @@ static const char more_info [] =
 static const char sync_help [] =
     "Usage: ptpst {-S --sync} [option ...]\n\n"
     "Options:\n"
-    "  -s, --shorten=URL   Created a redirect pointing to URL\n"
-    "  -f, --file=FILE     Use FILE for content of paste\n"
+    "  -s, --shorten=URL   Create a redirect to URL instead of pasting\n"
+    "  -f, --file=FILE     Create a paste from FILE\n"
     "  -l, --lexer=LANG    Lex paste with LANG\n"
-    "  -L, --line=LINE     Highlight LINE\n"
-    "  -p, --private       Create a less-guessable Id\n"
+    "  -L, --line=LINE     Highlight LINE in paste\n"
+    "  -p, --private       Return a less-guessable Id for paste\n"
     "  -r, --render        Render paste from rst to HTML\n"
     "  -v, --vanity=NAME   Use NAME as a custom Id\n";
 
