@@ -38,7 +38,7 @@ main (signed argc, char * argv []) {
         switch ( c ) {
             case 'S': case 'R': case 'U':
                 if ( state.cmd ) {
-                    fputs("Error: you can only run one operation at once\n",
+                    fputs("Error: you can only run one operation at a time\n",
                           stderr);
                     exit_status = EXIT_FAILURE;
                     goto cleanup;
