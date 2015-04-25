@@ -34,51 +34,25 @@ main (signed argc, char * argv []) {
           c != -1; c = getopt_long(argc, argv, vos, os, &oi) ) {
 
         size_t l = optarg ? strlen(optarg) : 0;
+        char ** state_var = (c == 's' ? &state.url      :
+                             c == 'f' ? &state.path     :
+                             c == 'l' ? &state.lexer    :
+                             c == 'v' ? &state.vanity   :
+                             c == 'u' ? &state.uuid     :
+                             c == 'P' ? &state.provider : 0);
 
         switch ( c ) {
             case 'S': case 'R': case 'U':
                 if ( state.cmd ) {
                     fputs("Error: you can only run one operation at a time\n",
                           stderr);
-                    exit_status = EXIT_FAILURE;
-                    goto cleanup;
+                    exit_status = EXIT_FAILURE; goto cleanup;
                 } state.cmd = (enum pb_cmd )c; break;
 
-            case 's':
-                if ( !state.url && !state.path ) {
-                    state.url = (char * )malloc(l + 1);
-                    strncpy(state.url, optarg, l);
-                } break;
-
-            case 'f':
-                if ( !state.path && !state.url ) {
-                    state.path = (char * )malloc(l + 1);
-                    strncpy(state.path, optarg, l);
-               } break;
-
-            case 'l':
-                if ( !state.lexer ) {
-                    state.lexer = (char * )malloc(l + 1);
-                    strncpy(state.lexer, optarg, l);
-                } break;
-
-            case 'v':
-                if ( !state.vanity ) {
-                    state.vanity = (char * )malloc(l + 1);
-                    strncpy(state.vanity, optarg, l);
-                } break;
-
-            case 'u':
-                if ( !state.uuid ) {
-                    state.uuid = (char * )malloc(l + 1);
-                    strncpy(state.uuid, optarg, l);
-                } break;
-
-            case 'P':
-                if ( !state.provider ) {
-                    state.provider = (char * )malloc(l + 1);
-                    strncpy(state.provider, optarg, l);
-                } break;
+            case 's': case 'f': case 'l': case 'v': case 'u': case 'P':
+                *state_var = (char * )malloc(l + 1);
+                strncpy(*state_var, optarg, l);
+                break;
 
             case 'L': sscanf(optarg, "%" SCNu32, &state.ln); break;
             case 'r': state.rend = true; break;
@@ -87,6 +61,13 @@ main (signed argc, char * argv []) {
             case 257: printf(version_str); goto cleanup;
         }
     }
+
+    /**
+     * TODO:
+     **
+     * validate that all options passed are legitimate for the operation
+     * write and call the libcurl functions to actually interact with pb
+     */
 
     if ( state.help ) {
         switch ( state.cmd ) {
