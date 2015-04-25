@@ -18,12 +18,12 @@ struct ptpst_state {
 signed
 main (signed argc, char * argv []) {
 
-    signed exit_status = EXIT_SUCCESS;
-
     if ( argc <= 1 ) {
         fprintf(stderr, "%s%s%s", cmds_help, gen_help, more_info);
         return EXIT_FAILURE;
     }
+
+    signed exit_status = EXIT_SUCCESS;
 
     struct ptpst_state state = { .path = 0, .url = 0, .lexer = 0, .vanity = 0,
                                  .uuid = 0, .provider = 0, .cmd = NON, .ln = 0,
