@@ -12,7 +12,7 @@ struct ptpst_state {
     char * path, * url, * lexer, * vanity, * uuid, * provider;
     enum pb_cmd cmd;
     uint32_t ln;
-    uint64_t help: 16, priv: 16, rend: 32;
+    uint64_t help: 16, priv: 16, rend: 16, verb: 16;
 };
 
 signed
@@ -27,7 +27,8 @@ main (signed argc, char * argv []) {
 
     struct ptpst_state state = { .path = 0, .url = 0, .lexer = 0, .vanity = 0,
                                  .uuid = 0, .provider = 0, .cmd = NON, .ln = 0,
-                                 .help = false, .priv = false, .rend = false };
+                                 .help = false, .priv = false, .rend = false,
+                                 .verb = false };
 
     const char vos [] = "SRUP:hv:s:f:l:L:pru:";
     for ( signed oi = 0, c = getopt_long(argc, argv, vos, os, &oi);
@@ -58,6 +59,7 @@ main (signed argc, char * argv []) {
             case 'r': state.rend = true; break;
             case 'p': state.priv = true; break;
             case 'h': state.help = true; break;
+            case 256: state.verb = true; break;
             case 257: printf(version_str); goto cleanup;
         }
     }
