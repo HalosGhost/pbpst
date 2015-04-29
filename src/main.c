@@ -135,8 +135,8 @@ paste (const struct ptpst_state * state) {
 
     if ( state->cmd == SNC ) {
         curl_formadd(&post, &last,
-                     CURLFORM_COPYNAME, "c",
-                     CURLFORM_FILE, state->path,
+                     CURLFORM_COPYNAME,    "c",
+                     CURLFORM_FILE,        state->path,
                      CURLFORM_CONTENTTYPE, "application/octet-stream",
                      CURLFORM_END);
     }
