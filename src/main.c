@@ -57,6 +57,11 @@ main (signed argc, char * argv []) {
 
     switch ( state.cmd ) {
         case SNC:
+            if ( !state.url && !state.path ) {
+                printf("%s%s",   sync_help, gen_help);
+                goto cleanup;
+            }
+
             if ( (state.url && (state.path || state.lexer  || state.rend ||
                                 state.ln   || state.priv)) || state.uuid ) {
                 fprintf(stderr, "Error: erroneous option. See `%s -Sh`\n",
@@ -112,33 +117,44 @@ main (signed argc, char * argv []) {
 CURLcode
 paste (const struct ptpst_state * state) {
 
-    CURL * handle = curl_easy_init();
     CURLcode status = CURLE_OK;
+    CURL * handle = curl_easy_init();
 
     if ( !handle ) {
         fputs("Failed to get CURL handle", stderr);
         return CURLE_FAILED_INIT;
     }
 
+    struct curl_httppost * post = NULL;
+    struct curl_httppost * last = NULL;
+
     char * url = state->provider;
     bool default_provider = false;
 
     if ( !state->provider ) {
-        default_provider = true;
         size_t len = strlen("https://ptpb.pw/") + 1;
+
         url = malloc(len);
+        if ( !url ) {
+            status = CURLE_OUT_OF_MEMORY;
+            goto cleanup;
+        }
+
         snprintf(url, len, "https://ptpb.pw/");
+        default_provider = true;
     }
 
-    struct curl_httppost * post = NULL;
-    struct curl_httppost * last = NULL;
-
     if ( state->cmd == SNC ) {
-        curl_formadd(&post, &last,
-                     CURLFORM_COPYNAME,    "c",
-                     CURLFORM_FILE,        state->path,
-                     CURLFORM_CONTENTTYPE, "application/octet-stream",
-                     CURLFORM_END);
+        CURLFORMcode s;
+        s = curl_formadd(&post, &last,
+                         CURLFORM_COPYNAME,    "c",
+                         CURLFORM_FILE,        state->path,
+                         CURLFORM_CONTENTTYPE, "application/octet-stream",
+                         CURLFORM_END);
+        if ( s != 0 ) {
+            status = CURLE_HTTP_POST_ERROR;
+            goto cleanup;
+        }
     }
 
     if ( state->verb ) {
@@ -149,11 +165,12 @@ paste (const struct ptpst_state * state) {
     curl_easy_setopt(handle, CURLOPT_URL, url);
     status = curl_easy_perform(handle);
 
-    curl_formfree(post);
-    curl_easy_cleanup(handle);
-    if ( default_provider ) { free(url); }
+    cleanup:
+        curl_easy_cleanup(handle);
+        if ( default_provider ) { free(url); }
+        if ( post )             { curl_formfree(post); }
 
-    return status;
+        return status;
 }
 
 // vim: set ts=4 sw=4 et:
