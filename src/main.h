@@ -94,7 +94,7 @@ struct ptpst_state {
     char * path, * url, * lexer, * vanity, * uuid, * provider;
     enum pb_cmd cmd;
     uint32_t ln;
-    uint64_t help: 16, priv: 16, rend: 16, verb: 16;
+    uint16_t help, priv, rend, verb;
 };
 
 CURLcode
