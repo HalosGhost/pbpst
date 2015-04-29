@@ -10,16 +10,16 @@ The goal of this utility is to support as many features of ``ptpb`` as possible 
 To-do
 -----
 
-- [ ] Pasting
-- [ ] Piping through ``stdin``
-- [ ] MIME types
-- [ ] URL Shortening
-- [ ] RST rendering handler
-- [ ] Lexers
-- [ ] Line highlighting
+- [X] Pasting
+- [X] Piping through ``stdin``
+- [-] MIME types
+- [-] URL Shortening
+- [-] RST rendering handler
+- [-] Lexers
+- [-] Line highlighting
 - [ ] Updating pastes
 - [ ] Deleting pastes
-- [ ] Vanity pastes
-- [ ] Private pastes
+- [-] Vanity pastes
+- [-] Private pastes
 - [ ] Paste fetching?
 
