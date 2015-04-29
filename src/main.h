@@ -88,4 +88,16 @@ static const char upd_help [] =
     "  -u, --uuid=UUID     Use UUID as authentication credential\n"
     "  -v, --vanity=NAME   Use NAME as a custom Id\n";
 
+enum pb_cmd { NON = 0, SNC = 'S', RMV = 'R', UPD = 'U' }; // DBS
+
+struct ptpst_state {
+    char * path, * url, * lexer, * vanity, * uuid, * provider;
+    enum pb_cmd cmd;
+    uint32_t ln;
+    uint64_t help: 16, priv: 16, rend: 16, verb: 16;
+};
+
+CURLcode
+paste (const struct ptpst_state *);
+
 // vim: set ts=4 sw=4 et:

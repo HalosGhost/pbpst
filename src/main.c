@@ -6,15 +6,6 @@
 
 #include "main.h"
 
-enum pb_cmd { NON = 0, SNC = 'S', RMV = 'R', UPD = 'U' }; // DBS
-
-struct ptpst_state {
-    char * path, * url, * lexer, * vanity, * uuid, * provider;
-    enum pb_cmd cmd;
-    uint32_t ln;
-    uint64_t help: 16, priv: 16, rend: 16, verb: 16;
-};
-
 signed
 main (signed argc, char * argv []) {
 
@@ -99,11 +90,8 @@ main (signed argc, char * argv []) {
         } goto cleanup;
     }
 
-    /**
-     * TODO:
-     **
-     * write and call the libcurl functions to actually interact with pb
-     */
+    // Takes care of all the interactions with pb
+    exit_status = paste(&state);
 
     cleanup:
         if ( state.url )      { free(state.url);      }
@@ -114,4 +102,58 @@ main (signed argc, char * argv []) {
         if ( state.provider ) { free(state.provider); }
         return exit_status;
 }
+
+/**
+ * TODO: new: Add support for vanity URLs, specifying the lexer, making
+ * a short URL, and specifying the line number.
+ *
+ * TODO: delete: Add functionality for deleting a paste.
+ */
+CURLcode
+paste (const struct ptpst_state * state) {
+
+    CURL * handle = curl_easy_init();
+    CURLcode status = CURLE_OK;
+
+    if ( !handle ) {
+        fputs("Failed to get CURL handle", stderr);
+        return CURLE_FAILED_INIT;
+    }
+
+    char * url = state->provider;
+    bool default_provider = false;
+
+    if ( !state->provider ) {
+        default_provider = true;
+        size_t len = strlen("https://ptpb.pw/") + 1;
+        url = malloc(len);
+        snprintf(url, len, "https://ptpb.pw/");
+    }
+
+    struct curl_httppost * post = NULL;
+    struct curl_httppost * last = NULL;
+
+    if ( state->cmd == SNC ) {
+        curl_formadd(&post, &last,
+                     CURLFORM_COPYNAME, "c",
+                     CURLFORM_FILE, state->path,
+                     CURLFORM_CONTENTTYPE, "application/octet-stream",
+                     CURLFORM_END);
+    }
+
+    if ( state->verb ) {
+        curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
+    }
+
+    curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
+    curl_easy_setopt(handle, CURLOPT_URL, url);
+    status = curl_easy_perform(handle);
+
+    curl_formfree(post);
+    curl_easy_cleanup(handle);
+    if ( default_provider ) { free(url); }
+
+    return status;
+}
+
 // vim: set ts=4 sw=4 et:
