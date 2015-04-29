@@ -57,6 +57,11 @@ main (signed argc, char * argv []) {
 
     switch ( state.cmd ) {
         case SNC:
+            if ( !state.url && !state.path ) {
+                printf("%s%s",   sync_help, gen_help);
+                goto cleanup;
+            }
+
             if ( (state.url && (state.path || state.lexer  || state.rend ||
                                 state.ln   || state.priv)) || state.uuid ) {
                 fprintf(stderr, "Error: erroneous option. See `%s -Sh`\n",
