@@ -95,6 +95,18 @@ main (signed argc, char * argv []) {
         } goto cleanup;
     }
 
+    if ( !state.provider ) {
+        size_t len = strlen("https://ptpb.pw/") + 1;
+
+        state.provider = malloc(len);
+        if ( !state.provider ) {
+            exit_status = CURLE_OUT_OF_MEMORY;
+            goto cleanup;
+        }
+
+        snprintf(state.provider, len, "https://ptpb.pw/");
+    }
+
     // Takes care of all the interactions with pb
     exit_status = state.cmd == SNC ? pb_paste(&state) : pb_remove(&state);
 
@@ -128,22 +140,6 @@ pb_paste (const struct ptpst_state * state) {
     struct curl_httppost * post = NULL;
     struct curl_httppost * last = NULL;
 
-    char * url = state->provider;
-    bool default_provider = false;
-
-    if ( !state->provider ) {
-        size_t len = strlen("https://ptpb.pw/") + 1;
-
-        url = malloc(len);
-        if ( !url ) {
-            status = CURLE_OUT_OF_MEMORY;
-            goto cleanup;
-        }
-
-        snprintf(url, len, "https://ptpb.pw/");
-        default_provider = true;
-    }
-
     if ( state->cmd == SNC ) {
         CURLFORMcode s;
         s = curl_formadd(&post,                &last,
@@ -160,12 +156,11 @@ pb_paste (const struct ptpst_state * state) {
     if ( state->verb ) { curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L); }
 
     curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
-    curl_easy_setopt(handle, CURLOPT_URL, url);
+    curl_easy_setopt(handle, CURLOPT_URL, state->provider);
     status = curl_easy_perform(handle);
 
     cleanup:
         curl_easy_cleanup(handle);
-        if ( default_provider ) { free(url); }
         if ( post )             { curl_formfree(post); }
         return status;
 }
