@@ -96,7 +96,7 @@ main (signed argc, char * argv []) {
     }
 
     // Takes care of all the interactions with pb
-    exit_status = paste(&state);
+    exit_status = state.cmd == SNC ? pb_paste(&state) : pb_remove(&state);
 
     cleanup:
         if ( state.url )      { free(state.url);      }
@@ -109,13 +109,13 @@ main (signed argc, char * argv []) {
 }
 
 /**
- * TODO: new: Add support for vanity URLs, specifying the lexer, making
+ * TODO
+ **
+ * Add support for vanity URLs, specifying the lexer, making
  * a short URL, and specifying the line number.
- *
- * TODO: delete: Add functionality for deleting a paste.
  */
 CURLcode
-paste (const struct ptpst_state * state) {
+pb_paste (const struct ptpst_state * state) {
 
     CURLcode status = CURLE_OK;
     CURL * handle = curl_easy_init();
@@ -146,7 +146,7 @@ paste (const struct ptpst_state * state) {
 
     if ( state->cmd == SNC ) {
         CURLFORMcode s;
-        s = curl_formadd(&post, &last,
+        s = curl_formadd(&post,                &last,
                          CURLFORM_COPYNAME,    "c",
                          CURLFORM_FILE,        state->path,
                          CURLFORM_CONTENTTYPE, "application/octet-stream",
@@ -157,9 +157,7 @@ paste (const struct ptpst_state * state) {
         }
     }
 
-    if ( state->verb ) {
-        curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
-    }
+    if ( state->verb ) { curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L); }
 
     curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
     curl_easy_setopt(handle, CURLOPT_URL, url);
@@ -169,8 +167,20 @@ paste (const struct ptpst_state * state) {
         curl_easy_cleanup(handle);
         if ( default_provider ) { free(url); }
         if ( post )             { curl_formfree(post); }
-
         return status;
+}
+
+/**
+ * TODO
+ **
+ * Actually implement paste removal
+ */
+CURLcode
+pb_remove (const struct ptpst_state * state) {
+
+    CURLcode status = CURLE_OK;
+
+    return status;
 }
 
 // vim: set ts=4 sw=4 et:
