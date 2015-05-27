@@ -18,7 +18,7 @@ To-do
 - [-] Lexers
 - [-] Line highlighting
 - [ ] Updating pastes
-- [ ] Deleting pastes
+- [X] Deleting pastes
 - [-] Vanity pastes
 - [-] Private pastes
 - [ ] Paste fetching?

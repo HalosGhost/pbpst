@@ -6,6 +6,11 @@
 
 #include "main.h"
 
+/**
+ * TODO
+ **
+ * Check for url sanity (provider ending in /, etc.)
+ */
 signed
 main (signed argc, char * argv []) {
 
@@ -72,6 +77,9 @@ main (signed argc, char * argv []) {
             if ( state.path || state.url  || state.lexer || state.vanity ||
                  state.ln   || state.priv || state.rend ) {
                 fprintf(stderr, "Error: erroneous option. See `%s -Rh`\n",
+                        argv[0]); goto cleanup;
+            } else if ( !state.uuid && !state.help ) {
+                fprintf(stderr, "Error: please specify UUID to remove. See `%s -Rh`\n",
                         argv[0]); goto cleanup;
             } break;
 
@@ -165,16 +173,35 @@ pb_paste (const struct ptpst_state * state) {
         return status;
 }
 
-/**
- * TODO
- **
- * Actually implement paste removal
- */
 CURLcode
 pb_remove (const struct ptpst_state * state) {
 
     CURLcode status = CURLE_OK;
+    CURL * handle = curl_easy_init();
 
+    if ( !handle ) {
+        fputs("Failed to get CURL handle", stderr);
+        return CURLE_FAILED_INIT;
+    }
+
+    if ( state->verb ) { curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L); }
+
+    size_t target_len = strlen(state->provider) + strlen(state->uuid) + 1;
+    char * target = malloc(target_len);
+    if ( !target ) {
+        status = CURLE_OUT_OF_MEMORY;
+        goto cleanup;
+    }
+
+    snprintf(target, target_len, "%s%s", state->provider, state->uuid);
+
+    curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "DELETE");
+    curl_easy_setopt(handle, CURLOPT_URL, target);
+    status = curl_easy_perform(handle);
+
+cleanup:
+    curl_easy_cleanup(handle);
+    if ( target )               { free(target);     }
     return status;
 }
 
