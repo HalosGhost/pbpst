@@ -26,12 +26,7 @@ main (signed argc, char * argv []) {
           c != -1; c = getopt_long(argc, argv, vos, os, &oi) ) {
 
         size_t l = optarg ? strlen(optarg) : 0;
-        char ** state_var = (c == 's' ? &state.url      :
-                             c == 'f' ? &state.path     :
-                             c == 'l' ? &state.lexer    :
-                             c == 'v' ? &state.vanity   :
-                             c == 'u' ? &state.uuid     :
-                             c == 'P' ? &state.provider : 0);
+        char ** state_var = 0;
 
         switch ( c ) {
             case 'S': case 'R': case 'U':
@@ -41,7 +36,13 @@ main (signed argc, char * argv []) {
                     exit_status = EXIT_FAILURE; goto cleanup;
                 } state.cmd = (enum pb_cmd )c; break;
 
-            case 's': case 'f': case 'l': case 'v': case 'u': case 'P':
+            case 's': state_var = &state.url;      goto svcase;
+            case 'f': state_var = &state.path;     goto svcase;
+            case 'l': state_var = &state.lexer;    goto svcase;
+            case 'v': state_var = &state.vanity;   goto svcase;
+            case 'u': state_var = &state.uuid;     goto svcase;
+            case 'P': state_var = &state.provider; goto svcase;
+            svcase:
                 *state_var = (char * )malloc(l + 1);
                 strncpy(*state_var, optarg, l);
                 break;
