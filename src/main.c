@@ -103,16 +103,20 @@ main (signed argc, char * argv []) {
         } goto cleanup;
     }
 
+    // Make sure we have a sane provider string
     if ( !state.provider ) {
         size_t len = strlen("https://ptpb.pw/") + 1;
-
         state.provider = malloc(len);
         if ( !state.provider ) {
             exit_status = CURLE_OUT_OF_MEMORY;
-            goto cleanup;
         }
-
         snprintf(state.provider, len, "https://ptpb.pw/");
+    } else {
+        size_t len = strlen(state.provider);
+        if ( state.provider [len - 1] != '/' ) {
+            state.provider = realloc(state.provider, len + 1);
+            strcat(state.provider, "/");
+        }
     }
 
     // Takes care of all the interactions with pb
