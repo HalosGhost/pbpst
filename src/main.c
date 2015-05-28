@@ -6,6 +6,11 @@
 
 #include "main.h"
 
+/**
+ * TODO
+ **
+ * Check for url sanity (provider ending in /, etc.)
+ */
 signed
 main (signed argc, char * argv []) {
 
@@ -73,6 +78,9 @@ main (signed argc, char * argv []) {
                  state.ln   || state.priv || state.rend ) {
                 fprintf(stderr, "Error: erroneous option. See `%s -Rh`\n",
                         argv[0]); goto cleanup;
+            } else if ( !state.uuid && !state.help ) {
+                fprintf(stderr, "Error: please specify UUID to remove. See `%s -Rh`\n",
+                        argv[0]); goto cleanup;
             } break;
 
         case UPD:
@@ -93,6 +101,24 @@ main (signed argc, char * argv []) {
             case UPD: printf("%s%s",   upd_help,  gen_help);            break;
             case NON: printf("%s%s%s", cmds_help, gen_help, more_info); break;
         } goto cleanup;
+    }
+
+    // Make sure we have a sane provider string
+    if ( !state.provider ) {
+        size_t len = strlen("https://ptpb.pw/") + 1;
+        state.provider = malloc(len);
+        if ( !state.provider ) {
+            exit_status = CURLE_OUT_OF_MEMORY;
+        }
+        snprintf(state.provider, len, "https://ptpb.pw/");
+    } else {
+        size_t len = strlen(state.provider);
+        if ( state.provider [len - 1] != '/' ) {
+            state.provider = realloc(state.provider, len + 2);
+            char * suffix = state.provider + len;
+            *suffix = '/';
+            *(suffix + 1) = '\0';
+        }
     }
 
     // Takes care of all the interactions with pb
@@ -128,22 +154,6 @@ pb_paste (const struct ptpst_state * state) {
     struct curl_httppost * post = NULL;
     struct curl_httppost * last = NULL;
 
-    char * url = state->provider;
-    bool default_provider = false;
-
-    if ( !state->provider ) {
-        size_t len = strlen("https://ptpb.pw/") + 1;
-
-        url = malloc(len);
-        if ( !url ) {
-            status = CURLE_OUT_OF_MEMORY;
-            goto cleanup;
-        }
-
-        snprintf(url, len, "https://ptpb.pw/");
-        default_provider = true;
-    }
-
     if ( state->cmd == SNC ) {
         CURLFORMcode s;
         s = curl_formadd(&post,                &last,
@@ -160,26 +170,44 @@ pb_paste (const struct ptpst_state * state) {
     if ( state->verb ) { curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L); }
 
     curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
-    curl_easy_setopt(handle, CURLOPT_URL, url);
+    curl_easy_setopt(handle, CURLOPT_URL, state->provider);
     status = curl_easy_perform(handle);
 
     cleanup:
         curl_easy_cleanup(handle);
-        if ( default_provider ) { free(url); }
         if ( post )             { curl_formfree(post); }
         return status;
 }
 
-/**
- * TODO
- **
- * Actually implement paste removal
- */
 CURLcode
 pb_remove (const struct ptpst_state * state) {
 
     CURLcode status = CURLE_OK;
+    CURL * handle = curl_easy_init();
 
+    if ( !handle ) {
+        fputs("Failed to get CURL handle", stderr);
+        return CURLE_FAILED_INIT;
+    }
+
+    if ( state->verb ) { curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L); }
+
+    size_t target_len = strlen(state->provider) + strlen(state->uuid) + 1;
+    char * target = malloc(target_len);
+    if ( !target ) {
+        status = CURLE_OUT_OF_MEMORY;
+        goto cleanup;
+    }
+
+    snprintf(target, target_len, "%s%s", state->provider, state->uuid);
+
+    curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "DELETE");
+    curl_easy_setopt(handle, CURLOPT_URL, target);
+    status = curl_easy_perform(handle);
+
+cleanup:
+    curl_easy_cleanup(handle);
+    if ( target )               { free(target);     }
     return status;
 }
 
