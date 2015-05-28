@@ -6,11 +6,6 @@
 
 #include "main.h"
 
-/**
- * TODO
- **
- * Check for url sanity (provider ending in /, etc.)
- */
 signed
 main (signed argc, char * argv []) {
 
@@ -109,15 +104,14 @@ main (signed argc, char * argv []) {
         state.provider = malloc(len);
         if ( !state.provider ) {
             exit_status = CURLE_OUT_OF_MEMORY;
-        }
-        snprintf(state.provider, len, "https://ptpb.pw/");
+            goto cleanup;
+        } snprintf(state.provider, len, "https://ptpb.pw/");
     } else {
         size_t len = strlen(state.provider);
         if ( state.provider [len - 1] != '/' ) {
             state.provider = realloc(state.provider, len + 2);
             char * suffix = state.provider + len;
-            *suffix = '/';
-            *(suffix + 1) = '\0';
+            *suffix = '/'; *(suffix + 1) = '\0';
         }
     }
 
@@ -175,7 +169,7 @@ pb_paste (const struct ptpst_state * state) {
 
     cleanup:
         curl_easy_cleanup(handle);
-        if ( post )             { curl_formfree(post); }
+        if ( post ) { curl_formfree(post); }
         return status;
 }
 
@@ -207,7 +201,7 @@ pb_remove (const struct ptpst_state * state) {
 
 cleanup:
     curl_easy_cleanup(handle);
-    if ( target )               { free(target);     }
+    if ( target ) { free(target); }
     return status;
 }
 
