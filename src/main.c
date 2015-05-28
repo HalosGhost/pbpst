@@ -72,7 +72,7 @@ main (signed argc, char * argv []) {
             }
 
             if ( (state.url && (state.path || state.lexer  || state.rend ||
-                                state.ln   || state.priv)) || state.uuid ) {
+                                state.ln   || state.vanity )) || state.uuid ) {
                 fprintf(stderr, "Error: erroneous option. See `%s -Sh`\n",
                         argv[0]); goto cleanup;
             } break;
@@ -134,8 +134,7 @@ main (signed argc, char * argv []) {
 /**
  * TODO
  **
- * Add support for vanity URLs, specifying the lexer, making
- * a short URL, and specifying the line number.
+ * Add support for specifying the lexer and specifying the line number.
  */
 CURLcode
 pb_paste (const struct ptpst_state * state) {
@@ -150,31 +149,92 @@ pb_paste (const struct ptpst_state * state) {
 
     if ( state->verb ) { curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L); }
 
-    if ( state->cmd == SNC ) {
-        struct curl_httppost * post = NULL;
-        struct curl_httppost * last = NULL;
+    struct curl_httppost * post = NULL;
+    struct curl_httppost * last = NULL;
+    char * target = NULL;
 
-        CURLFORMcode s;
-        s = curl_formadd(&post,                &last,
-                         CURLFORM_COPYNAME,    "c",
-                         CURLFORM_FILE,        state->path,
-                         CURLFORM_CONTENTTYPE, "application/octet-stream",
-                         CURLFORM_END);
-        if ( s != 0 ) {
-            status = CURLE_HTTP_POST_ERROR;
-            goto cleanup;
+    if (state->cmd == SNC ) {
+        if ( state->url ) {
+            size_t target_len = strlen(state->provider) + 2;
+            target = malloc(target_len);
+
+            if ( !target ) {
+                status = CURLE_OUT_OF_MEMORY;
+                goto cleanup;
+            }
+
+            snprintf(target, target_len, "%s%c", state->provider, 'u');
+
+            CURLFORMcode s =
+                curl_formadd(&post,                &last,
+                             CURLFORM_COPYNAME,    "c",
+                             CURLFORM_PTRCONTENTS, state->url,
+                             CURLFORM_END);
+
+            if ( s != 0 ) {
+                status = CURLE_HTTP_POST_ERROR;
+                goto cleanup;
+            }
+        } else {
+            CURLFORMcode s =
+                curl_formadd(post,                 last,
+                             CURLFORM_COPYNAME,    "c",
+                             CURLFORM_FILE,        state->path,
+                             CURLFORM_CONTENTTYPE, "application/octet-stream",
+                             CURLFORM_END);
+            if ( s != 0 ) {
+                status = CURLE_HTTP_POST_ERROR;
+                goto cleanup;
+            }
+        }
+
+        if ( state->vanity ) {
+            size_t target_len = strlen(state->provider) + strlen(state->vanity) + 2;
+            target = malloc(target_len);
+
+            if ( !target ) {
+                status = CURLE_OUT_OF_MEMORY;
+                goto cleanup;
+            }
+
+            snprintf(target, target_len, "%s~%s",
+                     state->provider, state->vanity);
+        }
+
+        if ( state->priv ) {
+            CURLFORMcode s =
+                curl_formadd(&post,    &last,
+                             CURLFORM_COPYNAME,     "p",
+                             CURLFORM_COPYCONTENTS, "1",
+                             CURLFORM_END);
+            if ( s != 0 ) {
+                status = CURLE_HTTP_POST_ERROR;
+                goto cleanup;
+            }
+        }
+
+        if ( !target ) {
+            size_t target_len = strlen(state->provider) + 1;
+            target = malloc(target_len);
+
+            if ( !target ) {
+                status = CURLE_OUT_OF_MEMORY;
+                goto cleanup;
+            }
+
+            snprintf(target, target_len, "%s", state->provider);
         }
 
         curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
-        curl_easy_setopt(handle, CURLOPT_URL, state->provider);
     }
 
+    curl_easy_setopt(handle, CURLOPT_URL, target);
     status = curl_easy_perform(handle);
 
     cleanup:
         curl_easy_cleanup(handle);
-        if ( post )       { curl_formfree(post);       }
-        if ( update_url ) { curl_formfree(update_url); }
+        if ( post )   { curl_formfree(post); }
+        if ( target ) { free(target);        }
         return status;
 }
 
