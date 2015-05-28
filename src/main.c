@@ -58,7 +58,7 @@ main (signed argc, char * argv []) {
     switch ( state.cmd ) {
         case SNC:
             if ( !state.url && !state.path ) {
-                printf("%s%s",   sync_help, gen_help);
+                printf("%s%s", sync_help, gen_help);
                 goto cleanup;
             }
 
@@ -199,10 +199,10 @@ pb_remove (const struct ptpst_state * state) {
     curl_easy_setopt(handle, CURLOPT_URL, target);
     status = curl_easy_perform(handle);
 
-cleanup:
-    curl_easy_cleanup(handle);
-    if ( target ) { free(target); }
-    return status;
+    cleanup:
+        curl_easy_cleanup(handle);
+        if ( target ) { free(target); }
+        return status;
 }
 
 // vim: set ts=4 sw=4 et:
