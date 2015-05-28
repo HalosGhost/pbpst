@@ -84,7 +84,8 @@ main (signed argc, char * argv []) {
                 fprintf(stderr, "Error: erroneous option. See `%s -Rh`\n",
                         argv[0]); goto cleanup;
             } else if ( !state.uuid ) {
-                fprintf(stderr, "Error: please specify UUID to remove. See `%s -Rh`\n",
+                fprintf(stderr,
+                        "Error: please specify UUID to remove. See `%s -Rh`\n",
                         argv[0]); goto cleanup;
             } break;
 
