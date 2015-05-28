@@ -103,7 +103,4 @@ pb_paste (const struct ptpst_state *);
 CURLcode
 pb_remove (const struct ptpst_state *);
 
-CURLcode
-pb_update (const struct ptpst_state * state);
-
 // vim: set ts=4 sw=4 et:

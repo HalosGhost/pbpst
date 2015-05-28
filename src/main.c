@@ -118,8 +118,8 @@ main (signed argc, char * argv []) {
 
     // Takes care of all the interactions with pb
     exit_status = state.cmd == SNC ? pb_paste(&state)  :
-                  state.cmd == RMV ? pb_remove(&state) :
-                  state.cmd == UPD ? pb_update(&state) : exit_status;
+                  state.cmd == UPD ? pb_paste(&state)  :
+                  state.cmd == RMV ? pb_remove(&state) : exit_status;
 
     cleanup:
         if ( state.url )      { free(state.url);      }
@@ -148,10 +148,12 @@ pb_paste (const struct ptpst_state * state) {
         return CURLE_FAILED_INIT;
     }
 
-    struct curl_httppost * post = NULL;
-    struct curl_httppost * last = NULL;
+    if ( state->verb ) { curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L); }
 
     if ( state->cmd == SNC ) {
+        struct curl_httppost * post = NULL;
+        struct curl_httppost * last = NULL;
+
         CURLFORMcode s;
         s = curl_formadd(&post,                &last,
                          CURLFORM_COPYNAME,    "c",
@@ -162,17 +164,17 @@ pb_paste (const struct ptpst_state * state) {
             status = CURLE_HTTP_POST_ERROR;
             goto cleanup;
         }
+
+        curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
+        curl_easy_setopt(handle, CURLOPT_URL, state->provider);
     }
 
-    if ( state->verb ) { curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L); }
-
-    curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
-    curl_easy_setopt(handle, CURLOPT_URL, state->provider);
     status = curl_easy_perform(handle);
 
     cleanup:
         curl_easy_cleanup(handle);
-        if ( post ) { curl_formfree(post); }
+        if ( post )       { curl_formfree(post);       }
+        if ( update_url ) { curl_formfree(update_url); }
         return status;
 }
 
@@ -206,18 +208,6 @@ pb_remove (const struct ptpst_state * state) {
         curl_easy_cleanup(handle);
         if ( target ) { free(target); }
         return status;
-}
-
-/**
- * TODO
- **
- * Implement updating
- */
-CURLcode
-pb_update (const struct ptpst_state * state) {
-
-    CURLcode status = CURLE_OK;
-    return status;
 }
 
 // vim: set ts=4 sw=4 et:
