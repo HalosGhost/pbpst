@@ -114,8 +114,10 @@ main (signed argc, char * argv []) {
     } else {
         size_t len = strlen(state.provider);
         if ( state.provider [len - 1] != '/' ) {
-            state.provider = realloc(state.provider, len + 1);
-            strcat(state.provider, "/");
+            state.provider = realloc(state.provider, len + 2);
+            char * suffix = state.provider + len;
+            *suffix = '/';
+            *(suffix + 1) = '\0';
         }
     }
 
