@@ -116,7 +116,9 @@ main (signed argc, char * argv []) {
     }
 
     // Takes care of all the interactions with pb
-    exit_status = state.cmd == SNC ? pb_paste(&state) : pb_remove(&state);
+    exit_status = state.cmd == SNC ? pb_paste(&state)  :
+                  state.cmd == RMV ? pb_remove(&state) :
+                  state.cmd == UPD ? pb_update(&state) : exit_status;
 
     cleanup:
         if ( state.url )      { free(state.url);      }
@@ -203,6 +205,18 @@ pb_remove (const struct ptpst_state * state) {
         curl_easy_cleanup(handle);
         if ( target ) { free(target); }
         return status;
+}
+
+/**
+ * TODO
+ **
+ * Implement updating
+ */
+CURLcode
+pb_update (const struct ptpst_state * state) {
+
+    CURLcode status = CURLE_OK;
+    return status;
 }
 
 // vim: set ts=4 sw=4 et:

@@ -13,7 +13,7 @@
 #define BUFFER_SIZE 256
 #define FILE_MAX 67108864 // 64 MiB
 
-static const char version_str [] = "ptpst 0.0.1\n";
+static const char version_str [] = "ptpst 0.2.0\n";
 
 static struct option os [] = {
     /* commands */
@@ -102,5 +102,8 @@ pb_paste (const struct ptpst_state *);
 
 CURLcode
 pb_remove (const struct ptpst_state *);
+
+CURLcode
+pb_update (const struct ptpst_state * state);
 
 // vim: set ts=4 sw=4 et:
