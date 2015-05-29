@@ -56,6 +56,15 @@ main (signed argc, char * argv []) {
         }
     }
 
+    if ( state.help ) {
+        switch ( state.cmd ) {
+            case SNC: printf("%s%s",   sync_help, gen_help);            break;
+            case RMV: printf("%s%s",   rem_help,  gen_help);            break;
+            case UPD: printf("%s%s",   upd_help,  gen_help);            break;
+            case NON: printf("%s%s%s", cmds_help, gen_help, more_info); break;
+        } goto cleanup;
+    }
+
     switch ( state.cmd ) {
         case SNC:
             if ( !state.url && !state.path ) {
@@ -64,7 +73,7 @@ main (signed argc, char * argv []) {
             }
 
             if ( (state.url && (state.path || state.lexer  || state.rend ||
-                                state.ln   || state.priv)) || state.uuid ) {
+                                state.ln   || state.vanity )) || state.uuid ) {
                 fprintf(stderr, "Error: erroneous option. See `%s -Sh`\n",
                         argv[0]); goto cleanup;
             } break;
@@ -74,8 +83,9 @@ main (signed argc, char * argv []) {
                  state.ln   || state.priv || state.rend ) {
                 fprintf(stderr, "Error: erroneous option. See `%s -Rh`\n",
                         argv[0]); goto cleanup;
-            } else if ( !state.uuid && !state.help ) {
-                fprintf(stderr, "Error: please specify UUID to remove. See `%s -Rh`\n",
+            } else if ( !state.uuid ) {
+                fprintf(stderr,
+                        "Error: please specify UUID to remove. See `%s -Rh`\n",
                         argv[0]); goto cleanup;
             } break;
 
@@ -88,15 +98,6 @@ main (signed argc, char * argv []) {
         case NON:
             printf("%s%s%s", cmds_help, gen_help, more_info);
             goto cleanup;
-    }
-
-    if ( state.help ) {
-        switch ( state.cmd ) {
-            case SNC: printf("%s%s",   sync_help, gen_help);            break;
-            case RMV: printf("%s%s",   rem_help,  gen_help);            break;
-            case UPD: printf("%s%s",   upd_help,  gen_help);            break;
-            case NON: printf("%s%s%s", cmds_help, gen_help, more_info); break;
-        } goto cleanup;
     }
 
     // Make sure we have a sane provider string
@@ -118,8 +119,8 @@ main (signed argc, char * argv []) {
 
     // Takes care of all the interactions with pb
     exit_status = state.cmd == SNC ? pb_paste(&state)  :
-                  state.cmd == RMV ? pb_remove(&state) :
-                  state.cmd == UPD ? pb_update(&state) : exit_status;
+                  state.cmd == UPD ? pb_paste(&state)  :
+                  state.cmd == RMV ? pb_remove(&state) : exit_status;
 
     cleanup:
         if ( state.url )      { free(state.url);      }
@@ -134,8 +135,7 @@ main (signed argc, char * argv []) {
 /**
  * TODO
  **
- * Add support for vanity URLs, specifying the lexer, making
- * a short URL, and specifying the line number.
+ * Add support for specifying the lexer and specifying the line number.
  */
 CURLcode
 pb_paste (const struct ptpst_state * state) {
@@ -148,12 +148,90 @@ pb_paste (const struct ptpst_state * state) {
         return CURLE_FAILED_INIT;
     }
 
+    if ( state->verb ) { curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L); }
+
     struct curl_httppost * post = NULL;
     struct curl_httppost * last = NULL;
+    char * target = NULL;
 
-    if ( state->cmd == SNC ) {
-        CURLFORMcode s;
-        s = curl_formadd(&post,                &last,
+    if (state->cmd == SNC ) {
+        if ( state->url ) {
+            size_t target_len = strlen(state->provider) + 2;
+            target = malloc(target_len);
+
+            if ( !target ) {
+                status = CURLE_OUT_OF_MEMORY;
+                goto cleanup;
+            }
+
+            snprintf(target, target_len, "%s%c", state->provider, 'u');
+
+            CURLFORMcode s =
+                curl_formadd(&post,                &last,
+                             CURLFORM_COPYNAME,    "c",
+                             CURLFORM_PTRCONTENTS, state->url,
+                             CURLFORM_END);
+
+            if ( s != 0 ) {
+                status = CURLE_HTTP_POST_ERROR;
+                goto cleanup;
+            }
+        } else {
+            CURLFORMcode s =
+                curl_formadd(&post,                &last,
+                             CURLFORM_COPYNAME,    "c",
+                             CURLFORM_FILE,        state->path,
+                             CURLFORM_CONTENTTYPE, "application/octet-stream",
+                             CURLFORM_END);
+            if ( s != 0 ) {
+                status = CURLE_HTTP_POST_ERROR;
+                goto cleanup;
+            }
+        }
+
+        if ( state->vanity ) {
+            size_t target_len = strlen(state->provider) + strlen(state->vanity) + 2;
+            target = malloc(target_len);
+
+            if ( !target ) {
+                status = CURLE_OUT_OF_MEMORY;
+                goto cleanup;
+            }
+
+            snprintf(target, target_len, "%s~%s",
+                     state->provider, state->vanity);
+        }
+
+        if ( state->priv ) {
+            CURLFORMcode s =
+                curl_formadd(&post,    &last,
+                             CURLFORM_COPYNAME,     "p",
+                             CURLFORM_COPYCONTENTS, "1",
+                             CURLFORM_END);
+            if ( s != 0 ) {
+                status = CURLE_HTTP_POST_ERROR;
+                goto cleanup;
+            }
+        }
+
+        if ( !target ) {
+            size_t target_len = strlen(state->provider) + 1;
+            target = malloc(target_len);
+
+            if ( !target ) {
+                status = CURLE_OUT_OF_MEMORY;
+                goto cleanup;
+            }
+
+            snprintf(target, target_len, "%s", state->provider);
+        }
+
+        curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
+    }
+
+    if (state->cmd == UPD ) {
+        CURLFORMcode s =
+            curl_formadd(&post,                &last,
                          CURLFORM_COPYNAME,    "c",
                          CURLFORM_FILE,        state->path,
                          CURLFORM_CONTENTTYPE, "application/octet-stream",
@@ -162,17 +240,29 @@ pb_paste (const struct ptpst_state * state) {
             status = CURLE_HTTP_POST_ERROR;
             goto cleanup;
         }
+
+        size_t target_len =
+            strlen(state->provider) + strlen(state->uuid) + 1;
+        target = malloc(target_len);
+
+        if ( !target ) {
+            status = CURLE_OUT_OF_MEMORY;
+            goto cleanup;
+        }
+
+        snprintf(target, target_len, "%s%s",
+                 state->provider, state->uuid);
+        curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
+        curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "PUT");
     }
 
-    if ( state->verb ) { curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L); }
-
-    curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
-    curl_easy_setopt(handle, CURLOPT_URL, state->provider);
+    curl_easy_setopt(handle, CURLOPT_URL, target);
     status = curl_easy_perform(handle);
 
     cleanup:
         curl_easy_cleanup(handle);
-        if ( post ) { curl_formfree(post); }
+        if ( post )   { curl_formfree(post); }
+        if ( target ) { free(target);        }
         return status;
 }
 
@@ -206,18 +296,6 @@ pb_remove (const struct ptpst_state * state) {
         curl_easy_cleanup(handle);
         if ( target ) { free(target); }
         return status;
-}
-
-/**
- * TODO
- **
- * Implement updating
- */
-CURLcode
-pb_update (const struct ptpst_state * state) {
-
-    CURLcode status = CURLE_OK;
-    return status;
 }
 
 // vim: set ts=4 sw=4 et:

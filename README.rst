@@ -13,13 +13,13 @@ To-do
 - [X] Pasting
 - [X] Piping through ``stdin``
 - [-] MIME types
-- [-] URL Shortening
+- [X] URL Shortening
 - [-] RST rendering handler
 - [-] Lexers
 - [-] Line highlighting
 - [ ] Updating pastes
 - [X] Deleting pastes
-- [-] Vanity pastes
-- [-] Private pastes
+- [X] Vanity pastes
+- [X] Private pastes
 - [ ] Paste fetching?
 
