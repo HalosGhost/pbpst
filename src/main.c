@@ -110,7 +110,7 @@ main (signed argc, char * argv []) {
         } snprintf(state.provider, len, "https://ptpb.pw/");
     } else {
         size_t len = strlen(state.provider);
-        if ( state.provider [len - 1] != '/' ) {
+        if ( state.provider[len - 1] != '/' ) {
             state.provider = realloc(state.provider, len + 2);
             char * suffix = state.provider + len;
             *suffix = '/'; *(suffix + 1) = '\0';
@@ -118,9 +118,7 @@ main (signed argc, char * argv []) {
     }
 
     // Takes care of all the interactions with pb
-    exit_status = state.cmd == SNC ? pb_paste(&state)  :
-                  state.cmd == UPD ? pb_paste(&state)  :
-                  state.cmd == RMV ? pb_remove(&state) : exit_status;
+    exit_status = state.cmd == RMV ? pb_remove(&state) : pb_paste(&state);
 
     cleanup:
         if ( state.url )      { free(state.url);      }
@@ -159,99 +157,69 @@ pb_paste (const struct ptpst_state * state) {
             size_t target_len = strlen(state->provider) + 2;
             target = malloc(target_len);
 
-            if ( !target ) {
-                status = CURLE_OUT_OF_MEMORY;
-                goto cleanup;
-            }
+            if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
 
             snprintf(target, target_len, "%s%c", state->provider, 'u');
 
-            CURLFORMcode s =
-                curl_formadd(&post,                &last,
-                             CURLFORM_COPYNAME,    "c",
-                             CURLFORM_PTRCONTENTS, state->url,
-                             CURLFORM_END);
+            CURLFORMcode s = curl_formadd(&post,                &last,
+                                          CURLFORM_COPYNAME,    "c",
+                                          CURLFORM_PTRCONTENTS, state->url,
+                                          CURLFORM_END);
 
-            if ( s != 0 ) {
-                status = CURLE_HTTP_POST_ERROR;
-                goto cleanup;
-            }
+            if ( s ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
         } else {
-            CURLFORMcode s =
-                curl_formadd(&post,                &last,
-                             CURLFORM_COPYNAME,    "c",
-                             CURLFORM_FILE,        state->path,
-                             CURLFORM_CONTENTTYPE, "application/octet-stream",
-                             CURLFORM_END);
-            if ( s != 0 ) {
-                status = CURLE_HTTP_POST_ERROR;
-                goto cleanup;
-            }
+            CURLFORMcode s = curl_formadd(&post,                &last,
+                                          CURLFORM_COPYNAME,    "c",
+                                          CURLFORM_FILE,        state->path,
+                                          CURLFORM_CONTENTTYPE,
+                                          "application/octet-stream",
+                                          CURLFORM_END);
+            if ( s ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
         }
 
         if ( state->vanity ) {
-            size_t target_len = strlen(state->provider) + strlen(state->vanity) + 2;
+            size_t target_len = strlen(state->provider)
+                              + strlen(state->vanity) + 2;
             target = malloc(target_len);
 
-            if ( !target ) {
-                status = CURLE_OUT_OF_MEMORY;
-                goto cleanup;
-            }
-
-            snprintf(target, target_len, "%s~%s",
-                     state->provider, state->vanity);
+            if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
+            snprintf(target, target_len, "%s~%s", state->provider,
+                                                  state->vanity);
         }
 
         if ( state->priv ) {
-            CURLFORMcode s =
-                curl_formadd(&post,    &last,
-                             CURLFORM_COPYNAME,     "p",
-                             CURLFORM_COPYCONTENTS, "1",
-                             CURLFORM_END);
-            if ( s != 0 ) {
-                status = CURLE_HTTP_POST_ERROR;
-                goto cleanup;
-            }
+            CURLFORMcode s = curl_formadd(&post,                 &last,
+                                          CURLFORM_COPYNAME,     "p",
+                                          CURLFORM_COPYCONTENTS, "1",
+                                          CURLFORM_END);
+            if ( s ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
         }
 
         if ( !target ) {
             size_t target_len = strlen(state->provider) + 1;
             target = malloc(target_len);
 
-            if ( !target ) {
-                status = CURLE_OUT_OF_MEMORY;
-                goto cleanup;
-            }
-
+            if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
             snprintf(target, target_len, "%s", state->provider);
-        }
-
-        curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
+        } curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
     }
 
     if (state->cmd == UPD ) {
-        CURLFORMcode s =
-            curl_formadd(&post,                &last,
-                         CURLFORM_COPYNAME,    "c",
-                         CURLFORM_FILE,        state->path,
-                         CURLFORM_CONTENTTYPE, "application/octet-stream",
-                         CURLFORM_END);
-        if ( s != 0 ) {
-            status = CURLE_HTTP_POST_ERROR;
-            goto cleanup;
-        }
+        CURLFORMcode s = curl_formadd(&post,                &last,
+                                      CURLFORM_COPYNAME,    "c",
+                                      CURLFORM_FILE,        state->path,
+                                      CURLFORM_CONTENTTYPE,
+                                      "application/octet-stream",
+                                      CURLFORM_END);
+        if ( s ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
 
-        size_t target_len =
-            strlen(state->provider) + strlen(state->uuid) + 1;
+        size_t target_len = strlen(state->provider)
+                          + strlen(state->uuid) + 1;
         target = malloc(target_len);
 
-        if ( !target ) {
-            status = CURLE_OUT_OF_MEMORY;
-            goto cleanup;
-        }
+        if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
 
-        snprintf(target, target_len, "%s%s",
-                 state->provider, state->uuid);
+        snprintf(target, target_len, "%s%s", state->provider, state->uuid);
         curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
         curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "PUT");
     }
