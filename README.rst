@@ -17,7 +17,7 @@ To-do
 - [-] RST rendering handler
 - [-] Lexers
 - [-] Line highlighting
-- [ ] Updating pastes
+- [X] Updating pastes
 - [X] Deleting pastes
 - [X] Vanity pastes
 - [X] Private pastes
