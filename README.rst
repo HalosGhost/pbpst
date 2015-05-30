@@ -12,7 +12,6 @@ To-do
 
 - [X] Pasting
 - [X] Piping through ``stdin``
-- [-] MIME types
 - [X] URL Shortening
 - [-] RST rendering handler
 - [-] Lexers
@@ -21,5 +20,9 @@ To-do
 - [X] Deleting pastes
 - [X] Vanity pastes
 - [X] Private pastes
-- [ ] Paste fetching?
+- [ ] Database of owned pastes
+
+  - [ ] Ability to manually add or remove pastes from the db
+
+- [ ] zsh completion of UUIDs in db to make removal super simple
 
