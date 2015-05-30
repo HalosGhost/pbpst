@@ -204,7 +204,7 @@ pb_paste (const struct ptpst_state * state) {
 
     cleanup:
         curl_easy_cleanup(handle);
-        if ( post ) { curl_formfree(post); }
+        curl_formfree(post);
         free(target);
         return status;
 }
