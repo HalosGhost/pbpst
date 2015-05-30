@@ -121,12 +121,12 @@ main (signed argc, char * argv []) {
     exit_status = state.cmd == RMV ? pb_remove(&state) : pb_paste(&state);
 
     cleanup:
-        if ( state.url )      { free(state.url);      }
-        if ( state.path )     { free(state.path);     }
-        if ( state.lexer )    { free(state.lexer);    }
-        if ( state.vanity )   { free(state.vanity);   }
-        if ( state.uuid )     { free(state.uuid);     }
-        if ( state.provider ) { free(state.provider); }
+        free(state.url);
+        free(state.path);
+        free(state.lexer);
+        free(state.vanity);
+        free(state.uuid);
+        free(state.provider);
         return exit_status;
 }
 
@@ -204,8 +204,8 @@ pb_paste (const struct ptpst_state * state) {
 
     cleanup:
         curl_easy_cleanup(handle);
-        if ( post )   { curl_formfree(post); }
-        if ( target ) { free(target);        }
+        if ( post ) { curl_formfree(post); }
+        free(target);
         return status;
 }
 
@@ -234,7 +234,7 @@ pb_remove (const struct ptpst_state * state) {
 
     cleanup:
         curl_easy_cleanup(handle);
-        if ( target ) { free(target); }
+        free(target);
         return status;
 }
 
