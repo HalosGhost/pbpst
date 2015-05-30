@@ -80,7 +80,6 @@ static const char rem_help [] =
 static const char upd_help [] =
     "Usage: ptpst {-U --update} [option ...]\n\n"
     "Options:\n"
-    "  -s, --shorten=URL   Created a redirect pointing to URL\n"
     "  -f, --file=FILE     Use FILE for content of paste\n"
     "  -l, --lexer=LANG    Lex paste with LANG\n"
     "  -L, --line=LINE     Highlight LINE\n"
