@@ -22,10 +22,11 @@ To-do
 - [ ] Lexers
 - [ ] Line highlighting
 - [ ] Arbitrary Pygments themes
-- [ ] Database of owned pastes
+- [ ] Database of owned pastes (probably in JSON with libjansson)
 
   - [ ] Ability to manually add or remove pastes from the db
   - [ ] Should double as the local config file (e.g., should specify the default provider to use
 
 - [ ] zsh completion of UUIDs in db to make removal super simple
-
+- [ ] Add test suite
+- [ ] Add generated man pages to the docs section
