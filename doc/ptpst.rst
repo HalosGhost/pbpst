@@ -15,6 +15,7 @@ Description
 
 Operations
 ----------
+
 -S, --sync
     Create a paste
 
@@ -47,6 +48,7 @@ Sync Options (apply to -S)
 
 -f, --file=FILE
     Create a paste from FILE
+
 -l, --lexer=LANG
     Lex paste with LANG
 
