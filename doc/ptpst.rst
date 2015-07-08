@@ -25,7 +25,7 @@ Operations
 -U, --update
     Update a paste
 
-Options
+Options (global options)
 -------
 
 -h, --help
@@ -115,19 +115,14 @@ ptpst -Ru <UUID>
 ptpst -Uu <UUID> -f <filename>
     update a paste with a new file using the UUID
 
+Bugs
+----
+
+Report bugs for ptpst to https://github.com/HalosGhost/ptpst/issues
+
 See Also
 --------
 
 :manpage:`libcurl(3)`
 
 See the documentation on pb, a lightweight pastebin at https://github.com/ptpb/pb/blob/master/pb/templates/index.rst
-
-Bugs
-----
-
-Report bugs for ptpst to https://github.com/HalosGhost/ptpst/issues
-
-Authors
--------
-
-Sam Stuewe <halosghost@archlinux.info>
