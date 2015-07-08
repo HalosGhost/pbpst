@@ -1,4 +1,4 @@
-Copyright (C) 2015, Sam Stuewe
+.. Copyright (C) 2015, Dolores Portalatin
 
 ptpst
 ======
@@ -11,7 +11,7 @@ Synopsis
 Description
 -----------
 
-:program:`ptpst` is a command-line libcurl C client for ptpb.pw, a lightweight pastebin.
+:program:`ptpst` is a command-line libcurl C client for pb, a lightweight pastebin.
 
 Operations
 ----------
@@ -32,7 +32,7 @@ Options
     Print usage information and exit
 
 -P, --provider
-    Specify an alternative pb host
+    Specify an alternative pb host, default is ptpb.pw
 
 --verbose
     Output verbosely
@@ -114,3 +114,20 @@ ptpst -Ru <UUID>
 
 ptpst -Uu <UUID> -f <filename>
     update a paste with a new file using the UUID
+
+See Also
+--------
+
+:manpage:`libcurl(3)`
+
+See the documentation on pb, a lightweight pastebin at https://github.com/ptpb/pb/blob/master/pb/templates/index.rst
+
+Bugs
+----
+
+Report bugs for ptpst to https://github.com/HalosGhost/ptpst/issues
+
+Authors
+-------
+
+Sam Stuewe <halosghost@archlinux.info>
