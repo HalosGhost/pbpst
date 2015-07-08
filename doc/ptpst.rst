@@ -25,14 +25,14 @@ Operations
 -U, --update
     Update a paste
 
-Options (global options)
--------
+Global Options
+--------------
 
 -h, --help
     Print usage information and exit
 
 -P, --provider
-    Specify an alternative pb host, default is ptpb.pw
+    Specify an alternative pb host, default is https://ptpb.pw
 
 --verbose
     Output verbosely
@@ -40,8 +40,8 @@ Options (global options)
 --version
     List the version and exit
 
-Sync Options (apply to -S)
---------------------------
+Sync Options
+------------
 
 -s, --shorten=URL
     Create a redirect to URL instead of pasting
@@ -67,8 +67,8 @@ Sync Options (apply to -S)
 -h, --help
     List this help and exit
 
-Remove Options (apply to -R)
-----------------------------
+Remove Options
+--------------
 
 -u, --uuid=UUID
     Use UUID as authentication credential
@@ -76,8 +76,8 @@ Remove Options (apply to -R)
 -h, --help
     List this help and exi
 
-Update Options (apply to -U)
-----------------------------
+Update Options
+--------------
 
 -f, --file=FILE
     Use FILE for content of paste
