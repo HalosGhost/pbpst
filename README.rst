@@ -29,4 +29,4 @@ To-do
 
 - [ ] zsh completion of UUIDs in db to make removal super simple
 - [ ] Add test suite
-- [ ] Add generated man pages to the docs section
+- [X] Add generated man pages to the docs section
