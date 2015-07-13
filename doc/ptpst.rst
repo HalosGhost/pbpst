@@ -59,7 +59,7 @@ Sync Options
     Return a less-guessable Id for paste
 
 -r, --render
-    Render paste from rst to HTML
+    Render a ReStructuredText or Markdown paste to HTML
 
 -v, --vanity=NAME
     Use NAME as a custom Id
@@ -74,7 +74,7 @@ Remove Options
     Use UUID as authentication credential
 
 -h, --help
-    List this help and exi
+    List this help and exit
 
 Update Options
 --------------
@@ -89,7 +89,7 @@ Update Options
     Highlight LINE
 
 -r, --render
-    Render paste from rst to HTML
+    Render a ReStructuredText or Markdown paste to HTML
 
 -u, --uuid=UUID
     Use UUID as authentication credential
@@ -103,17 +103,17 @@ Update Options
 Examples
 --------
 
-ptpst -Sf <filename>
-    pastebin a file to ptpb.pw
+ptpst -Sf <filepath>
+    paste the file at <filepath>
 
 ptpst -Ss <url>
-    shorten a url with ptpb.pw
+    create a shortcut URL to <url>
 
 ptpst -Ru <UUID>
-    remove a paste using the UUID
+    remove a paste using <UUID> for authentication
 
-ptpst -Uu <UUID> -f <filename>
-    update a paste with a new file using the UUID
+ptpst -Uu <UUID> -f <filepath>
+    update a paste to the file at <filepath> using <UUID> for authentication
 
 Bugs
 ----
