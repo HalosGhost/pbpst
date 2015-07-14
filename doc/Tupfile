@@ -1,4 +1,4 @@
 include_rules
 
 export LANG
-: ptpst.rst |> sphinx-build -b man -Dversion=@(VERSION) -d doctree -E . .; rm -r doctree |> ptpst.1
+: pbpst.rst |> sphinx-build -b man -Dversion=@(VERSION) -d doctree -E . .; rm -r doctree |> pbpst.1

@@ -1,17 +1,17 @@
 .. Copyright (C) 2015, Dolores Portalatin
 
-ptpst
+pbpst
 ======
 
 Synopsis
 --------
 
-**ptpst**  <*operation*> [*options*]
+**pbpst**  <*operation*> [*options*]
 
 Description
 -----------
 
-:program:`ptpst` is a command-line libcurl C client for pb, a lightweight pastebin.
+:program:`pbpst` is a command-line libcurl C client for pb, a lightweight pastebin.
 
 Operations
 ----------
@@ -103,22 +103,22 @@ Update Options
 Examples
 --------
 
-ptpst -Sf <filepath>
+pbpst -Sf <filepath>
     paste the file at <filepath>
 
-ptpst -Ss <url>
+pbpst -Ss <url>
     create a shortcut URL to <url>
 
-ptpst -Ru <UUID>
+pbpst -Ru <UUID>
     remove a paste using <UUID> for authentication
 
-ptpst -Uu <UUID> -f <filepath>
+pbpst -Uu <UUID> -f <filepath>
     update a paste to the file at <filepath> using <UUID> for authentication
 
 Bugs
 ----
 
-Report bugs for ptpst to https://github.com/HalosGhost/ptpst/issues
+Report bugs for pbpst to https://github.com/HalosGhost/pbpst/issues
 
 See Also
 --------

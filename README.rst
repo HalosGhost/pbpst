@@ -1,4 +1,4 @@
-ptpst
+pbpst
 =====
 
 Eventually, this repo will play host to the source for a replacement for my command-line client for ``pomf``.

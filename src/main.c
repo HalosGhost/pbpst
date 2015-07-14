@@ -16,7 +16,7 @@ main (signed argc, char * argv []) {
 
     signed exit_status = EXIT_SUCCESS;
 
-    struct ptpst_state state = { .path = 0, .url = 0, .lexer = 0, .vanity = 0,
+    struct pbpst_state state = { .path = 0, .url = 0, .lexer = 0, .vanity = 0,
                                  .uuid = 0, .provider = 0, .cmd = NON, .ln = 0,
                                  .help = false, .priv = false, .rend = false,
                                  .verb = false };
@@ -136,7 +136,7 @@ main (signed argc, char * argv []) {
  * Add support for specifying the lexer and specifying the line number.
  */
 CURLcode
-pb_paste (const struct ptpst_state * state) {
+pb_paste (const struct pbpst_state * state) {
 
     CURLcode status = CURLE_OK;
     CURL * handle = curl_easy_init();
@@ -210,7 +210,7 @@ pb_paste (const struct ptpst_state * state) {
 }
 
 CURLcode
-pb_remove (const struct ptpst_state * state) {
+pb_remove (const struct pbpst_state * state) {
 
     CURLcode status = CURLE_OK;
     CURL * handle = curl_easy_init();

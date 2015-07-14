@@ -13,7 +13,7 @@
 #define BUFFER_SIZE 256
 #define FILE_MAX 67108864 // 64 MiB
 
-static const char version_str [] = "ptpst 0.2.0\n";
+static const char version_str [] = "pbpst 0.2.0\n";
 
 static struct option os [] = {
     /* commands */
@@ -50,8 +50,8 @@ static const char gen_help [] =
     "      --version       List the version and exit\n";
 
 static const char cmds_help [] =
-    "Usage: ptpst <operation> [option ...]\n"
-    "ptpst -- a simple tool to pastebin from the command-line\n\n"
+    "Usage: pbpst <operation> [option ...]\n"
+    "pbpst -- a simple tool to pastebin from the command-line\n\n"
     "Operations:\n"
     "  -S, --sync          Create a paste\n"
     "  -R, --remove        Delete a paste\n"
@@ -59,10 +59,10 @@ static const char cmds_help [] =
     "Options:";
 
 static const char more_info [] =
-    "\nRun `ptpst -h` with an operation for help with that operation\n";
+    "\nRun `pbpst -h` with an operation for help with that operation\n";
 
 static const char sync_help [] =
-    "Usage: ptpst {-S --sync} [option ...]\n\n"
+    "Usage: pbpst {-S --sync} [option ...]\n\n"
     "Options:\n"
     "  -s, --shorten=URL   Create a redirect to URL instead of pasting\n"
     "  -f, --file=FILE     Create a paste from FILE\n"
@@ -73,12 +73,12 @@ static const char sync_help [] =
     "  -v, --vanity=NAME   Use NAME as a custom Id\n";
 
 static const char rem_help [] =
-    "Usage: ptpst {-R --remove} [option ...]\n\n"
+    "Usage: pbpst {-R --remove} [option ...]\n\n"
     "Options:\n"
     "  -u, --uuid=UUID     Use UUID as authentication credential\n";
 
 static const char upd_help [] =
-    "Usage: ptpst {-U --update} [option ...]\n\n"
+    "Usage: pbpst {-U --update} [option ...]\n\n"
     "Options:\n"
     "  -f, --file=FILE     Use FILE for content of paste\n"
     "  -l, --lexer=LANG    Lex paste with LANG\n"
@@ -89,7 +89,7 @@ static const char upd_help [] =
 
 enum pb_cmd { NON = 0, SNC = 'S', RMV = 'R', UPD = 'U' }; // DBS
 
-struct ptpst_state {
+struct pbpst_state {
     char * path, * url, * lexer, * vanity, * uuid, * provider;
     enum pb_cmd cmd;
     uint32_t ln;
@@ -97,9 +97,9 @@ struct ptpst_state {
 };
 
 CURLcode
-pb_paste (const struct ptpst_state *);
+pb_paste (const struct pbpst_state *);
 
 CURLcode
-pb_remove (const struct ptpst_state *);
+pb_remove (const struct pbpst_state *);
 
 // vim: set ts=4 sw=4 et:
