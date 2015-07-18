@@ -1,14 +1,12 @@
 {
-    "provider": "https://ptpb.pw/",
+    "default_provider": "https://ptpb.pw/",
     "pastes": {
-        "filename.ext": {
-            "long": "base64-encoded sha1 digest, left-zero-padded to 21 bytes",
-            "sha1": "40 character sha1 hexdigest",
-            "short": "base64-encoded last 3 bytes of sha1 digest",
-            "url": "the URL link to the file",
-            "uuid": "The string representation of a RFC 4122 UUID.",
-            "label": "The vanity label (if one exists)",
-            "note": "An optional string to remind you of the file contents"
+        "https://ptpb.pw": {
+            "<uuid>": {
+                "long": "base64-encoded sha1 digest, left-zero-padded to 21 bytes",
+                "label": "The vanity label (if one exists; null otherwise)",
+                "note": "A string to remind you of the paste contents; defaults to the filename"
+            }
         }
     }
 }
