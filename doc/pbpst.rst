@@ -1,7 +1,7 @@
 .. Copyright (C) 2015, Dolores Portalatin
 
 pbpst
-======
+=====
 
 Synopsis
 --------
