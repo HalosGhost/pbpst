@@ -13,38 +13,47 @@
 #define BUFFER_SIZE 256
 #define FILE_MAX 67108864 // 64 MiB
 
-static const char version_str [] = "pbpst 0.2.0\n";
+static const char version_str [] = "pbpst 0.3.0\n";
 
 static struct option os [] = {
     /* commands */
-    { "sync",     no_argument,       0, 'S' },
-    { "remove",   no_argument,       0, 'R' },
-    { "update",   no_argument,       0, 'U' },
+    { "sync",      no_argument,       0, 'S' },
+    { "remove",    no_argument,       0, 'R' },
+    { "update",    no_argument,       0, 'U' },
+    { "database",  no_argument,       0, 'D' },
 
     /* sync/upd options */
-    { "shorten",  required_argument, 0, 's' },
-    { "file",     required_argument, 0, 'f' },
-    { "lexer",    required_argument, 0, 'l' },
-    { "line",     required_argument, 0, 'L' },
-    { "private",  no_argument,       0, 'p' }, // sync-only
-    { "render",   no_argument,       0, 'r' },
-    { "vanity",   required_argument, 0, 'v' },
-    { "help",     no_argument,       0, 'h' },
+    { "shorten",   required_argument, 0, 's' },
+    { "file",      required_argument, 0, 'f' },
+    { "lexer",     required_argument, 0, 'l' },
+    { "line",      required_argument, 0, 'L' },
+    { "private",   no_argument,       0, 'p' }, // sync-only
+    { "render",    no_argument,       0, 'r' },
+    { "vanity",    required_argument, 0, 'v' },
+    { "help",      no_argument,       0, 'h' },
+    { "message",   required_argument, 0, 'm' },
 
     /* for rem and upd */
-    { "uuid",     required_argument, 0, 'u' },
+    { "uuid",      required_argument, 0, 'u' },
+
+    /* db options */
+    { "noconfirm", no_argument,       0, 'n' },
+    { "query",     required_argument, 0, 'q' },
+    { "delete",    required_argument, 0, 'd' },
 
     /* generic options */
-    { "provider", required_argument, 0, 'P' },
-    { "help",     no_argument,       0, 'h' },
-    { "verbose",  no_argument,       0, 256 },
-    { "version",  no_argument,       0, 257 },
-    { 0,          0,                 0, 0   }
+    { "provider",  required_argument, 0, 'P' },
+    { "help",      no_argument,       0, 'h' },
+    { "dbpath",    required_argument, 0, 'b' },
+    { "verbose",   no_argument,       0, 256 },
+    { "version",   no_argument,       0, 257 },
+    { 0,           0,                 0, 0   }
 };
 
 static const char gen_help [] =
     "\n"
     "  -h, --help          List this help and exit\n"
+    "  -b, --dbpath=PATH   Use the database at PATH\n"
     "  -P, --provider      Specify an alternative pb host\n"
     "      --verbose       Output verbosely\n"
     "      --version       List the version and exit\n";
@@ -55,7 +64,8 @@ static const char cmds_help [] =
     "Operations:\n"
     "  -S, --sync          Create a paste\n"
     "  -R, --remove        Delete a paste\n"
-    "  -U, --update        Update a paste\n\n"
+    "  -U, --update        Update a paste\n"
+    "  -D, --database      Operate on the database\n\n"
     "Options:";
 
 static const char more_info [] =
@@ -70,7 +80,8 @@ static const char sync_help [] =
     "  -L, --line=LINE     Highlight LINE in paste\n"
     "  -p, --private       Return a less-guessable Id for paste\n"
     "  -r, --render        Render paste from rst to HTML\n"
-    "  -v, --vanity=NAME   Use NAME as a custom Id\n";
+    "  -v, --vanity=NAME   Use NAME as a custom Id\n"
+    "  -m, --message=MSG   Use MSG as the note in the database\n";
 
 static const char rem_help [] =
     "Usage: pbpst {-R --remove} [option ...]\n\n"
@@ -85,21 +96,27 @@ static const char upd_help [] =
     "  -L, --line=LINE     Highlight LINE\n"
     "  -r, --render        Render paste from rst to HTML\n"
     "  -u, --uuid=UUID     Use UUID as authentication credential\n"
-    "  -v, --vanity=NAME   Use NAME as a custom Id\n";
+    "  -v, --vanity=NAME   Use NAME as a custom Id\n"
+    "  -m, --message=MSG   Use MSG as the note in the database\n";
 
-enum pb_cmd { NON = 0, SNC = 'S', RMV = 'R', UPD = 'U' }; // DBS
+static const char dbs_help [] =
+    "Usage: pbpst {-D --database} [option ...]\n\n"
+    "Options:\n"
+    "  -n, --noconfirm     Do not ask for confirmation during modification\n"
+    "  -q, --query=STR     Search the database for a paste matching STR\n"
+    "  -d, --delete=UUID   Manually delete the paste with UUID\n";
+
+enum pb_cmd { NON = 0, SNC = 'S', RMV = 'R', UPD = 'U', DBS = 'D' };
 
 struct pbpst_state {
-    char * path, * url, * lexer, * vanity, * uuid, * provider;
+    char * path, * url, * lexer, * vanity, * uuid, * provider,
+         * query, * del, * dbfile;
     enum pb_cmd cmd;
     uint32_t ln;
-    uint16_t help, priv, rend, verb;
+    uint16_t help, priv, rend, verb: 8, ncnf: 8;
 };
 
-CURLcode
-pb_paste (const struct pbpst_state *);
-
-CURLcode
-pb_remove (const struct pbpst_state *);
+signed
+pbpst_dispatch (const struct pbpst_state *);
 
 // vim: set ts=4 sw=4 et:
