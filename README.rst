@@ -18,15 +18,18 @@ To-do
 - [X] Vanity pastes
 - [X] Private pastes
 - [X] Alternative Providers
+- [X] Add generated man pages to the docs section
 - [ ] Rendering handler (now supports Rst and Mdown)
 - [ ] Lexers
+
+  - [ ] Option to list all available lexers
+
 - [ ] Line highlighting
 - [ ] Arbitrary Pygments themes
 - [ ] Database of owned pastes (probably in JSON with libjansson)
 
-  - [ ] Ability to manually add or remove pastes from the db
-  - [ ] Should double as the local config file (e.g., should specify the default provider to use
+  - [ ] Ability to manually remove (, add?) and query pastes in the database
+  - [ ] Should double as the local config file (e.g., should specify the default provider to use)
 
 - [ ] zsh completion of UUIDs in db to make removal super simple
 - [ ] Add test suite
-- [X] Add generated man pages to the docs section
