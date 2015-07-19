@@ -5,7 +5,7 @@
             "<uuid>": {
                 "long": "base64-encoded sha1 digest, left-zero-padded to 21 bytes",
                 "label": "The vanity label (if one exists; null otherwise)",
-                "note": "A string to remind you of the paste contents; defaults to the filename"
+                "msg": "A string to remind you of the paste contents; defaults to the filename"
             }
         }
     }

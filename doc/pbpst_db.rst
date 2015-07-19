@@ -1,4 +1,4 @@
-.. Copyright (C) 2015, Dolores Portalatin
+.. Copyright (C) 2015, Sam Stuewe
 
 pbpst_db
 ========
@@ -42,7 +42,7 @@ label
     A string equal to the vanity label associated with the paste (if one was given).
     If the paste does not have a vanity label, this will be set to ``null``.
 
-note
+msg
     An arbitrary string which may be specified by the user upon creation/updating of the associated paste.
     If the user choose not to specify a string for a paste, this field defaults to the basename of the file.
 
@@ -58,14 +58,14 @@ Example
                 "fa3423b6-2c29-4758-a707-bf3f972b93c9": {
                     "long": "AFKg4i_J0ssH6sJKdsYCA8WuR542",
                     "label": "random_junk",
-                    "note": "-"
+                    "msg": "-"
                 }
             }
         }
     }
 
 The above snippet is an example database that keeps the default provider and is tracking one paste (which happens to be on that default provider).
-The ``note`` field is "-" because this paste was created by piping through :file:`stdin`.
+The ``msg`` field is "-" because this paste was created by piping through :file:`stdin`.
 
 Bugs
 ----
