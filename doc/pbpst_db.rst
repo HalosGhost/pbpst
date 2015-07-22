@@ -1,5 +1,7 @@
 .. Copyright (C) 2015, Sam Stuewe
 
+:orphan:
+
 pbpst_db
 ========
 
