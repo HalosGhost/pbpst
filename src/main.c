@@ -164,7 +164,7 @@ main (signed argc, char * argv []) {
 }
 
 signed
-pbpst_dispatch(const struct pbpst_state * state) {
+pbpst_dispatch (const struct pbpst_state * state) {
     switch ( state->cmd ) {
         case SNC:
         case UPD: return pb_paste(state);
