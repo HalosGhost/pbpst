@@ -116,6 +116,8 @@ main (signed argc, char * argv []) {
     /**
      * TODO
      **
+     * Check for lockfile (error out with message if it exists)
+     * Check for swapdb (error out with message if it exists)
      * Locate the database (handling the does-not-exist case)
      * Read-in the database
      * Set state.provider according to the db (falling back on ptpb if needed)
@@ -139,6 +141,14 @@ main (signed argc, char * argv []) {
     }
 
     exit_status = pbpst_dispatch(&state);
+
+    /**
+     * TODO
+     **
+     * Write resultant in-memory db to swapdb
+     * move swapdb to db location
+     * remove lockfile
+     */
 
     cleanup:
         free(state.url);
