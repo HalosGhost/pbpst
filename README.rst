@@ -1,11 +1,10 @@
 pbpst
 =====
 
-Eventually, this repo will play host to the source for a replacement for my command-line client for ``pomf``.
-``pomf`` was a decent tool, but was essentially useless in terms of its use as a pastebin and its author has said some… questionable things.
-`ptpb <https://ptpb.pw>`_, on the other hand, is the most versatile pastebin I have ever seen while still maintaining all the power of ``pomf`` (with a larger filesize cap too!).
-
-The goal of this utility is to support as many features of ``pb`` as possible (hopefully, all) in a simple cli.
+``pbpst`` is a small tool to make interacting with ``pb`` instances as simple as possible.
+``pb`` is a versatile, free and open source pastebin which has more features, is more robust and is faster than any other pastebin with which I am familiar.
+You can find the reference instance (which tracks `pb's master branch <https://github.com/ptpb/pb>`_) at `ptpb <https://ptpb.pw>`_.
+Ideally, ``pbpst`` will support as many features of ``pb`` as possible (hopefully, nearly all) in a simple, unassuming CLI.
 
 To-do
 -----
