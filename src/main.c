@@ -84,17 +84,14 @@ main (signed argc, char * argv []) {
 
         case RMV:
             if ( state.path || state.url  || state.lexer || state.vanity ||
-                 state.ln   || state.priv || state.rend  || state.prog   ) {
+                 state.ln   || state.priv || state.rend  || !state.uuid  ||
+				 state.prog ) {
                 fprintf(stderr, "Error: erroneous option. See `%s -Rh`\n",
-                        argv[0]); goto cleanup;
-            } else if ( !state.uuid ) {
-                fprintf(stderr,
-                        "Error: please specify UUID to remove. See `%s -Rh`\n",
                         argv[0]); goto cleanup;
             } break;
 
         case UPD:
-            if ( (state.path && state.url) || state.priv ) {
+            if ( !state.uuid || state.priv ) {
                 fprintf(stderr, "Error: erroneous option. See `%s -Uh`\n",
                         argv[0]); goto cleanup;
             } break;
