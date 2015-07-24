@@ -21,9 +21,9 @@ main (signed argc, char * argv []) {
                                  .uuid = 0, .provider = 0, .dbfile = 0,
                                  .query = 0, .del = 0, .cmd = NON, .ln = 0,
                                  .help = false, .priv = false, .rend = false,
-                                 .verb = false, .ncnf = false };
+                                 .verb = false, .ncnf = false, .prog = false};
 
-    const char vos [] = "SRUDP:hv:s:f:l:L:pru:b:q:d:n";
+    const char vos [] = "SRUDP:hv:s:f:l:L:pru:b:q:d:n#";
     for ( signed oi = 0, c = getopt_long(argc, argv, vos, os, &oi);
           c != -1; c = getopt_long(argc, argv, vos, os, &oi) ) {
 
@@ -53,12 +53,14 @@ main (signed argc, char * argv []) {
                 break;
 
             case 'L': sscanf(optarg, "%" SCNu32, &state.ln); break;
+            case '#': state.prog = true; break;
             case 'n': state.ncnf = true; break;
             case 'r': state.rend = true; break;
             case 'p': state.priv = true; break;
             case 'h': state.help = true; break;
             case 256: state.verb = true; break;
             case 257: printf(version_str); goto cleanup;
+            default:  goto cleanup;
         }
     }
 
@@ -87,7 +89,7 @@ main (signed argc, char * argv []) {
 
         case RMV:
             if ( state.path || state.url  || state.lexer || state.vanity ||
-                 state.ln   || state.priv || state.rend ) {
+                 state.ln   || state.priv || state.rend  || state.prog   ) {
                 fprintf(stderr, "Error: erroneous option. See `%s -Rh`\n",
                         argv[0]); goto cleanup;
             } else if ( !state.uuid ) {
@@ -97,13 +99,13 @@ main (signed argc, char * argv []) {
             } break;
 
         case UPD:
-            if ( (state.path && state.url) || state.priv ) {
+            if ( (state.path && state.url) || state.priv || state.prog ) {
                 fprintf(stderr, "Error: erroneous option. See `%s -Uh`\n",
                         argv[0]); goto cleanup;
             } break;
 
         case DBS:
-            if ( state.query && (state.ncnf || state.del) ) {
+            if ( state.prog || (state.query && (state.ncnf || state.del)) ) {
                 fprintf(stderr, "Error: erroneos option. See `%s -Dh`\n",
                         argv[0]); goto cleanup;
             } break;

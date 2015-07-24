@@ -31,6 +31,7 @@ static struct option os [] = {
     { "render",    no_argument,       0, 'r' },
     { "vanity",    required_argument, 0, 'v' },
     { "help",      no_argument,       0, 'h' },
+    { "progress",  no_argument,       0, '#' },
     { "message",   required_argument, 0, 'm' },
 
     /* for rem and upd */
@@ -81,6 +82,7 @@ static const char sync_help [] =
     "  -p, --private       Return a less-guessable Id for paste\n"
     "  -r, --render        Render paste from rst to HTML\n"
     "  -v, --vanity=NAME   Use NAME as a custom Id\n"
+    "  -#, --progress      Show a progress bar for the upload\n"
     "  -m, --message=MSG   Use MSG as the note in the database\n";
 
 static const char rem_help [] =
@@ -97,6 +99,7 @@ static const char upd_help [] =
     "  -r, --render        Render paste from rst to HTML\n"
     "  -u, --uuid=UUID     Use UUID as authentication credential\n"
     "  -v, --vanity=NAME   Use NAME as a custom Id\n"
+    "  -#, --progress      Show a progress bar for the upload\n"
     "  -m, --message=MSG   Use MSG as the note in the database\n";
 
 static const char dbs_help [] =
@@ -113,7 +116,7 @@ struct pbpst_state {
          * query, * del, * dbfile;
     enum pb_cmd cmd;
     uint32_t ln;
-    uint16_t help, priv, rend, verb: 8, ncnf: 8;
+    uint16_t help, priv, rend: 8, verb: 8, ncnf: 8, prog: 8;
 };
 
 signed

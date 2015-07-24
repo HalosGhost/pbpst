@@ -73,7 +73,7 @@ pb_paste (const struct pbpst_state * state) {
 
     curl_easy_setopt(handle, CURLOPT_URL, target);
     curl_easy_setopt(handle, CURLOPT_XFERINFOFUNCTION, &pb_progress_cb);
-    curl_easy_setopt(handle, CURLOPT_NOPROGRESS, 0);
+    curl_easy_setopt(handle, CURLOPT_NOPROGRESS, (long )!state->prog);
     status = curl_easy_perform(handle);
 
     cleanup:
