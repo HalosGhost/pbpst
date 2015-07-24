@@ -1,6 +1,6 @@
 #pragma once
 
-int
-pb_progress_cb (void *client,
-                curl_off_t dltotal, curl_off_t dlnow,
-                curl_off_t ultotal, curl_off_t ulnow);
+signed
+pb_progress_cb (void *, curl_off_t, curl_off_t, curl_off_t, curl_off_t);
+
+// vim: set ts=4 sw=4 et:
