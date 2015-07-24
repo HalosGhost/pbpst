@@ -64,6 +64,9 @@ Sync Options
 -v, --vanity=NAME
     Use NAME as a custom Id
 
+-#, --progress
+    Show a progress bar for the status of the upload
+
 -h, --help
     List this help and exit
 
@@ -96,6 +99,9 @@ Update Options
 
 -v, --vanity=NAME
     Use NAME as a custom Id
+
+-#, --progress
+    Show a progress bar for the status of the upload
 
 -h, --help
     List this help and exit
