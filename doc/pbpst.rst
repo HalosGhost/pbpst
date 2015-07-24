@@ -43,6 +43,8 @@ Global Options
 Sync Options
 ------------
 
+Note: if neither the :option:`s` or :option:`f` options are passed, :program:`pbpst` will paste the contents of :file:`stdin`.
+
 -s, --shorten=URL
     Create a redirect to URL instead of pasting
 
@@ -81,6 +83,8 @@ Remove Options
 
 Update Options
 --------------
+
+Note: if the :option:`f` option is not passed, :program:`pbpst` will paste the contents of :file:`stdin`.
 
 -f, --file=FILE
     Use FILE for content of paste

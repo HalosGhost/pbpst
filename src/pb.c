@@ -41,7 +41,7 @@ pb_paste (const struct pbpst_state * state) {
                          CURLFORM_END)
           : curl_formadd(&post,                &last,
                          CURLFORM_COPYNAME,    "c",
-                         CURLFORM_FILE,        state->path,
+                         CURLFORM_FILE,        state->path ? state->path : "-",
                          CURLFORM_CONTENTTYPE, "application/octet-stream",
                          CURLFORM_END);
 
@@ -56,7 +56,7 @@ pb_paste (const struct pbpst_state * state) {
     } else if ( state->cmd == UPD ) {
         s = curl_formadd(&post,                &last,
                          CURLFORM_COPYNAME,    "c",
-                         CURLFORM_FILE,        state->path,
+                         CURLFORM_FILE,        state->path ? state->path : "-",
                          CURLFORM_CONTENTTYPE, "application/octet-stream",
                          CURLFORM_END);
 
