@@ -1,5 +1,5 @@
 #include <stdint.h>    // uint8_t
-#include <stdio.h>     // fputs(), putchar(), printf(), fflush()
+#include <stdio.h>     // fputs(), fputc(), fprintf(), fflush()
 #include <inttypes.h>  // PRIu8
 #include <curl/curl.h> // curl_off_t
 #include "callback.h"
@@ -13,17 +13,17 @@ fill_progress (const uint8_t bar_percent, const uint8_t proglen) {
                   hash    = bar_percent * hashlen / 100;
 
     if ( hashlen > 0 ) {
-        fputs(" [", stdout);
+        fputs(" [", stderr);
         for ( uint8_t i = hashlen; i; --i ) {
-            putchar(i > (hashlen - hash) ? '#' : '-');
-        } putchar(']');
+            fputc(i > (hashlen - hash) ? '#' : '-', stderr);
+        } fputc(']', stderr);
     }
 
     /* print display percent after progress bar */
-    if ( proglen >= 5 ) { printf(" %3" PRIu8 "%%", bar_percent); }
+    if ( proglen >= 5 ) { fprintf(stderr, " %3" PRIu8 "%%", bar_percent); }
 
-    putchar(bar_percent == 100 ? '\n' : '\r');
-    fflush(stdout);
+    fputc(bar_percent == 100 ? '\n' : '\r', stderr);
+    fflush(stderr);
 }
 
 signed
