@@ -99,7 +99,7 @@ main (signed argc, char * argv []) {
             } break;
 
         case UPD:
-            if ( (state.path && state.url) || state.priv || state.prog ) {
+            if ( (state.path && state.url) || state.priv ) {
                 fprintf(stderr, "Error: erroneous option. See `%s -Uh`\n",
                         argv[0]); goto cleanup;
             } break;
