@@ -2,11 +2,6 @@
 #include "pb.h"
 #include "callback.h"
 
-/**
- * TODO
- **
- * Add support for specifying the lexer and specifying the line number.
- */
 CURLcode
 pb_paste (const struct pbpst_state * state) {
 
