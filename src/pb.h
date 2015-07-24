@@ -1,3 +1,5 @@
+#pragma once
+
 CURLcode
 pb_paste (const struct pbpst_state *);
 
