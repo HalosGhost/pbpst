@@ -8,8 +8,10 @@ signed
 db_lockfile_init (void) {
     signed fd; // Integer for file descriptor
     if (fd = open("/tmp/ptpst.lock", O_RDONLY | O_CREAT | O_EXCL | S_IRUSR)) {
-        return 0;
+        fprintf(stderr, "Cannot open /tmp/ptpst.lock.\n");
+        return not 0; // :P
     }
+    return 0;
 }
 
 signed
