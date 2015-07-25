@@ -6,6 +6,7 @@
 
 #include "main.h"
 #include "pb.h"
+#include "pbpst_db.h"
 
 signed
 main (signed argc, char * argv []) {
@@ -85,7 +86,7 @@ main (signed argc, char * argv []) {
         case RMV:
             if ( state.path || state.url  || state.lexer || state.vanity ||
                  state.ln   || state.priv || state.rend  || !state.uuid  ||
-				 state.prog ) {
+                 state.prog ) {
                 fprintf(stderr, "Error: erroneous option. See `%s -Rh`\n",
                         argv[0]); goto cleanup;
             } break;
@@ -107,10 +108,11 @@ main (signed argc, char * argv []) {
             goto cleanup;
     }
 
+    db_lockfile_init();
+
     /**
      * TODO
      **
-     * Check for lockfile (error out with message if it exists)
      * Check for swapdb (error out with message if it exists)
      * Locate the database (handling the does-not-exist case)
      * Read-in the database
@@ -133,6 +135,8 @@ main (signed argc, char * argv []) {
             *suffix = '/'; *(suffix + 1) = '\0';
         }
     }
+
+    db_lockfile_cleanup();
 
     exit_status = pbpst_dispatch(&state);
 
