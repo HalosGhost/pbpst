@@ -7,6 +7,13 @@ static const char lockfile_err [] =
     "pbpst: If no other instances of pbpst are running, "
     "you can delete /tmp/pbpst.lck\n";
 
+static const char def_db [] =
+    "{\n"
+    "   \"default_provider\": \"https://ptpb.pw\",\n"
+    "   \"pastes\": {\n"
+    "   }\n"
+    "}\n";
+
 signed
 db_lockfile_init (void);
 
