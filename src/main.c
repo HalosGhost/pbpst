@@ -150,8 +150,9 @@ main (signed argc, char * argv []) {
      * remove lockfile
      */
 
+    db_lockfile_cleanup();
+
     cleanup:
-        db_lockfile_cleanup();
         free(state.url);
         free(state.path);
         free(state.lexer);
