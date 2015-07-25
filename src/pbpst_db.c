@@ -1,8 +1,3 @@
-#include <stdio.h>    // fputs(), remove()
-#include <fcntl.h>    // open()
-#include <unistd.h>   // close()
-#include <sys/stat.h> // S_IRUSR
-#include <stdlib.h>   // EXIT_FAILURE, EXIT_SUCCESS
 #include "pbpst_db.h"
 
 signed
@@ -10,7 +5,8 @@ db_lockfile_init (void) {
 
     signed fd;
     if ( (fd = open("/tmp/pbpst.lck", O_CREAT | O_EXCL, NULL)) == -1 ) {
-        fputs("Cannot open /tmp/ptpst.lck.\n", stderr);
+        signed errsv = errno;
+        fprintf(stderr, lockfile_err, strerror(errsv));
         return EXIT_FAILURE;
     }
 
