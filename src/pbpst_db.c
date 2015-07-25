@@ -7,16 +7,17 @@
 signed
 db_lockfile_init (void) {
     signed fd; // Integer for file descriptor
-    if (fd = open("/tmp/ptpst.lock", O_RDONLY | O_CREAT | O_EXCL | S_IRUSR)) {
-        fprintf(stderr, "Cannot open /tmp/ptpst.lock.\n");
-        return not 0; // :P
+    if ( (fd = open("/tmp/pbpst.lck", O_RDONLY | O_CREAT | O_EXCL, S_IRUSR)) == -1 ) {
+        fprintf(stderr, "Cannot open /tmp/ptpst.lck.\n");
+        return 1;
     }
+    close(fd);
     return 0;
 }
 
 signed
 db_lockfile_cleanup (void) {
-    remove("/tmp/ptpst.lock");
+    remove("/tmp/ptpst.lck");
     return 0;
 }
 
