@@ -9,8 +9,8 @@
 #include <string.h>   // strerror()
 
 static const char lockfile_err [] =
-    "Could not lock the database: %s\n"
-    "If no other instances of pbpst are running, "
+    "pbpst: Could not lock the database: %s\n"
+    "pbpst: If no other instances of pbpst are running, "
     "you can delete /tmp/pbpst.lck\n";
 
 signed

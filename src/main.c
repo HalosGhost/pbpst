@@ -34,7 +34,7 @@ main (signed argc, char * argv []) {
         switch ( c ) {
             case 'S': case 'R': case 'U': case 'D':
                 if ( state.cmd ) {
-                    fputs("Error: you can only run one operation at a time\n",
+                    fputs("pbpst: You can only run one operation at a time\n",
                           stderr);
                     exit_status = EXIT_FAILURE; goto cleanup;
                 } state.cmd = (enum pb_cmd )c; break;
@@ -75,32 +75,29 @@ main (signed argc, char * argv []) {
         } goto cleanup;
     }
 
+    const char option_err [] = "pbpst: erroneous option. See `pbpst -%ch`\n";
     switch ( state.cmd ) {
         case SNC:
             if ( (state.url && (state.path || state.lexer  || state.rend ||
                                 state.ln   || state.vanity )) || state.uuid ) {
-                fprintf(stderr, "Error: erroneous option. See `%s -Sh`\n",
-                        argv[0]); goto cleanup;
+                fprintf(stderr, option_err, 'S'); goto cleanup;
             } break;
 
         case RMV:
             if ( state.path || state.url  || state.lexer || state.vanity ||
                  state.ln   || state.priv || state.rend  || !state.uuid  ||
                  state.prog ) {
-                fprintf(stderr, "Error: erroneous option. See `%s -Rh`\n",
-                        argv[0]); goto cleanup;
+               fprintf(stderr, option_err, 'R'); goto cleanup;
             } break;
 
         case UPD:
             if ( !state.uuid || state.priv ) {
-                fprintf(stderr, "Error: erroneous option. See `%s -Uh`\n",
-                        argv[0]); goto cleanup;
+                fprintf(stderr, option_err, 'U'); goto cleanup;
             } break;
 
         case DBS:
             if ( state.prog || (state.query && (state.ncnf || state.del)) ) {
-                fprintf(stderr, "Error: erroneos option. See `%s -Dh`\n",
-                        argv[0]); goto cleanup;
+                fprintf(stderr, option_err, 'D'); goto cleanup;
             } break;
 
         case NON:
