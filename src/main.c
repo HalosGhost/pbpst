@@ -147,7 +147,6 @@ main (signed argc, char * argv []) {
      **
      * Write resultant in-memory db to swapdb
      * move swapdb to db location
-     * remove lockfile
      */
 
     db_lockfile_cleanup();
