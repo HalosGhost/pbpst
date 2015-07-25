@@ -1,14 +1,17 @@
+#pragma once
+
 #include <getopt.h>    // getopt_long()
-#include <stdio.h>     // fprintf(), fputs(), sscanf_s()
+#include <stdio.h>     // fprintf(), fputs(), sscanf_s(), remove()
 #include <stdbool.h>   // bool
 #include <stdint.h>    // explicitly-sized integral types
 #include <inttypes.h>  // SCNu32
-#include <stdlib.h>    // EXIT_SUCCESS
+#include <stdlib.h>    // EXIT_SUCCESS, EXIT_FAILURE
 #include <curl/curl.h> // curl_easy_*()
-#include <sys/stat.h>  // fstat()
-#include <string.h>    // strncat()
+#include <sys/stat.h>  // fstat(), open()
+#include <string.h>    // strncat(), strerror()
 #include <fcntl.h>     // open()
 #include <unistd.h>    // close()
+#include <errno.h>     // errno
 
 #define BUFFER_SIZE 256
 #define FILE_MAX 67108864 // 64 MiB

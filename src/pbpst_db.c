@@ -21,4 +21,10 @@ db_lockfile_cleanup (void) {
     return EXIT_SUCCESS;
 }
 
+signed
+db_locate (void) {
+
+    return 0;
+}
+
 // vim: set ts=4 sw=4 et:
