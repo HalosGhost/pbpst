@@ -87,7 +87,7 @@ main (signed argc, char * argv []) {
             if ( state.path || state.url  || state.lexer || state.vanity ||
                  state.ln   || state.priv || state.rend  || !state.uuid  ||
                  state.prog ) {
-               fprintf(stderr, option_err, 'R'); goto cleanup;
+                fprintf(stderr, option_err, 'R'); goto cleanup;
             } break;
 
         case UPD:
