@@ -8,8 +8,8 @@
 signed
 db_lockfile_init (void) {
 
-    signed fd, oflag = O_RDONLY | O_CREAT | O_EXCL;
-    if ( (fd = open("/tmp/pbpst.lck", oflag, S_IRUSR)) == -1 ) {
+    signed fd;
+    if ( (fd = open("/tmp/pbpst.lck", O_CREAT | O_EXCL, NULL)) == -1 ) {
         fputs("Cannot open /tmp/ptpst.lck.\n", stderr);
         return EXIT_FAILURE;
     }
@@ -21,7 +21,7 @@ db_lockfile_init (void) {
 signed
 db_lockfile_cleanup (void) {
 
-    remove("/tmp/ptpst.lck");
+    remove("/tmp/pbpst.lck");
     return EXIT_SUCCESS;
 }
 

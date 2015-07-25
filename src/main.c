@@ -108,7 +108,11 @@ main (signed argc, char * argv []) {
             goto cleanup;
     }
 
-    db_lockfile_init();
+    signed lckst = db_lockfile_init();
+    if ( lckst != EXIT_SUCCESS ) {
+        exit_status = lckst;
+        goto cleanup;
+    }
 
     /**
      * TODO
@@ -136,8 +140,6 @@ main (signed argc, char * argv []) {
         }
     }
 
-    db_lockfile_cleanup();
-
     exit_status = pbpst_dispatch(&state);
 
     /**
@@ -149,6 +151,7 @@ main (signed argc, char * argv []) {
      */
 
     cleanup:
+        db_lockfile_cleanup();
         free(state.url);
         free(state.path);
         free(state.lexer);
