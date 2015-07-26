@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ptpst frontend</title>
+    <meta name="description" content="A library of ptpst pastes">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700">
+    <style>
+      body{font-family:'Open Sans',verdana, sans-serif;color: #333;background:#ccc;}
+      header,footer{text-align:center;}
+    </style>
+  </head>
+  <body>
+    <header role="banner">
+      <h1>ptpst Paste History</h1>
+    </header>
+    <div id="content" role="main">
+      <article>
+        <p id="library">Javascript is required for this website to work. Please enable javascript in your browser settings.</p>
+      </article>
+    </div><!-- end content -->
+    <footer role="contentinfo">
+      <p>
+        <a href="https://github.com/HalosGhost/pbpst">
+          frontend for ptpst, a command-line libcurl C client for pb deployments
+        </a>
+      </p>
+    <footer>
+    <script>
+      function loadJSON(callback) {
+        var request = new XMLHttpRequest();
+        request.overrideMimeType("application/json");
+        request.open('GET', 'ptpst.json', true); // Replace 'ptpst.json' with the path to json database
+        request.onreadystatechange = function() {
+          if (request.status >= 200 && request.status < 400){
+            callback(request.responseText);
+          }
+          else {
+            // We reached our target server, but it returned an error
+          }
+          request.send(null);
+        };
+        request.onerror = function() {
+          document.getElementById("library").innerHTML = "There was an error connecting to the database";
+        }
+      }
+      function init() {
+        loadJSON(function(response) {
+          var data = JSON.parse(response);
+        });
+      }
+    </script>
+  </body>
+</html>
