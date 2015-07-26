@@ -75,34 +75,9 @@ main (signed argc, char * argv []) {
         } goto cleanup;
     }
 
-    const char option_err [] = "pbpst: erroneous option. See `pbpst -%ch`\n";
-    switch ( state.cmd ) {
-        case SNC:
-            if ( (state.url && (state.path || state.lexer  || state.rend ||
-                                state.ln   || state.vanity )) || state.uuid ) {
-                fprintf(stderr, option_err, 'S'); goto cleanup;
-            } break;
-
-        case RMV:
-            if ( state.path || state.url  || state.lexer || state.vanity ||
-                 state.ln   || state.priv || state.rend  || !state.uuid  ||
-                 state.prog ) {
-                fprintf(stderr, option_err, 'R'); goto cleanup;
-            } break;
-
-        case UPD:
-            if ( !state.uuid || state.priv ) {
-                fprintf(stderr, option_err, 'U'); goto cleanup;
-            } break;
-
-        case DBS:
-            if ( state.prog || (state.query && (state.ncnf || state.del)) ) {
-                fprintf(stderr, option_err, 'D'); goto cleanup;
-            } break;
-
-        case NON:
-            printf("%s%s%s", cmds_help, gen_help, more_info);
-            goto cleanup;
+    if ( !pbpst_test_options(&state) ) {
+        exit_status = EXIT_FAILURE;
+        goto cleanup;
     }
 
     signed lckst = db_lockfile_init();
@@ -161,8 +136,39 @@ main (signed argc, char * argv []) {
         return exit_status;
 }
 
+bool
+pbpst_test_options (const struct pbpst_state * s) {
+
+    const char option_err [] = "pbpst: erroneous option(s). See `pbpst -%ch`\n";
+    char cl = 0;
+    switch ( s->cmd ) {
+        case SNC: cl = (s->url && (s->path || s->lexer || s->rend
+               || s->ln || s->vanity )) || s->uuid ? 'S' : cl; break;
+
+        case RMV: cl = s->path || s->url  || s->lexer || s->vanity
+               || s->ln || s->priv || s->rend || !s->uuid || s->prog
+                ? 'R' : cl; break;
+
+        case UPD: cl = !s->uuid || s->priv || s->query || s->ncnf
+               || s->del || s->url ? 'U' : cl; break;
+
+        case DBS: cl = (s->query && (s->ncnf || s->del)) || s->url
+               || s->path || s->lexer || s->vanity || s->ln || s->priv
+               || s->rend || s->uuid || s->prog ? 'D' : cl; break;
+
+        case NON: cl = 'N'; break;
+    }
+
+    if ( cl == 'N' ) {
+        fprintf(stderr, "%s%s%s", cmds_help, gen_help, more_info);
+    } else if ( cl != 0 ) {
+        fprintf(stderr, option_err, cl);
+    } return cl == 0;
+}
+
 signed
 pbpst_dispatch (const struct pbpst_state * state) {
+
     switch ( state->cmd ) {
         case SNC:
         case UPD: return pb_paste(state);

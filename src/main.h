@@ -121,6 +121,8 @@ struct pbpst_state {
     uint32_t ln;
     uint16_t help, priv, rend: 8, verb: 8, ncnf: 8, prog: 8;
 };
+bool
+pbpst_test_options (const struct pbpst_state *);
 
 signed
 pbpst_dispatch (const struct pbpst_state *);
