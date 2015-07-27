@@ -15,8 +15,7 @@ pb_paste (const struct pbpst_state * state) {
 
     if ( state->verb ) { curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L); }
 
-    struct curl_httppost * post = NULL;
-    struct curl_httppost * last = NULL;
+    struct curl_httppost * post = NULL, * last = NULL;
     size_t tlen = strlen(state->provider) + (
                   state->vanity     ? strlen(state->vanity) + 2 :
                   state->cmd == UPD ? strlen(state->uuid) + 1   : 2);
