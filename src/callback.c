@@ -36,7 +36,7 @@ pb_progress_cb (void * client,
 
     if ( progress == last_progress ) { return 0; }
 
-    fill_progress((uint8_t )progress, 40);
+    fill_progress((uint8_t )progress, 80);
     last_progress = progress;
     return 0;
 }
