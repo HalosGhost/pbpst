@@ -2,6 +2,7 @@
 #include <stdio.h>     // fputs(), fputc(), fprintf(), fflush()
 #include <inttypes.h>  // PRIu8
 #include <curl/curl.h> // curl_off_t
+#include <jansson.h>
 #include "callback.h"
 
 /* adapted from pacman */
@@ -41,4 +42,22 @@ pb_progress_cb (void * client,
     return 0;
 }
 
-// vim: set ts=4 sw=4 et:
+size_t
+pb_write_cb (char *ptr, size_t size, size_t nmemb, void *userdata) {
+
+    size_t rsize = size * nmemb;
+    json_t *json, *value;
+    const char *key;
+
+    *(ptr + rsize) = '\0';
+
+    json = json_loads(ptr, 0, NULL);
+    if (json == NULL)
+        return 0;
+
+    json_object_foreach(json, key, value) {
+        printf("%s: %s\n", key, json_string_value(value));
+    }
+
+    return rsize;
+}

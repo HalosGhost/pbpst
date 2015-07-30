@@ -65,9 +65,16 @@ pb_paste (const struct pbpst_state * state) {
         curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "PUT");
     }
 
+    struct curl_slist *list = NULL;
+    list = curl_slist_append(list, "Accept: application/json");
+    curl_easy_setopt(handle, CURLOPT_HTTPHEADER, list);
+
     curl_easy_setopt(handle, CURLOPT_URL, target);
     curl_easy_setopt(handle, CURLOPT_XFERINFOFUNCTION, &pb_progress_cb);
     curl_easy_setopt(handle, CURLOPT_NOPROGRESS, (long )!state->prog);
+
+    curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &pb_write_cb);
+
     status = curl_easy_perform(handle);
 
     cleanup:
