@@ -43,18 +43,19 @@ pb_progress_cb (void * client,
 }
 
 size_t
-pb_write_cb (char *ptr, size_t size, size_t nmemb, void *userdata) {
+pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
+
+    if ( !ptr || !userdata ) { return 0; }
 
     size_t rsize = size * nmemb;
-    json_t *json, *value;
-    const char *key;
 
     *(ptr + rsize) = '\0';
 
-    json = json_loads(ptr, 0, NULL);
-    if (json == NULL)
-        return 0;
+    json_t * json = json_loads(ptr, 0, NULL);
+    if ( !json ) { return 0; }
 
+    json_t * value;
+    const char * key;
     json_object_foreach(json, key, value) {
         printf("%s: %s\n", key, json_string_value(value));
     }

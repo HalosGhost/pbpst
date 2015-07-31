@@ -20,6 +20,10 @@ pb_paste (const struct pbpst_state * state) {
                   state->vanity     ? strlen(state->vanity) + 2 :
                   state->cmd == UPD ? strlen(state->uuid) + 1   : 2);
 
+    struct curl_slist * list = NULL;
+    list = curl_slist_append(list, "Accept: application/json");
+    curl_easy_setopt(handle, CURLOPT_HTTPHEADER, list);
+
     char * target = malloc(tlen);
     CURLFORMcode s;
     if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
@@ -65,20 +69,15 @@ pb_paste (const struct pbpst_state * state) {
         curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "PUT");
     }
 
-    struct curl_slist *list = NULL;
-    list = curl_slist_append(list, "Accept: application/json");
-    curl_easy_setopt(handle, CURLOPT_HTTPHEADER, list);
-
     curl_easy_setopt(handle, CURLOPT_URL, target);
     curl_easy_setopt(handle, CURLOPT_XFERINFOFUNCTION, &pb_progress_cb);
     curl_easy_setopt(handle, CURLOPT_NOPROGRESS, (long )!state->prog);
-
     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &pb_write_cb);
 
     status = curl_easy_perform(handle);
-    curl_slist_free_all(list);
 
     cleanup:
+        if ( list ) { curl_slist_free_all(list); }
         curl_easy_cleanup(handle);
         curl_formfree(post);
         free(target);
@@ -98,6 +97,10 @@ pb_remove (const struct pbpst_state * state) {
 
     if ( state->verb ) { curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L); }
 
+    struct curl_slist * list = NULL;
+    list = curl_slist_append(list, "Accept: application/json");
+    curl_easy_setopt(handle, CURLOPT_HTTPHEADER, list);
+
     size_t target_len = strlen(state->provider) + strlen(state->uuid) + 1;
     char * target = malloc(target_len);
     if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
@@ -106,17 +109,12 @@ pb_remove (const struct pbpst_state * state) {
 
     curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "DELETE");
     curl_easy_setopt(handle, CURLOPT_URL, target);
-
-    struct curl_slist *list = NULL;
-    list = curl_slist_append(list, "Accept: application/json");
-    curl_easy_setopt(handle, CURLOPT_HTTPHEADER, list);
-
     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &pb_write_cb);
 
     status = curl_easy_perform(handle);
-    curl_slist_free_all(list);
 
     cleanup:
+        if ( list ) { curl_slist_free_all(list); }
         curl_easy_cleanup(handle);
         free(target);
         return status;
