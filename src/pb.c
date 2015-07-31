@@ -76,6 +76,7 @@ pb_paste (const struct pbpst_state * state) {
     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &pb_write_cb);
 
     status = curl_easy_perform(handle);
+    curl_slist_free_all(list);
 
     cleanup:
         curl_easy_cleanup(handle);
@@ -105,7 +106,15 @@ pb_remove (const struct pbpst_state * state) {
 
     curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "DELETE");
     curl_easy_setopt(handle, CURLOPT_URL, target);
+
+    struct curl_slist *list = NULL;
+    list = curl_slist_append(list, "Accept: application/json");
+    curl_easy_setopt(handle, CURLOPT_HTTPHEADER, list);
+
+    curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &pb_write_cb);
+
     status = curl_easy_perform(handle);
+    curl_slist_free_all(list);
 
     cleanup:
         curl_easy_cleanup(handle);

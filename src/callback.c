@@ -59,5 +59,9 @@ pb_write_cb (char *ptr, size_t size, size_t nmemb, void *userdata) {
         printf("%s: %s\n", key, json_string_value(value));
     }
 
+    json_decref(json);
+
     return rsize;
 }
+
+// vim: set ts=4 sw=4 et:
