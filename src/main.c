@@ -80,17 +80,11 @@ main (signed argc, char * argv []) {
         goto cleanup;
     }
 
-    signed lckst = db_lockfile_init();
-    if ( lckst != EXIT_SUCCESS ) {
-        exit_status = lckst;
-        goto cleanup;
-    }
-
     /**
      * TODO
      **
-     * Check for swapdb (error out with message if it exists)
      * Locate the database (handling the does-not-exist case)
+     * Check for swapdb (error out with message if it exists)
      * Read-in the database
      * Set state.provider according to the db (falling back on ptpb if needed)
      */
@@ -120,8 +114,6 @@ main (signed argc, char * argv []) {
      * Write resultant in-memory db to swapdb
      * move swapdb to db location
      */
-
-    db_lockfile_cleanup();
 
     cleanup:
         free(state.url);
