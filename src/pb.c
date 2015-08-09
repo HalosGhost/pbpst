@@ -25,9 +25,9 @@ pb_paste (const struct pbpst_state * state) {
     curl_easy_setopt(handle, CURLOPT_HTTPHEADER, list);
 
     char * target = malloc(tlen);
-    CURLFORMcode s;
     if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
 
+    CURLFORMcode s;
     if ( state->cmd == SNC ) {
         if ( state->url ) {
             snprintf(target, tlen, "%s%c", state->provider, 'u');
