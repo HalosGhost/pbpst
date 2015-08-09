@@ -7,7 +7,7 @@
 #include <inttypes.h>  // SCNu32
 #include <stdlib.h>    // EXIT_SUCCESS, EXIT_FAILURE
 #include <curl/curl.h> // curl_easy_*()
-#include <sys/stat.h>  // fstat(), open()
+#include <sys/stat.h>  // fstat(), open(), mkdir()
 #include <string.h>    // strncat(), strerror()
 #include <fcntl.h>     // open()
 #include <unistd.h>    // close()

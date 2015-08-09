@@ -80,10 +80,15 @@ main (signed argc, char * argv []) {
         goto cleanup;
     }
 
+    signed db_stat = db_locate(&state);
+    switch ( db_stat ) {
+        case 0: goto cleanup;
+        default: break;
+    }
+
     /**
      * TODO
      **
-     * Locate the database (handling the does-not-exist case)
      * Check for swapdb (error out with message if it exists)
      * Read-in the database
      * Set state.provider according to the db (falling back on ptpb if needed)

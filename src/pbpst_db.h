@@ -2,10 +2,8 @@
 
 #include "main.h"
 
-static const char lockfile_err [] =
-    "pbpst: Could not lock the database: %s\n"
-    "pbpst: If no other instances of pbpst are running, "
-    "you can delete /tmp/pbpst.lck\n";
+static const char db_err [] =
+    "pbpst: Error opening %s: %s\n";
 
 static const char def_db [] =
     "{\n"
@@ -15,12 +13,6 @@ static const char def_db [] =
     "}\n";
 
 signed
-db_lockfile_init (void);
-
-signed
-db_lockfile_cleanup (void);
-
-signed
-db_locate (void);
+db_locate (const struct pbpst_state *);
 
 // vim: set ts=4 sw=4 et:
