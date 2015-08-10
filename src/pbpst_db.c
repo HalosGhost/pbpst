@@ -4,60 +4,54 @@
 signed
 db_locate (const struct pbpst_state * s) {
 
+    char * db_loc, * db = 0;
+    enum {
+        FLE = 0, USR = 1, XDG = 2, HME = 3
+    } which_brnch = (db_loc = s->dbfile)                 ? USR
+                  : (db_loc = getenv("XDG_CONFIG_HOME")) ? XDG
+                  : (db_loc = getenv("HOME"))            ? HME : FLE;
 
-    mode_t dirmode = S_IRUSR | S_IWUSR | S_IXUSR
-                   | S_IRGRP           | S_IXGRP
-                   | S_IROTH           | S_IXOTH;
-
-    mode_t dbmode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-
-    signed fd, errsv;
-    if ( s->dbfile ) {
-        errno = 0;
-        if ( (fd = open(s->dbfile, O_CREAT | O_EXCL, dbmode)) == -1 ) {
-            errsv = errno;
-            if ( errsv == EEXIST ) {
-                return 1;
-            } else {
-                fprintf(stderr, db_err, s->dbfile, strerror(errsv));
-                return 0;
-            }
-        } close(fd); return 1;
-    }
-
-    char cwd [PATH_MAX] = { '\0' };
-    errno = 0;
-    if ( !getcwd(cwd, PATH_MAX - 1) ) {
-        errsv = errno;
-        fprintf(stderr, "pbpst: Could not save cwd: %s\n", strerror(errsv));
+    if ( which_brnch == FLE ) {
+        fputs("pbpst: No valid location for database\n", stderr);
         return 0;
     }
 
-    char * xch_loc = getenv("XDG_CONFIG_HOME");
-    if ( xch_loc ) {
+    signed errsv;
+    size_t db_len;
+    if ( which_brnch != USR ) {
+        char cwd [PATH_MAX] = { '\0' };
         errno = 0;
-        if ( chdir(xch_loc) == -1 ) {
+        if ( !getcwd(cwd, PATH_MAX - 1) ) {
             errsv = errno;
-            fprintf(stderr, "pbpst: Could not cd to %s: %s\n", xch_loc,
-                    strerror(errsv));
+            fprintf(stderr, "pbpst: Could not save cwd: %s\n", strerror(errsv));
             return 0;
         }
 
         errno = 0;
-        if ( chdir("pbpst") == -1 ) {
+        if ( chdir(db_loc) == -1 ) {
             errsv = errno;
-            if ( errsv == ENOENT ) {
-                errno = 0;
-                if ( mkdir("pbpst", dirmode) == -1 ) {
-                    errsv = errno;
-                    fprintf(stderr, "pbpst: Could not create %s/pbpst: %s\n",
-                            xch_loc, strerror(errsv));
-                    return 0;
+            fprintf(stderr, "pbpst: Could not cd to %s: %s\n", db_loc,
+                    strerror(errsv)); return 0;
+        }
+
+        for ( uint8_t i = 0; i < 2; i ++ ) {
+            i += which_brnch == XDG;
+            char * str = !i ? ".config" : "pbpst";
+
+            errno = 0;
+            if ( chdir(str) == -1 ) {
+                errsv = errno;
+                if ( errsv == ENOENT ) {
+                    errno = 0;
+                    if ( mkdir(str, 0777) == -1 ) {
+                        errsv = errno;
+                        fprintf(stderr, "pbpst: Could not create %s/%s: %s\n",
+                                db_loc, str, strerror(errsv)); return 0;
+                    }
+                } else {
+                    fprintf(stderr, "pbpst: Could not cd to %s/%s: %s\n",
+                            db_loc, str, strerror(errsv)); return 0;
                 }
-            } else {
-                fprintf(stderr, "pbpst: Could not cd to %s/pbpst: %s\n",
-                        xch_loc, strerror(errsv));
-                return 0;
             }
         }
 
@@ -65,101 +59,38 @@ db_locate (const struct pbpst_state * s) {
         if ( chdir(cwd) == -1 ) {
             errsv = errno;
             fprintf(stderr, "pbpst: Could not return to %s: %s\n",
-                    cwd, strerror(errsv));
+                    cwd, strerror(errsv)); return 0;
+        }
+
+        db_len = strlen(db_loc) + 23;
+        db = (char * )malloc(db_len);
+        if ( !db ) {
+            fprintf(stderr, "pbpst: Could not save db path: Out of Memory\n");
             return 0;
         }
 
-        char * xch_db = (char * )malloc(strlen(xch_loc) + 15);
-        if ( !xch_db ) {
-            fprintf(stderr, "pbpst: Out of Memory\n");
-            return 0;
-        }
-
-        strncpy(xch_db, xch_loc, strlen(xch_loc));
-        strncat(xch_db, "/pbpst/db.json", 14);
-
-        errno = 0;
-        if ( (fd = open(xch_db, O_CREAT | O_EXCL, dbmode)) == -1 ) {
-            errsv = errno;
-            if ( errsv == EEXIST ) {
-                free(xch_db);
-                return 2;
-            }
-        } close(fd); free(xch_db); return 2;
+        snprintf(db, db_len, "%s%s/pbpst/db.json", db_loc,
+                 which_brnch == XDG ? "" : "/.config");
     }
 
-    char * h_loc = getenv("HOME");
-    if ( !h_loc ) {
-        fprintf(stderr, "pbpst: Error locating HOME directory\n");
-        return 0;
-    }
+    char * fdb = which_brnch == USR ? db_loc : db;
 
+    signed fd;
     errno = 0;
-    if ( chdir(".config") == -1 ) {
-        errsv = errno;
-        if ( errsv == ENOENT ) {
-            errno = 0;
-            if ( mkdir(".config", dirmode) == -1 ) {
-                errsv = errno;
-                fprintf(stderr, "pbpst: Could not create %s/.config: %s\n",
-                        h_loc, strerror(errsv));
-                return 0;
-            }
-        } else {
-            fprintf(stderr, "pbpst: Could not cd to %s/.config: %s\n",
-                    h_loc, strerror(errsv));
-            return 0;
-        }
-    }
-
-    errno = 0;
-    if ( chdir("pbpst") == -1 ) {
-        errsv = errno;
-        if ( errsv == ENOENT ) {
-            errno = 0;
-            if ( mkdir("pbpst", dirmode) == -1 ) {
-                errsv = errno;
-                fprintf(stderr, "pbpst: Could not create %s/%s: %s\n",
-                        h_loc, ".config/pbpst", strerror(errsv));
-                return 0;
-            }
-        } else {
-            fprintf(stderr, "pbpst: Could not cd to %s/%s: %s\n",
-                    h_loc, ".config/pbpst", strerror(errsv));
-            return 0;
-        }
-    }
-
-    errno = 0;
-    if ( chdir(cwd) == -1 ) {
-        errsv = errno;
-        fprintf(stderr, "pbpst: Could not return to %s: %s\n",
-                cwd, strerror(errsv));
-        return 0;
-    }
-
-    errno = 0;
-    char * hdb = (char * )malloc(strlen(h_loc) + 23);
-    if ( !hdb ) {
-        fprintf(stderr, "pbpst: Out of Memory\n");
-        return 0;
-    }
-
-    strncpy(hdb, h_loc, strlen(h_loc));
-    strncat(hdb, "/.config/pbpst/db.json", 22);
-
-    errno = 0;
-    if ( (fd = open(hdb, O_CREAT | O_EXCL, dbmode)) == -1 ) {
+    if ( (fd = open(fdb, O_CREAT | O_EXCL, 0666)) == -1 ) {
         errsv = errno;
         if ( errsv == EEXIST ) {
-            free(hdb);
-            return 3;
+            if ( which_brnch != USR ) { free(fdb); }
+            return which_brnch;
         } else {
-            free(hdb);
-            fprintf(stderr, db_err, hdb, strerror(errsv));
+            fprintf(stderr, db_err, fdb, strerror(errsv));
+            if ( which_brnch != USR ) { free(fdb); }
             return 0;
         }
-    } close(fd); free(hdb); return 3;
+    } close(fd);
+
+    if ( which_brnch != USR ) { free(db); }
+    return which_brnch;
 }
 
 // vim: set ts=4 sw=4 et:
