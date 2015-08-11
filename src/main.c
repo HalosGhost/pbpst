@@ -30,7 +30,7 @@ main (signed argc, char * argv []) {
     for ( signed oi = 0, c = getopt_long(argc, argv, vos, os, &oi);
           c != -1; c = getopt_long(argc, argv, vos, os, &oi) ) {
 
-        size_t l = optarg ? strlen(optarg) : 0;
+        size_t l = optarg ? strlen(optarg) + 1 : 0;
         char ** state_var = 0;
 
         switch ( c ) {
@@ -51,8 +51,8 @@ main (signed argc, char * argv []) {
             case 'P': state_var = &state.provider; goto svcase;
             case 'b': state_var = &state.dbfile;   goto svcase;
             svcase:
-                *state_var = (char * )malloc(l + 1);
-                strncpy(*state_var, optarg, l);
+                *state_var = (char * )malloc(l);
+                snprintf(*state_var, l, "%s", optarg);
                 break;
 
             case 'L': sscanf(optarg, "%" SCNu32, &state.ln); break;

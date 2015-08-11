@@ -1,14 +1,14 @@
 #pragma once
 
 #include <getopt.h>    // getopt_long()
-#include <stdio.h>     // fprintf(), fputs(), sscanf_s(), remove()
+#include <stdio.h>     // fprintf(), snprintf(), fputs(), sscanf_s(), remove()
 #include <stdbool.h>   // bool
 #include <stdint.h>    // explicitly-sized integral types
 #include <inttypes.h>  // SCNu32
 #include <stdlib.h>    // EXIT_SUCCESS, EXIT_FAILURE
 #include <curl/curl.h> // curl_easy_*()
 #include <sys/stat.h>  // fstat(), open(), mkdir()
-#include <string.h>    // strncat(), strerror()
+#include <string.h>    // strerror()
 #include <fcntl.h>     // open()
 #include <unistd.h>    // close()
 #include <errno.h>     // errno
