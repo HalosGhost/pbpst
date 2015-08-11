@@ -88,7 +88,7 @@ main (signed argc, char * argv []) {
         goto cleanup;
     }
 
-    if ( db_swp_init(db_loc) ) {
+    if ( db_swp_init(db_loc) == -1 ) {
         exit_status = EXIT_FAILURE;
         goto cleanup;
     }

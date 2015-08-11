@@ -1,5 +1,6 @@
 #include "pbpst_db.h"
 #include <linux/limits.h>
+#include <libgen.h>
 
 char *
 db_locate (const struct pbpst_state * s) {
@@ -82,16 +83,98 @@ db_locate (const struct pbpst_state * s) {
         if ( errsv == EEXIST ) {
             return fdb;
         } else {
-            fprintf(stderr, db_err, fdb, strerror(errsv));
-            return 0;
+            fprintf(stderr, "pbpst: Failed to open %s: %s\n", fdb,
+                    strerror(errsv)); return 0;
         }
-    } close(fd); return fdb;
+    }
+
+    errno = 0;
+    if ( close(fd) == -1 ) {
+        errsv = errno;
+        fprintf(stderr, "pbpst: Failed to close %s: %s\n", fdb,
+                strerror(errsv)); return 0;
+    } return fdb;
 }
 
 signed
 db_swp_init (const char * db_loc) {
 
-    return 0;
+    size_t len = strlen(db_loc) + 1;
+    char * parent = 0, * file = 0, * fc = 0, * swp_db_name = 0,
+         * pc = (char * )malloc(len);
+
+    signed fd = 0;
+
+    if ( !pc ) {
+        fprintf(stderr, "pbpst: Could not store db dirname: Out of Memory\n");
+        fd = -1; goto cleanup;
+    }
+
+    fc = (char * )malloc(len);
+    if ( !fc ) {
+        fprintf(stderr, "pbpst: Could not store db basename: Out of Memory\n");
+        fd = -1; goto cleanup;
+    }
+
+    snprintf(pc, len, "%s", db_loc);
+    snprintf(fc, len, "%s", db_loc);
+
+    parent = dirname(pc);
+    file = basename(fc);
+
+    char cwd [PATH_MAX] = { '\0' };
+
+    signed errsv = 0;
+    errno = 0;
+    if ( !getcwd(cwd, PATH_MAX - 1) ) {
+        errsv = errno;
+        fprintf(stderr, "pbpst: Could not save cwd: %s\n", strerror(errsv));
+        fd = -1; goto cleanup;
+    }
+
+    errno = 0;
+    if ( chdir(parent) == -1 ) {
+        errsv = errno;
+        fprintf(stderr, "pbpst: Could not cd to db path: %s\n",
+                strerror(errsv));
+        fd = -1; goto cleanup;
+    }
+
+    len = strlen(file) + 6;
+    swp_db_name = (char * )malloc(len);
+    if ( !swp_db_name ) {
+        fprintf(stderr, "pbpst: Could not save swap db name: Out of Memory\n");
+        fd = -1; goto cleanup;
+    }
+
+    snprintf(swp_db_name, len, ".%s.swp", file);
+
+    errno = 0;
+    if ( (fd = open(swp_db_name, O_CREAT | O_EXCL, 0666)) == -1 ) {
+        errsv = errno;
+        fprintf(stderr, swp_db_err, strerror(errsv), parent, swp_db_name);
+        fd = -1; goto cleanup;
+    }
+
+    errno = 0;
+    if ( chdir(cwd) == -1 ) {
+        errsv = errno;
+        fprintf(stderr, "pbpst: Could not return to %s: %s\n",
+                cwd, strerror(errsv));
+
+        errno = 0;
+        if ( close(fd) == -1 ) {
+            errsv = errno;
+            fprintf(stderr, "pbpst: Failed to close %s: %s\n", swp_db_name,
+                    strerror(errsv)); fd = -1; goto cleanup;
+        }
+    }
+
+    cleanup:
+        free(pc);
+        free(fc);
+        free(swp_db_name);
+        return fd;
 }
 
 // vim: set ts=4 sw=4 et:
