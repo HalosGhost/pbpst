@@ -21,6 +21,6 @@ signed
 db_swp_init (const char *);
 
 signed
-db_swp_cleanup (const char * db_loc, signed swp_fd);
+db_swp_cleanup (const char *, signed);
 
 // vim: set ts=4 sw=4 et:

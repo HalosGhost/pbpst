@@ -8,6 +8,18 @@
 #include "pb.h"
 #include "pbpst_db.h"
 
+static struct pbpst_state state = {
+    .path = 0, .url = 0, .lexer = 0, .vanity = 0,
+    .uuid = 0, .provider = 0, .dbfile = 0,
+    .query = 0, .del = 0, .cmd = NON, .ln = 0,
+    .help = false, .priv = false, .rend = false,
+    .verb = false, .ncnf = false, .prog = false
+};
+
+static char * db_loc = 0;
+static signed swp_db_fd = 0;
+extern const char * const sys_siglist [];
+
 signed
 main (signed argc, char * argv []) {
 
@@ -16,15 +28,9 @@ main (signed argc, char * argv []) {
         return EXIT_FAILURE;
     }
 
+    signal(2, signal_handler);
+
     signed exit_status = EXIT_SUCCESS;
-
-    struct pbpst_state state = { .path = 0, .url = 0, .lexer = 0, .vanity = 0,
-                                 .uuid = 0, .provider = 0, .dbfile = 0,
-                                 .query = 0, .del = 0, .cmd = NON, .ln = 0,
-                                 .help = false, .priv = false, .rend = false,
-                                 .verb = false, .ncnf = false, .prog = false};
-
-    char * db_loc = 0;
 
     const char vos [] = "SRUDP:hv:s:f:l:L:pru:b:q:d:n#";
     for ( signed oi = 0, c = getopt_long(argc, argv, vos, os, &oi);
@@ -88,7 +94,6 @@ main (signed argc, char * argv []) {
         goto cleanup;
     }
 
-    signed swp_db_fd = 0;
     if ( (swp_db_fd = db_swp_init(db_loc)) == -1 ) {
         exit_status = EXIT_FAILURE;
         goto cleanup;
@@ -121,17 +126,16 @@ main (signed argc, char * argv []) {
 
     exit_status = pbpst_dispatch(&state);
 
-    if ( db_swp_cleanup(db_loc, swp_db_fd) == -1 ) {
-        exit_status = EXIT_FAILURE;
-        goto cleanup;
-    }
-
     /**
      * TODO
      **
      * Write resultant in-memory db to swapdb
-     * move swapdb to db location
      */
+
+    if ( db_swp_cleanup(db_loc, swp_db_fd) == -1 ) {
+        exit_status = EXIT_FAILURE;
+        goto cleanup;
+    }
 
     cleanup:
         free(state.url);
@@ -181,15 +185,38 @@ pbpst_test_options (const struct pbpst_state * s) {
 }
 
 signed
-pbpst_dispatch (const struct pbpst_state * state) {
+pbpst_dispatch (const struct pbpst_state * s) {
 
-    switch ( state->cmd ) {
+    switch ( s->cmd ) {
         case SNC:
-        case UPD: return pb_paste(state);
-        case RMV: return pb_remove(state);
+        case UPD: return pb_paste(s);
+        case RMV: return pb_remove(s);
         case DBS: return EXIT_FAILURE; // replace later
         case NON: return EXIT_FAILURE; // should never get here
     }
+}
+
+void
+signal_handler (signed signum) {
+
+    if ( signum < 1 || signum > 31 ) { return; }
+
+    fprintf(stderr, "pbpst: Received %s\n", sys_siglist[signum]);
+    db_swp_cleanup(db_loc, swp_db_fd);
+    free(state.url);
+    free(state.path);
+    free(state.lexer);
+    free(state.vanity);
+    free(state.uuid);
+    free(state.query);
+    free(state.del);
+    free(state.provider);
+    if ( db_loc == state.dbfile ) {
+        free(state.dbfile);
+    } else {
+        free(db_loc);
+        free(state.dbfile);
+    } exit(EXIT_FAILURE);
 }
 
 // vim: set ts=4 sw=4 et:

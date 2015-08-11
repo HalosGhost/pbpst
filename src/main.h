@@ -2,6 +2,7 @@
 
 #include <getopt.h>    // getopt_long()
 #include <stdio.h>     // fprintf(), snprintf(), fputs(), sscanf_s(), remove()
+#include <signal.h>    // sigaction()
 #include <stdbool.h>   // bool
 #include <stdint.h>    // explicitly-sized integral types
 #include <inttypes.h>  // SCNu32
@@ -127,5 +128,8 @@ pbpst_test_options (const struct pbpst_state *);
 
 signed
 pbpst_dispatch (const struct pbpst_state *);
+
+void
+signal_handler (signed);
 
 // vim: set ts=4 sw=4 et:
