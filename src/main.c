@@ -24,6 +24,8 @@ main (signed argc, char * argv []) {
                                  .help = false, .priv = false, .rend = false,
                                  .verb = false, .ncnf = false, .prog = false};
 
+    char * db_loc = 0;
+
     const char vos [] = "SRUDP:hv:s:f:l:L:pru:b:q:d:n#";
     for ( signed oi = 0, c = getopt_long(argc, argv, vos, os, &oi);
           c != -1; c = getopt_long(argc, argv, vos, os, &oi) ) {
@@ -80,10 +82,10 @@ main (signed argc, char * argv []) {
         goto cleanup;
     }
 
-    signed db_stat = db_locate(&state);
-    switch ( db_stat ) {
-        case 0: goto cleanup;
-        default: break;
+    db_loc = db_locate(&state);
+    if ( !db_loc ) {
+        exit_status = EXIT_FAILURE;
+        goto cleanup;
     }
 
     /**
@@ -129,8 +131,12 @@ main (signed argc, char * argv []) {
         free(state.query);
         free(state.del);
         free(state.provider);
-        free(state.dbfile);
-        return exit_status;
+        if ( db_loc == state.dbfile ) {
+            free(state.dbfile);
+        } else {
+            free(db_loc);
+            free(state.dbfile);
+        } return exit_status;
 }
 
 bool

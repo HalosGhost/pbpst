@@ -12,7 +12,7 @@ static const char def_db [] =
     "   }\n"
     "}\n";
 
-signed
+char *
 db_locate (const struct pbpst_state *);
 
 // vim: set ts=4 sw=4 et:

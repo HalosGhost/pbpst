@@ -1,7 +1,7 @@
 #include "pbpst_db.h"
 #include <linux/limits.h>
 
-signed
+char *
 db_locate (const struct pbpst_state * s) {
 
     char * db_loc, * db = 0;
@@ -80,17 +80,12 @@ db_locate (const struct pbpst_state * s) {
     if ( (fd = open(fdb, O_CREAT | O_EXCL, 0666)) == -1 ) {
         errsv = errno;
         if ( errsv == EEXIST ) {
-            if ( which_brnch != USR ) { free(fdb); }
-            return which_brnch;
+            return fdb;
         } else {
             fprintf(stderr, db_err, fdb, strerror(errsv));
-            if ( which_brnch != USR ) { free(fdb); }
             return 0;
         }
-    } close(fd);
-
-    if ( which_brnch != USR ) { free(db); }
-    return which_brnch;
+    } close(fd); return fdb;
 }
 
 // vim: set ts=4 sw=4 et:
