@@ -177,4 +177,60 @@ db_swp_init (const char * db_loc) {
         return fd;
 }
 
+signed
+db_swp_cleanup (const char * db_loc, signed swp_fd) {
+
+    size_t len = strlen(db_loc) + 1;
+    char * parent = 0, * file = 0, * fc = 0, * swp_db_path = 0,
+         * pc = (char * )malloc(len);
+
+    signed errsv = 0, ret = 0;
+
+    if ( !pc ) {
+        fprintf(stderr, "pbpst: Could not store db dirname: Out of Memory\n");
+        ret = -1; goto cleanup;
+    }
+
+    fc = (char * )malloc(len);
+    if ( !fc ) {
+        fprintf(stderr, "pbpst: Could not store db basename: Out of Memory\n");
+        ret = -1; goto cleanup;
+    }
+
+    snprintf(pc, len, "%s", db_loc);
+    snprintf(fc, len, "%s", db_loc);
+
+    parent = dirname(pc);
+    file = basename(fc);
+
+    len = strlen(db_loc) + 6;
+    swp_db_path = (char * )malloc(len);
+    if ( !swp_db_path ) {
+        fprintf(stderr, "pbpst: Could not save swap db name: Out of Memory\n");
+        ret = -1; goto cleanup;
+    }
+
+    snprintf(swp_db_path, len, "%s/.%s.swp", parent, file);
+
+    errno = 0;
+    if ( close(swp_fd) == -1 ) {
+        errsv = errno;
+        fprintf(stderr, "pbpst: Could not close %s: %s\n", swp_db_path,
+                strerror(errsv)); ret = -1; goto cleanup;
+    }
+
+    errno = 0;
+    if ( rename(swp_db_path, db_loc) == -1 ) {
+        errsv = errno;
+        fprintf(stderr, "pbpst: Failed to save %s to %s: %s\n", swp_db_path,
+                db_loc, strerror(errsv)); ret = -1; goto cleanup;
+    }
+
+    cleanup:
+        free(pc);
+        free(fc);
+        free(swp_db_path);
+        return ret;
+}
+
 // vim: set ts=4 sw=4 et:

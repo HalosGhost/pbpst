@@ -88,7 +88,8 @@ main (signed argc, char * argv []) {
         goto cleanup;
     }
 
-    if ( db_swp_init(db_loc) == -1 ) {
+    signed swp_db_fd = 0;
+    if ( (swp_db_fd = db_swp_init(db_loc)) == -1 ) {
         exit_status = EXIT_FAILURE;
         goto cleanup;
     }
@@ -119,6 +120,11 @@ main (signed argc, char * argv []) {
     }
 
     exit_status = pbpst_dispatch(&state);
+
+    if ( db_swp_cleanup(db_loc, swp_db_fd) == -1 ) {
+        exit_status = EXIT_FAILURE;
+        goto cleanup;
+    }
 
     /**
      * TODO
