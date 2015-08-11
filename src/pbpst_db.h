@@ -15,4 +15,7 @@ static const char def_db [] =
 char *
 db_locate (const struct pbpst_state *);
 
+signed
+db_swp_init (const char *);
+
 // vim: set ts=4 sw=4 et:

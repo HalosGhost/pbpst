@@ -88,4 +88,10 @@ db_locate (const struct pbpst_state * s) {
     } close(fd); return fdb;
 }
 
+signed
+db_swp_init (const char * db_loc) {
+
+    return 0;
+}
+
 // vim: set ts=4 sw=4 et:
