@@ -102,7 +102,6 @@ main (signed argc, char * argv []) {
     /**
      * TODO
      **
-     * Check for swapdb (error out with message if it exists)
      * Read-in the database
      * Set state.provider according to the db (falling back on ptpb if needed)
      */
