@@ -203,7 +203,7 @@ db_swp_cleanup (const char * db_loc, signed swp_fd) {
     parent = dirname(pc);
     file = basename(fc);
 
-    len = strlen(db_loc) + 6;
+    len = strlen(db_loc) + 8;
     swp_db_path = (char * )malloc(len);
     if ( !swp_db_path ) {
         fprintf(stderr, "pbpst: Could not save swap db name: Out of Memory\n");
