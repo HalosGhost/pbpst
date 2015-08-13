@@ -108,7 +108,6 @@ main (signed argc, char * argv []) {
     /**
      * TODO
      **
-     * Read-in the database
      * Set state.provider according to the db (falling back on ptpb if needed)
      */
 
