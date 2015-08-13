@@ -13,6 +13,7 @@
 #include <fcntl.h>     // open()
 #include <unistd.h>    // close()
 #include <errno.h>     // errno
+#include <jansson.h>
 
 #define BUFFER_SIZE 256
 #define FILE_MAX 67108864 // 64 MiB

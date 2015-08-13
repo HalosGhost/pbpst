@@ -18,6 +18,7 @@ static struct pbpst_state state = {
 
 static char * db_loc = 0;
 static signed swp_db_fd = 0;
+static json_t * mem_db;
 extern const char * const sys_siglist [];
 
 signed
@@ -99,6 +100,11 @@ main (signed argc, char * argv []) {
         goto cleanup;
     }
 
+    if ( !(mem_db = db_read(&state, db_loc)) ) {
+        exit_status = EXIT_FAILURE;
+        goto cleanup;
+    } json_decref(mem_db);
+
     /**
      * TODO
      **
@@ -145,6 +151,7 @@ main (signed argc, char * argv []) {
         free(state.query);
         free(state.del);
         free(state.provider);
+        json_decref(mem_db);
         if ( db_loc == state.dbfile ) {
             free(state.dbfile);
         } else {

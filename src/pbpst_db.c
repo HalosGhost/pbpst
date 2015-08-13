@@ -1,6 +1,4 @@
 #include "pbpst_db.h"
-#include <linux/limits.h>
-#include <libgen.h>
 
 char *
 db_locate (const struct pbpst_state * s) {
@@ -231,6 +229,54 @@ db_swp_cleanup (const char * db_loc, signed swp_fd) {
         free(fc);
         free(swp_db_path);
         return ret;
+}
+
+json_t *
+db_read (const struct pbpst_state * s, const char * db_loc) {
+
+    FILE * f;
+    signed errsv;
+    errno = 0;
+    if ( !(f = fopen(db_loc, "r")) ) {
+        errsv = errno;
+        fprintf(stderr, "pbpst: Could not open %s for reading: %s\n", db_loc,
+                strerror(errsv)); return 0;
+    }
+
+    json_error_t err;
+    json_t * mdb = json_loadf(f, 0, &err);
+    if ( !mdb ) {
+        errno = 0;
+        if ( (fseek(f, 0, SEEK_END)) == -1 ) {
+            errsv = errno;
+            fprintf(stderr, "pbpst: Failed to seek to end of %s: %s\n", db_loc,
+                    strerror(errsv)); goto cleanup;
+        }
+
+        signed long size = 0;
+        errno = 0;
+        if ( (size = ftell(f)) == -1 ) {
+            errsv = errno;
+            fprintf(stderr, "pbpst: failed to check position in %s: %s\n",
+                    db_loc, strerror(errsv)); goto cleanup;
+        }
+
+        if ( size == 0 ) {
+            mdb = DEF_DB();
+            goto cleanup;
+        }
+
+        fprintf(stderr, "pbpst: Failed reading %s: %s\n", db_loc, err.text);
+        goto cleanup;
+    }
+
+    cleanup:
+        errno = 0;
+        if ( fclose(f) == -1 ) {
+            errsv = errno;
+            fprintf(stderr, "pbpst: Could not close %s: %s\n", db_loc,
+                    strerror(errsv));
+        } return mdb;
 }
 
 // vim: set ts=4 sw=4 et:
