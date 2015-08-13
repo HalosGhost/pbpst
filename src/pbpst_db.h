@@ -15,13 +15,16 @@ static const char swp_db_err [] =
 char *
 db_locate (const struct pbpst_state *);
 
-signed
+char *
 db_swp_init (const char *);
 
 signed
-db_swp_cleanup (const char *, signed);
+db_swp_cleanup (const char *, const char *);
 
 json_t *
-db_read (const struct pbpst_state *, const char *);
+db_read (const char *);
+
+signed
+db_swp_flush (const json_t *, const char *);
 
 // vim: set ts=4 sw=4 et:

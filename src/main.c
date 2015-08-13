@@ -16,8 +16,7 @@ static struct pbpst_state state = {
     .verb = false, .ncnf = false, .prog = false
 };
 
-static char * db_loc = 0;
-static signed swp_db_fd = 0;
+static char * db_loc = 0, * swp_db_loc = 0;
 static json_t * mem_db;
 extern const char * const sys_siglist [];
 
@@ -85,25 +84,21 @@ main (signed argc, char * argv []) {
     }
 
     if ( !pbpst_test_options(&state) ) {
-        exit_status = EXIT_FAILURE;
-        goto cleanup;
+        exit_status = EXIT_FAILURE; goto cleanup;
     }
 
     db_loc = db_locate(&state);
     if ( !db_loc ) {
-        exit_status = EXIT_FAILURE;
-        goto cleanup;
+        exit_status = EXIT_FAILURE; goto cleanup;
     }
 
-    if ( (swp_db_fd = db_swp_init(db_loc)) == -1 ) {
-        exit_status = EXIT_FAILURE;
-        goto cleanup;
+    if ( !(swp_db_loc = db_swp_init(db_loc)) ) {
+        exit_status = EXIT_FAILURE; goto cleanup;
     }
 
-    if ( !(mem_db = db_read(&state, db_loc)) ) {
-        exit_status = EXIT_FAILURE;
-        goto cleanup;
-    } json_decref(mem_db);
+    if ( !(mem_db = db_read(db_loc)) ) {
+        exit_status = EXIT_FAILURE; goto cleanup;
+    }
 
     /**
      * TODO
@@ -133,12 +128,15 @@ main (signed argc, char * argv []) {
     /**
      * TODO
      **
-     * Write resultant in-memory db to swapdb
+     * Manipulate the db as necessary
      */
 
-    if ( db_swp_cleanup(db_loc, swp_db_fd) == -1 ) {
-        exit_status = EXIT_FAILURE;
-        goto cleanup;
+    if ( db_swp_flush(mem_db, swp_db_loc) == -1 ) {
+        exit_status = EXIT_FAILURE; goto cleanup;
+    }
+
+    if ( db_swp_cleanup(db_loc, swp_db_loc) == -1 ) {
+        exit_status = EXIT_FAILURE; goto cleanup;
     }
 
     cleanup:
@@ -151,6 +149,7 @@ main (signed argc, char * argv []) {
         free(state.del);
         free(state.provider);
         json_decref(mem_db);
+        if ( swp_db_loc ) { free(swp_db_loc); }
         if ( db_loc == state.dbfile ) {
             free(state.dbfile);
         } else {
@@ -207,7 +206,7 @@ signal_handler (signed signum) {
     if ( signum < 1 || signum > 31 ) { return; }
 
     fprintf(stderr, "pbpst: Received %s\n", sys_siglist[signum]);
-    db_swp_cleanup(db_loc, swp_db_fd);
+    db_swp_cleanup(db_loc, swp_db_loc);
     free(state.url);
     free(state.path);
     free(state.lexer);
@@ -216,6 +215,8 @@ signal_handler (signed signum) {
     free(state.query);
     free(state.del);
     free(state.provider);
+    json_decref(mem_db);
+    if ( swp_db_loc ) { free(swp_db_loc); }
     if ( db_loc == state.dbfile ) {
         free(state.dbfile);
     } else {
