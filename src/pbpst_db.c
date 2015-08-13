@@ -275,7 +275,7 @@ db_read (const struct pbpst_state * s, const char * db_loc) {
         if ( fclose(f) == -1 ) {
             errsv = errno;
             fprintf(stderr, "pbpst: Could not close %s: %s\n", db_loc,
-                    strerror(errsv));
+                    strerror(errsv)); json_decref(mdb); mdb = 0;
         } return mdb;
 }
 
