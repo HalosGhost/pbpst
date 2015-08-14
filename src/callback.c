@@ -48,12 +48,6 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
     json_t * json = json_loads(ptr, 0, NULL);
     if ( !json ) { return 0; }
 
-    json_t * value;
-    const char * key;
-    json_object_foreach(json, key, value) {
-        printf("%s: %s\n", key, json_string_value(value));
-    }
-
     pastes = json_object_get(mem_db, "pastes");
     json_t * prov_obj = 0, * uuid_j = 0, * lid_j = 0,
            * label_j = 0, * status_j = 0, * new_paste = 0;
