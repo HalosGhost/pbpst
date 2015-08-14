@@ -10,7 +10,7 @@ static const char swp_db_err [] =
     " have been saved\npbpst: Then manually remove: %s/%s\n";
 
 #define DEF_DB() json_pack("{s:s,s:{}}", "default_provider",\
-                           "https://ptpb.pw", "pastes")
+                           "https://ptpb.pw/", "pastes")
 
 char *
 db_locate (const struct pbpst_state *);
