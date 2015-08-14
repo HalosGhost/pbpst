@@ -88,7 +88,9 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
         goto cleanup;
     }
 
-    printf("%s%s\n", state.provider, state.priv ? lid : lid + 24);
+    const char * lb = label_j    ? label
+                    : state.priv ? lid          : lid + 24;
+    printf("%s%s\n", state.provider, lb);
 
     cleanup:
         json_decref(json);
