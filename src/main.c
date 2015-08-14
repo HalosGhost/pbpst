@@ -8,7 +8,7 @@
 #include "pb.h"
 #include "pbpst_db.h"
 
-json_t * mem_db;
+json_t * mem_db, * pastes = 0, * prov_pastes = 0;
 struct pbpst_state state = {
     .path = 0, .url = 0, .lexer = 0, .vanity = 0,
     .uuid = 0, .provider = 0, .dbfile = 0,
@@ -140,6 +140,8 @@ main (signed argc, char * argv []) {
         free(state.del);
         free(state.provider);
         json_decref(mem_db);
+        json_decref(pastes);
+        json_decref(prov_pastes);
         if ( swp_db_loc ) { free(swp_db_loc); }
         if ( db_loc == state.dbfile ) {
             free(state.dbfile);

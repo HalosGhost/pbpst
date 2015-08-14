@@ -135,7 +135,7 @@ signal_handler (signed);
 
 extern struct pbpst_state state;
 static char * db_loc = 0, * swp_db_loc = 0;
-extern json_t * mem_db;
+extern json_t * mem_db, * pastes, * prov_pastes;
 extern const char * const sys_siglist [];
 
 // vim: set ts=4 sw=4 et:
