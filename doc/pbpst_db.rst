@@ -59,7 +59,7 @@ Example
             "https://ptpb.pw": {
                 "fa3423b6-2c29-4758-a707-bf3f972b93c9": {
                     "long": "AFKg4i_J0ssH6sJKdsYCA8WuR542",
-                    "label": "random_junk",
+                    "label": "~random_junk",
                     "msg": "-"
                 }
             }
