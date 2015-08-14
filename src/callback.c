@@ -45,6 +45,9 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
 
     size_t rsize = size * nmemb;
     *(ptr + rsize) = '\0';
+
+    if ( state.url ) { printf("%s", ptr); return rsize; }
+
     json_t * json = json_loads(ptr, 0, NULL);
     if ( !json ) { return 0; }
 
