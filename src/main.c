@@ -8,17 +8,14 @@
 #include "pb.h"
 #include "pbpst_db.h"
 
-static struct pbpst_state state = {
+json_t * mem_db;
+struct pbpst_state state = {
     .path = 0, .url = 0, .lexer = 0, .vanity = 0,
     .uuid = 0, .provider = 0, .dbfile = 0,
     .query = 0, .del = 0, .cmd = NON, .ln = 0,
     .help = false, .priv = false, .rend = false,
     .verb = false, .ncnf = false, .prog = false
 };
-
-static char * db_loc = 0, * swp_db_loc = 0;
-static json_t * mem_db;
-extern const char * const sys_siglist [];
 
 signed
 main (signed argc, char * argv []) {
@@ -124,12 +121,6 @@ main (signed argc, char * argv []) {
     }
 
     exit_status = pbpst_dispatch(&state);
-
-    /**
-     * TODO
-     **
-     * Manipulate the db as necessary
-     */
 
     if ( db_swp_flush(mem_db, swp_db_loc) == -1 ) {
         exit_status = EXIT_FAILURE; goto cleanup;

@@ -3,7 +3,7 @@
 #include "callback.h"
 
 CURLcode
-pb_paste (const struct pbpst_state * state) {
+pb_paste (const struct pbpst_state * s) {
 
     CURLcode status = CURLE_OK;
     CURL * handle = curl_easy_init();
@@ -13,12 +13,12 @@ pb_paste (const struct pbpst_state * state) {
         return CURLE_FAILED_INIT;
     }
 
-    if ( state->verb ) { curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L); }
+    if ( s->verb ) { curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L); }
 
     struct curl_httppost * post = NULL, * last = NULL;
-    size_t tlen = strlen(state->provider) + (
-                  state->vanity     ? strlen(state->vanity) + 2 :
-                  state->cmd == UPD ? strlen(state->uuid) + 1   : 2);
+    size_t tlen = strlen(s->provider) + (
+                  s->vanity     ? strlen(s->vanity) + 2 :
+                  s->cmd == UPD ? strlen(s->uuid) + 1   : 2);
 
     struct curl_slist * list = NULL;
     list = curl_slist_append(list, "Accept: application/json");
@@ -27,51 +27,51 @@ pb_paste (const struct pbpst_state * state) {
     char * target = malloc(tlen);
     if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
 
-    CURLFORMcode s;
-    if ( state->cmd == SNC ) {
-        if ( state->url ) {
-            snprintf(target, tlen, "%s%c", state->provider, 'u');
-        } else if ( state->vanity ) {
-            snprintf(target, tlen, "%s~%s", state->provider, state->vanity);
+    CURLFORMcode fc;
+    if ( s->cmd == SNC ) {
+        if ( s->url ) {
+            snprintf(target, tlen, "%s%c", s->provider, 'u');
+        } else if ( s->vanity ) {
+            snprintf(target, tlen, "%s~%s", s->provider, s->vanity);
         } else {
-            snprintf(target, tlen, "%s", state->provider);
+            snprintf(target, tlen, "%s", s->provider);
         }
 
-        s = state->url
-          ? curl_formadd(&post,                &last,
-                         CURLFORM_COPYNAME,    "c",
-                         CURLFORM_PTRCONTENTS, state->url,
-                         CURLFORM_END)
-          : curl_formadd(&post,                &last,
-                         CURLFORM_COPYNAME,    "c",
-                         CURLFORM_FILE,        state->path ? state->path : "-",
-                         CURLFORM_CONTENTTYPE, "application/octet-stream",
-                         CURLFORM_END);
+        fc = s->url
+           ? curl_formadd(&post,                &last,
+                          CURLFORM_COPYNAME,    "c",
+                          CURLFORM_PTRCONTENTS, s->url,
+                          CURLFORM_END)
+           : curl_formadd(&post,                &last,
+                          CURLFORM_COPYNAME,    "c",
+                          CURLFORM_FILE,        s->path ? s->path : "-",
+                          CURLFORM_CONTENTTYPE, "application/octet-stream",
+                          CURLFORM_END);
 
-        if ( s ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
-        if ( state->priv ) {
-            s = curl_formadd(&post,                 &last,
-                             CURLFORM_COPYNAME,     "p",
-                             CURLFORM_COPYCONTENTS, "1",
-                             CURLFORM_END);
-            if ( s ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
+        if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
+        if ( s->priv ) {
+            fc = curl_formadd(&post,                 &last,
+                              CURLFORM_COPYNAME,     "p",
+                              CURLFORM_COPYCONTENTS, "1",
+                              CURLFORM_END);
+            if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
         } curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
-    } else if ( state->cmd == UPD ) {
-        s = curl_formadd(&post,                &last,
-                         CURLFORM_COPYNAME,    "c",
-                         CURLFORM_FILE,        state->path ? state->path : "-",
-                         CURLFORM_CONTENTTYPE, "application/octet-stream",
-                         CURLFORM_END);
+    } else if ( s->cmd == UPD ) {
+        fc = curl_formadd(&post,                &last,
+                          CURLFORM_COPYNAME,    "c",
+                          CURLFORM_FILE,        s->path ? s->path : "-",
+                          CURLFORM_CONTENTTYPE, "application/octet-stream",
+                          CURLFORM_END);
 
-        if ( s ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
-        snprintf(target, tlen, "%s%s", state->provider, state->uuid);
+        if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
+        snprintf(target, tlen, "%s%s", s->provider, s->uuid);
         curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
         curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "PUT");
     }
 
     curl_easy_setopt(handle, CURLOPT_URL, target);
     curl_easy_setopt(handle, CURLOPT_XFERINFOFUNCTION, &pb_progress_cb);
-    curl_easy_setopt(handle, CURLOPT_NOPROGRESS, (long )!state->prog);
+    curl_easy_setopt(handle, CURLOPT_NOPROGRESS, (long )!s->prog);
     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &pb_write_cb);
 
     status = curl_easy_perform(handle);
@@ -85,7 +85,7 @@ pb_paste (const struct pbpst_state * state) {
 }
 
 CURLcode
-pb_remove (const struct pbpst_state * state) {
+pb_remove (const struct pbpst_state * s) {
 
     CURLcode status = CURLE_OK;
     CURL * handle = curl_easy_init();
@@ -95,17 +95,17 @@ pb_remove (const struct pbpst_state * state) {
         return CURLE_FAILED_INIT;
     }
 
-    if ( state->verb ) { curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L); }
+    if ( s->verb ) { curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L); }
 
     struct curl_slist * list = NULL;
     list = curl_slist_append(list, "Accept: application/json");
     curl_easy_setopt(handle, CURLOPT_HTTPHEADER, list);
 
-    size_t target_len = strlen(state->provider) + strlen(state->uuid) + 1;
+    size_t target_len = strlen(s->provider) + strlen(s->uuid) + 1;
     char * target = malloc(target_len);
     if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
 
-    snprintf(target, target_len, "%s%s", state->provider, state->uuid);
+    snprintf(target, target_len, "%s%s", s->provider, s->uuid);
 
     curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "DELETE");
     curl_easy_setopt(handle, CURLOPT_URL, target);

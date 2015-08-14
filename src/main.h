@@ -133,4 +133,9 @@ pbpst_dispatch (const struct pbpst_state *);
 void
 signal_handler (signed);
 
+extern struct pbpst_state state;
+static char * db_loc = 0, * swp_db_loc = 0;
+extern json_t * mem_db;
+extern const char * const sys_siglist [];
+
 // vim: set ts=4 sw=4 et:

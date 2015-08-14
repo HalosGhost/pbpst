@@ -3,12 +3,12 @@
 char *
 db_locate (const struct pbpst_state * s) {
 
-    char * db_loc, * db = 0;
+    char * dbl, * db = 0;
     enum {
         FLE = 0, USR = 1, XDG = 2, HME = 3
-    } which_brnch = (db_loc = s->dbfile)                 ? USR
-                  : (db_loc = getenv("XDG_CONFIG_HOME")) ? XDG
-                  : (db_loc = getenv("HOME"))            ? HME : FLE;
+    } which_brnch = (dbl = s->dbfile)                 ? USR
+                  : (dbl = getenv("XDG_CONFIG_HOME")) ? XDG
+                  : (dbl = getenv("HOME"))            ? HME : FLE;
 
     if ( which_brnch == FLE ) {
         fputs("pbpst: No valid location for database\n", stderr);
@@ -27,9 +27,9 @@ db_locate (const struct pbpst_state * s) {
         }
 
         errno = 0;
-        if ( chdir(db_loc) == -1 ) {
+        if ( chdir(dbl) == -1 ) {
             errsv = errno;
-            fprintf(stderr, "pbpst: Could not cd to %s: %s\n", db_loc,
+            fprintf(stderr, "pbpst: Could not cd to %s: %s\n", dbl,
                     strerror(errsv)); return 0;
         }
 
@@ -45,11 +45,11 @@ db_locate (const struct pbpst_state * s) {
                     if ( mkdir(str, 0777) == -1 ) {
                         errsv = errno;
                         fprintf(stderr, "pbpst: Could not create %s/%s: %s\n",
-                                db_loc, str, strerror(errsv)); return 0;
+                                dbl, str, strerror(errsv)); return 0;
                     }
                 } else {
                     fprintf(stderr, "pbpst: Could not cd to %s/%s: %s\n",
-                            db_loc, str, strerror(errsv)); return 0;
+                            dbl, str, strerror(errsv)); return 0;
                 }
             }
         }
@@ -61,18 +61,18 @@ db_locate (const struct pbpst_state * s) {
                     cwd, strerror(errsv)); return 0;
         }
 
-        db_len = strlen(db_loc) + 23;
+        db_len = strlen(dbl) + 23;
         db = (char * )malloc(db_len);
         if ( !db ) {
             fprintf(stderr, "pbpst: Could not save db path: Out of Memory\n");
             return 0;
         }
 
-        snprintf(db, db_len, "%s%s/pbpst/db.json", db_loc,
+        snprintf(db, db_len, "%s%s/pbpst/db.json", dbl,
                  which_brnch == XDG ? "" : "/.config");
     }
 
-    char * fdb = which_brnch == USR ? db_loc : db;
+    char * fdb = which_brnch == USR ? dbl : db;
 
     signed fd;
     errno = 0;
@@ -95,9 +95,9 @@ db_locate (const struct pbpst_state * s) {
 }
 
 char *
-db_swp_init (const char * db_loc) {
+db_swp_init (const char * dbl) {
 
-    size_t len = strlen(db_loc) + 1;
+    size_t len = strlen(dbl) + 1;
     char * parent = 0, * file = 0, * fc = 0, * swp_db_name = 0,
          * pc = (char * )malloc(len);
 
@@ -114,8 +114,8 @@ db_swp_init (const char * db_loc) {
         fd = -1; goto cleanup;
     }
 
-    snprintf(pc, len, "%s", db_loc);
-    snprintf(fc, len, "%s", db_loc);
+    snprintf(pc, len, "%s", dbl);
+    snprintf(fc, len, "%s", dbl);
 
     parent = dirname(pc);
     file = basename(fc);
@@ -137,7 +137,7 @@ db_swp_init (const char * db_loc) {
                 strerror(errsv)); fd = -1; goto cleanup;
     }
 
-    len = strlen(db_loc) + 7;
+    len = strlen(dbl) + 7;
     swp_db_name = (char * )malloc(len);
     if ( !swp_db_name ) {
         fprintf(stderr, "pbpst: Could not save swap db name: Out of Memory\n");
@@ -186,25 +186,25 @@ db_swp_init (const char * db_loc) {
 }
 
 signed
-db_swp_cleanup (const char * db_loc, const char * s_db_loc) {
+db_swp_cleanup (const char * dbl, const char * s_dbl) {
 
     errno = 0;
-    if ( rename(s_db_loc, db_loc) == -1 ) {
+    if ( rename(s_dbl, dbl) == -1 ) {
         signed errsv = errno;
-        fprintf(stderr, "pbpst: Failed to save %s to %s: %s\n", s_db_loc,
-                db_loc, strerror(errsv)); return -1;
+        fprintf(stderr, "pbpst: Failed to save %s to %s: %s\n", s_dbl,
+                dbl, strerror(errsv)); return -1;
     } return 0;
 }
 
 json_t *
-db_read (const char * db_loc) {
+db_read (const char * dbl) {
 
     FILE * f;
     signed errsv;
     errno = 0;
-    if ( !(f = fopen(db_loc, "r")) ) {
+    if ( !(f = fopen(dbl, "r")) ) {
         errsv = errno;
-        fprintf(stderr, "pbpst: Could not open %s for reading: %s\n", db_loc,
+        fprintf(stderr, "pbpst: Could not open %s for reading: %s\n", dbl,
                 strerror(errsv)); return 0;
     }
 
@@ -214,7 +214,7 @@ db_read (const char * db_loc) {
         errno = 0;
         if ( (fseek(f, 0, SEEK_END)) == -1 ) {
             errsv = errno;
-            fprintf(stderr, "pbpst: Failed to seek to end of %s: %s\n", db_loc,
+            fprintf(stderr, "pbpst: Failed to seek to end of %s: %s\n", dbl,
                     strerror(errsv)); goto cleanup;
         }
 
@@ -223,7 +223,7 @@ db_read (const char * db_loc) {
         if ( (size = ftell(f)) == -1 ) {
             errsv = errno;
             fprintf(stderr, "pbpst: failed to check position in %s: %s\n",
-                    db_loc, strerror(errsv)); goto cleanup;
+                    dbl, strerror(errsv)); goto cleanup;
         }
 
         if ( size == 0 ) {
@@ -231,7 +231,7 @@ db_read (const char * db_loc) {
             goto cleanup;
         }
 
-        fprintf(stderr, "pbpst: Failed reading %s: %s\n", db_loc, err.text);
+        fprintf(stderr, "pbpst: Failed reading %s: %s\n", dbl, err.text);
         goto cleanup;
     }
 
@@ -239,18 +239,18 @@ db_read (const char * db_loc) {
         errno = 0;
         if ( fclose(f) == -1 ) {
             errsv = errno;
-            fprintf(stderr, "pbpst: Could not close %s: %s\n", db_loc,
+            fprintf(stderr, "pbpst: Could not close %s: %s\n", dbl,
                     strerror(errsv)); json_decref(mdb); mdb = 0;
         } return mdb;
 }
 
 signed
-db_swp_flush (const json_t * mdb, const char * s_db_loc) {
+db_swp_flush (const json_t * mdb, const char * s_dbl) {
 
     FILE * swp_db;
     signed errsv;
     errno = 0;
-    if ( !(swp_db = fopen(s_db_loc, "w")) ) {
+    if ( !(swp_db = fopen(s_dbl, "w")) ) {
         errsv = errno;
         fprintf(stderr, "pbpst: Could not open swap db: %s\n",
                 strerror(errsv)); return -1;

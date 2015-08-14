@@ -1,8 +1,4 @@
-#include <stdint.h>    // uint8_t
-#include <stdio.h>     // fputs(), fputc(), fprintf(), fflush()
-#include <inttypes.h>  // PRIu8
-#include <curl/curl.h> // curl_off_t
-#include <jansson.h>
+#include "main.h"
 #include "callback.h"
 
 /* adapted from pacman */
@@ -48,7 +44,6 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
     if ( !ptr || !userdata ) { return 0; }
 
     size_t rsize = size * nmemb;
-
     *(ptr + rsize) = '\0';
 
     json_t * json = json_loads(ptr, 0, NULL);
@@ -58,7 +53,40 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
     const char * key;
     json_object_foreach(json, key, value) {
         printf("%s: %s\n", key, json_string_value(value));
-    } json_decref(json); return rsize;
+    }
+
+    json_t * pastes = json_object_get(mem_db, "pastes");
+    if ( !pastes ) { return rsize; }
+
+    json_t * prov_pastes = json_object_get(pastes, state.provider);
+    if ( !prov_pastes ) {
+        json_t * prov_obj = json_pack("{s:{}}", state.provider);
+        json_object_update(pastes, prov_obj);
+        json_decref(prov_obj);
+        prov_pastes = json_object_get(pastes, state.provider);
+    }
+
+    json_t * uuid_j  = json_object_get(json, "uuid"),
+           * lid_j   = json_object_get(json, "long"),
+           * label_j = json_object_get(json, "label");
+
+    if ( (!uuid_j && !state.uuid) || !lid_j ) { return rsize; }
+
+    const char * uuid  = uuid_j ? json_string_value(uuid_j) : state.uuid,
+               * lid   = json_string_value(lid_j),
+               * label = json_string_value(label_j);
+
+    json_t * new_paste = json_pack(label_j ? "{s:s,s:s}" : "{s:s,s:n}",
+                                   "long", lid, "label", label);
+
+    if ( json_object_set(prov_pastes, uuid, new_paste) == -1 ) {
+        return rsize;
+    }
+
+    printf("%s%s\n", state.provider, state.priv ? lid : lid + 24);
+    json_decref(uuid_j); json_decref(lid_j); json_decref(label_j);
+    json_decref(prov_pastes); json_decref(pastes); json_decref(new_paste);
+    json_decref(json); return rsize;
 }
 
 // vim: set ts=4 sw=4 et:
