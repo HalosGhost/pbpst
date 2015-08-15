@@ -12,9 +12,9 @@ json_t * mem_db, * pastes = 0, * prov_pastes = 0;
 struct pbpst_state state = {
     .path = 0, .url = 0, .lexer = 0, .vanity = 0,
     .uuid = 0, .provider = 0, .dbfile = 0,
-    .query = 0, .del = 0, .cmd = NON, .ln = 0,
+    .query = 0, .del = 0, .msg = 0, .cmd = NON, .ln = 0,
     .help = false, .priv = false, .rend = false,
-    .verb = false, .ncnf = false, .prog = false
+    .verb = 0, .prog = false
 };
 
 signed
@@ -29,7 +29,7 @@ main (signed argc, char * argv []) {
 
     signed exit_status = EXIT_SUCCESS;
 
-    const char vos [] = "SRUDP:hv:s:f:l:L:pru:b:q:d:n#";
+    const char vos [] = "SRUDP:hv:s:f:l:L:pru:b:q:d:m:#";
     for ( signed oi = 0, c = getopt_long(argc, argv, vos, os, &oi);
           c != -1; c = getopt_long(argc, argv, vos, os, &oi) ) {
 
@@ -49,6 +49,7 @@ main (signed argc, char * argv []) {
             case 'l': state_var = &state.lexer;    goto svcase;
             case 'v': state_var = &state.vanity;   goto svcase;
             case 'u': state_var = &state.uuid;     goto svcase;
+            case 'm': state_var = &state.msg;      goto svcase;
             case 'q': state_var = &state.query;    goto svcase;
             case 'd': state_var = &state.del;      goto svcase;
             case 'P': state_var = &state.provider; goto svcase;
@@ -60,11 +61,10 @@ main (signed argc, char * argv []) {
 
             case 'L': sscanf(optarg, "%" SCNu32, &state.ln); break;
             case '#': state.prog = true; break;
-            case 'n': state.ncnf = true; break;
             case 'r': state.rend = true; break;
             case 'p': state.priv = true; break;
             case 'h': state.help = true; break;
-            case 256: state.verb = true; break;
+            case 256: state.verb += 1;   break;
             case 257: printf(version_str); goto cleanup;
             default:  goto cleanup;
         }
@@ -133,6 +133,7 @@ main (signed argc, char * argv []) {
     cleanup:
         free(state.url);
         free(state.path);
+        free(state.msg);
         free(state.lexer);
         free(state.vanity);
         free(state.uuid);
@@ -164,10 +165,10 @@ pbpst_test_options (const struct pbpst_state * s) {
                || s->ln || s->priv || s->rend || !s->uuid || s->prog
                 ? 'R' : cl; break;
 
-        case UPD: cl = !s->uuid || s->priv || s->query || s->ncnf
+        case UPD: cl = !s->uuid || s->priv || s->query
                || s->del || s->url ? 'U' : cl; break;
 
-        case DBS: cl = (s->query && (s->ncnf || s->del)) || s->url
+        case DBS: cl = (s->query && s->del) || s->url
                || s->path || s->lexer || s->vanity || s->ln || s->priv
                || s->rend || s->uuid || s->prog ? 'D' : cl; break;
 
@@ -202,6 +203,7 @@ signal_handler (signed signum) {
     db_swp_cleanup(db_loc, swp_db_loc);
     free(state.url);
     free(state.path);
+    free(state.msg);
     free(state.lexer);
     free(state.vanity);
     free(state.uuid);
@@ -209,6 +211,8 @@ signal_handler (signed signum) {
     free(state.del);
     free(state.provider);
     json_decref(mem_db);
+    json_decref(pastes);
+    json_decref(prov_pastes);
     if ( swp_db_loc ) { free(swp_db_loc); }
     if ( db_loc == state.dbfile ) {
         free(state.dbfile);

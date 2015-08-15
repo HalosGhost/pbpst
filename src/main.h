@@ -43,7 +43,6 @@ static struct option os [] = {
     { "uuid",      required_argument, 0, 'u' },
 
     /* db options */
-    { "noconfirm", no_argument,       0, 'n' },
     { "query",     required_argument, 0, 'q' },
     { "delete",    required_argument, 0, 'd' },
 
@@ -116,13 +115,13 @@ static const char dbs_help [] =
 
 enum pb_cmd { NON = 0, SNC = 'S', RMV = 'R', UPD = 'U', DBS = 'D' };
 
-struct pbpst_state {
+extern struct pbpst_state {
     char * path, * url, * lexer, * vanity, * uuid, * provider,
-         * query, * del, * dbfile;
+         * query, * del, * dbfile, * msg;
     enum pb_cmd cmd;
     uint32_t ln;
-    uint16_t help, priv, rend: 8, verb: 8, ncnf: 8, prog: 8;
-};
+    uint16_t help, priv, rend, verb: 8, prog: 8;
+} state;
 
 bool
 pbpst_test_options (const struct pbpst_state *);
@@ -133,7 +132,6 @@ pbpst_dispatch (const struct pbpst_state *);
 void
 signal_handler (signed);
 
-extern struct pbpst_state state;
 static char * db_loc = 0, * swp_db_loc = 0;
 extern json_t * mem_db, * pastes, * prov_pastes;
 extern const char * const sys_siglist [];
