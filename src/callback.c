@@ -55,6 +55,8 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
     json_t * prov_obj = 0, * uuid_j = 0, * lid_j = 0,
            * label_j = 0, * status_j = 0, * new_paste = 0;
 
+    char * hdln = 0, * lexr = 0;
+
     if ( !pastes ) { goto cleanup; }
     prov_pastes = json_object_get(pastes, state.provider);
     if ( !prov_pastes ) {
@@ -105,13 +107,35 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
         const char * key;
         json_object_foreach(json, key, value) {
             printf("%s: %s\n", key, json_string_value(value));
-        }
-    } else {
-        const char * lb = label_j ? label : state.priv ? lid : lid + 24;
-        printf("%s%s\n", state.provider, lb);
+        } printf("murl: ");
     }
 
+    size_t tlen = strlen(state.lexer);
+
+    const char * rndr = state.rend ? "r/" : "",
+               * idnt = label_j ? label : state.priv ? lid : lid + 24;
+
+    hdln = state.ln ? malloc(14) : "";
+    lexr = state.lexer ? malloc(tlen + 3) : "";
+
+    if ( !hdln || !lexr ) {
+        fputs("pbpst: Could not store URL modifiers: Out of Memory\n", stderr);
+        goto cleanup;
+    }
+
+    if ( state.ln ) {
+        snprintf(hdln, 13, "#L-%" PRIu32, state.ln);
+    }
+
+    if ( state.lexer ) {
+        snprintf(lexr, tlen + 2, "/%s", state.lexer);
+    }
+
+    printf("%s%s%s%s%s\n", state.provider, rndr, idnt, lexr, hdln);
+
     cleanup:
+        if ( state.ln ) { free(hdln); }
+        if ( state.lexer ) { free(lexr); }
         json_decref(json);
         json_decref(uuid_j);
         json_decref(lid_j);
