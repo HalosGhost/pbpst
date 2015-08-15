@@ -110,26 +110,25 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
         } printf("murl: ");
     }
 
-    size_t tlen = strlen(state.lexer);
-
     const char * rndr = state.rend ? "r/" : "",
                * idnt = label_j ? label : state.priv ? lid : lid + 24;
 
-    hdln = state.ln ? malloc(14) : "";
-    lexr = state.lexer ? malloc(tlen + 3) : "";
-
-    if ( !hdln || !lexr ) {
-        fputs("pbpst: Could not store URL modifiers: Out of Memory\n", stderr);
-        goto cleanup;
-    }
-
     if ( state.ln ) {
-        snprintf(hdln, 13, "#L-%" PRIu32, state.ln);
-    }
+        hdln = malloc(14);
+        if ( !hdln ) {
+            fputs("pbpst: Could not store line modifier: Out of Memory\n",
+                  stderr); goto cleanup;
+        } snprintf(hdln, 13, "#L-%" PRIu32, state.ln);
+    } else { hdln = ""; }
 
     if ( state.lexer ) {
-        snprintf(lexr, tlen + 2, "/%s", state.lexer);
-    }
+        size_t tlen = strlen(state.lexer);
+        lexr = malloc(tlen + 3);
+        if ( !lexr ) {
+            fputs("pbpst: Could not store lexer modifier: Out of Memory\n",
+                  stderr); goto cleanup;
+        } snprintf(lexr, tlen + 2, "/%s", state.lexer);
+    } else { lexr = ""; }
 
     printf("%s%s%s%s%s\n", state.provider, rndr, idnt, lexr, hdln);
 
