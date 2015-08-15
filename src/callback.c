@@ -76,7 +76,13 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
         goto cleanup;
     } else if ( stat == 'd' ) {
         json_object_del(prov_pastes, state.uuid);
-        goto cleanup;
+        if ( state.verb ) {
+            json_t * value;
+            const char * key;
+            json_object_foreach(json, key, value) {
+                printf("%s: %s\n", key, json_string_value(value));
+            }
+        } goto cleanup;
     }
 
     if ( (!uuid_j && !state.uuid) || !lid_j ) { goto cleanup; }
@@ -94,9 +100,16 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
         goto cleanup;
     }
 
-    const char * lb = label_j    ? label
-                    : state.priv ? lid          : lid + 24;
-    printf("%s%s\n", state.provider, lb);
+    if ( state.verb ) {
+        json_t * value;
+        const char * key;
+        json_object_foreach(json, key, value) {
+            printf("%s: %s\n", key, json_string_value(value));
+        }
+    } else {
+        const char * lb = label_j ? label : state.priv ? lid : lid + 24;
+        printf("%s%s\n", state.provider, lb);
+    }
 
     cleanup:
         json_decref(json);
