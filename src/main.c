@@ -9,6 +9,7 @@
 #include "pbpst_db.h"
 
 json_t * mem_db, * pastes = 0, * prov_pastes = 0;
+static json_t * def_prov = 0;
 struct pbpst_state state = {
     .path = 0, .url = 0, .lexer = 0, .vanity = 0,
     .uuid = 0, .provider = 0, .dbfile = 0,
@@ -16,6 +17,8 @@ struct pbpst_state state = {
     .help = false, .priv = false, .rend = false,
     .verb = 0, .prog = false
 };
+
+const char * def_provider = 0;
 
 signed
 main (signed argc, char * argv []) {
@@ -97,14 +100,9 @@ main (signed argc, char * argv []) {
         exit_status = EXIT_FAILURE; goto cleanup;
     }
 
-    /**
-     * TODO
-     **
-     * Set state.provider according to the db (falling back on ptpb if needed)
-     */
-
-    // Make sure we have a sane provider string
-    if ( !state.provider ) {
+    if ( (def_prov = json_object_get(mem_db, "default_provider")) ) {
+        def_provider = json_string_value(def_prov);
+    } else if ( !state.provider ) {
         size_t len = strlen("https://ptpb.pw/") + 1;
         state.provider = malloc(len);
         if ( !state.provider ) {
@@ -143,6 +141,7 @@ main (signed argc, char * argv []) {
         json_decref(mem_db);
         json_decref(pastes);
         json_decref(prov_pastes);
+        json_decref(def_prov);
         if ( swp_db_loc ) { free(swp_db_loc); }
         if ( db_loc == state.dbfile ) {
             free(state.dbfile);
@@ -213,6 +212,7 @@ signal_handler (signed signum) {
     json_decref(mem_db);
     json_decref(pastes);
     json_decref(prov_pastes);
+    json_decref(def_prov);
     if ( swp_db_loc ) { free(swp_db_loc); }
     if ( db_loc == state.dbfile ) {
         free(state.dbfile);

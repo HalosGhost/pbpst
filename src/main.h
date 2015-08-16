@@ -135,5 +135,6 @@ signal_handler (signed);
 static char * db_loc = 0, * swp_db_loc = 0;
 extern json_t * mem_db, * pastes, * prov_pastes;
 extern const char * const sys_siglist [];
+extern const char * def_provider;
 
 // vim: set ts=4 sw=4 et:
