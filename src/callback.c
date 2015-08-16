@@ -57,13 +57,15 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
 
     char * hdln = 0, * lexr = 0;
 
+    const char * provider = def_provider ? def_provider : state.provider;
+
     if ( !pastes ) { goto cleanup; }
-    prov_pastes = json_object_get(pastes, state.provider);
+    prov_pastes = json_object_get(pastes, provider);
     if ( !prov_pastes ) {
-        prov_obj = json_pack("{s:{}}", state.provider);
+        prov_obj = json_pack("{s:{}}", provider);
         json_object_update(pastes, prov_obj);
         json_decref(prov_obj);
-        prov_pastes = json_object_get(pastes, state.provider);
+        prov_pastes = json_object_get(pastes, provider);
     }
 
     uuid_j   = json_object_get(json, "uuid");
@@ -130,7 +132,7 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
         } snprintf(lexr, tlen + 2, "/%s", state.lexer);
     } else { lexr = ""; }
 
-    printf("%s%s%s%s%s\n", state.provider, rndr, idnt, lexr, hdln);
+    printf("%s%s%s%s%s\n", provider, rndr, idnt, lexr, hdln);
 
     cleanup:
         if ( state.ln ) { free(hdln); }
