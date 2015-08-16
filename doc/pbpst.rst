@@ -17,28 +17,37 @@ Operations
 ----------
 
 -S, --sync
-    Create a paste
+    Create a paste.
 
 -R, --remove
-    Delete a paste
+    Delete a paste.
 
 -U, --update
-    Update a paste
+    Update a paste.
+
+-D, --database
+    Interact with the local database.
 
 Global Options
 --------------
 
+The following options are available for any operation.
+
 -h, --help
-    Print usage information and exit
+    Print usage information and exit.
 
 -P, --provider
-    Specify an alternative pb host, default is https://ptpb.pw
+    Specify an alternative pb host, default is https://ptpb.pw.
+
+-b, --dbpath=PATH
+    Specify a file to use as the local database.
 
 --verbose
-    Output verbosely
+    Passing once will output the full response from pb in valid yaml (including the URL we create with modifications specified by the user).
+    Passing twice will signal :program:`libcurl` to output verbosely as well.
 
 --version
-    List the version and exit
+    List the version and exit.
 
 Sync Options
 ------------
@@ -46,40 +55,37 @@ Sync Options
 Note: if neither the :option:`s` or :option:`f` options are passed, :program:`pbpst` will paste the contents of :file:`stdin`.
 
 -s, --shorten=URL
-    Create a redirect to URL instead of pasting
+    Create a redirect to URL instead of pasting.
 
 -f, --file=FILE
-    Create a paste from FILE
+    Create a paste from FILE.
 
 -l, --lexer=LANG
-    Lex paste with LANG
+    Lex paste with LANG.
 
 -L, --line=LINE
-    Highlight LINE in paste
+    Highlight LINE in paste.
 
 -p, --private
-    Return a less-guessable Id for paste
+    Return a less-guessable Id for paste.
 
 -r, --render
-    Render a ReStructuredText or Markdown paste to HTML
+    Render a ReStructuredText or Markdown paste to HTML.
 
 -v, --vanity=NAME
-    Use NAME as a custom Id
+    Use NAME as a custom Id.
 
 -#, --progress
-    Show a progress bar for the status of the upload
+    Show a progress bar for the status of the upload.
 
--h, --help
-    List this help and exit
+-m, --message=STR
+    Store STR as a message with the paste in the local database (helpful for reminding you what the contents of the paste are).
 
 Remove Options
 --------------
 
 -u, --uuid=UUID
-    Use UUID as authentication credential
-
--h, --help
-    List this help and exit
+    Use UUID as authentication credential.
 
 Update Options
 --------------
@@ -87,28 +93,40 @@ Update Options
 Note: if the :option:`f` option is not passed, :program:`pbpst` will paste the contents of :file:`stdin`.
 
 -f, --file=FILE
-    Use FILE for content of paste
+    Use FILE for content of paste.
 
 -l, --lexer=LANG
-    Lex paste with LANG
+    Lex paste with LANG.
 
 -L, --line=LINE
-    Highlight LINE
+    Highlight LINE.
 
 -r, --render
-    Render a ReStructuredText or Markdown paste to HTML
+    Render a ReStructuredText or Markdown paste to HTML.
 
 -u, --uuid=UUID
-    Use UUID as authentication credential
+    Use UUID as authentication credential.
 
 -v, --vanity=NAME
-    Use NAME as a custom Id
+    Use NAME as a custom Id.
 
 -#, --progress
-    Show a progress bar for the status of the upload
+    Show a progress bar for the status of the upload.
 
--h, --help
-    List this help and exit
+-m, --message=STR
+    Store STR as a message with the paste in the local database (helpful for reminding you what the contents of the paste are).
+
+Database Options
+----------------
+
+-i, --init
+    Initialize the database with a default provider and a pastes object, and exit.
+
+-q, --query=STR
+    Search each paste in the pastes object for text matching STR. Matches will be printed to :file:`stdout` with the form ``<uuid> <provider>/<longid> <msg>``.
+
+-d, --delete=UUID
+    Remove the paste from the pastes object specified by UUID. Note: This option will respect the default provider and :option:`-P`.
 
 Examples
 --------

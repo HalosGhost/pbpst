@@ -46,7 +46,7 @@ label
 
 msg
     An arbitrary string which may be specified by the user upon creation/updating of the associated paste.
-    If the user choose not to specify a string for a paste, this field defaults to the basename of the file.
+    If the user choose not to specify a string for a paste, this field defaults to the basename of the file ("-" for :file:`stdin`).
 
 Example
 -------
