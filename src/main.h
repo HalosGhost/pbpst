@@ -31,6 +31,8 @@ static struct option os [] = {
     { "shorten",   required_argument, 0, 's' },
     { "file",      required_argument, 0, 'f' },
     { "lexer",     required_argument, 0, 'l' },
+    { "theme",     required_argument, 0, 't' },
+    { "extension", required_argument, 0, 'e' },
     { "line",      required_argument, 0, 'L' },
     { "private",   no_argument,       0, 'p' }, // sync-only
     { "render",    no_argument,       0, 'r' },
@@ -58,20 +60,20 @@ static struct option os [] = {
 
 static const char gen_help [] =
     "\n"
-    "  -h, --help          List this help and exit\n"
-    "  -b, --dbpath=PATH   Use the database at PATH\n"
-    "  -P, --provider      Specify an alternative pb host\n"
-    "      --verbose       Output verbosely\n"
-    "      --version       List the version and exit\n";
+    "  -h, --help           List this help and exit\n"
+    "  -b, --dbpath=PATH    Use the database at PATH\n"
+    "  -P, --provider       Specify an alternative pb host\n"
+    "      --verbose        Output verbosely\n"
+    "      --version        List the version and exit\n";
 
 static const char cmds_help [] =
     "Usage: pbpst <operation> [option ...]\n"
     "pbpst -- a simple tool to pastebin from the command-line\n\n"
     "Operations:\n"
-    "  -S, --sync          Create a paste\n"
-    "  -R, --remove        Delete a paste\n"
-    "  -U, --update        Update a paste\n"
-    "  -D, --database      Operate on the database\n\n"
+    "  -S, --sync           Create a paste\n"
+    "  -R, --remove         Delete a paste\n"
+    "  -U, --update         Update a paste\n"
+    "  -D, --database       Operate on the database\n\n"
     "Options:";
 
 static const char more_info [] =
@@ -80,45 +82,49 @@ static const char more_info [] =
 static const char sync_help [] =
     "Usage: pbpst {-S --sync} [option ...]\n\n"
     "Options:\n"
-    "  -s, --shorten=URL   Create a redirect to URL instead of pasting\n"
-    "  -f, --file=FILE     Create a paste from FILE\n"
-    "  -l, --lexer=LANG    Lex paste with LANG\n"
-    "  -L, --line=LINE     Highlight LINE in paste\n"
-    "  -p, --private       Return a less-guessable Id for paste\n"
-    "  -r, --render        Render paste from rst to HTML\n"
-    "  -v, --vanity=NAME   Use NAME as a custom Id\n"
-    "  -#, --progress      Show a progress bar for the upload\n"
-    "  -m, --message=MSG   Use MSG as the note in the database\n";
+    "  -s, --shorten=URL    Create a redirect to URL instead of pasting\n"
+    "  -f, --file=FILE      Create a paste from FILE\n"
+    "  -l, --lexer=LANG     Lex paste with LANG\n"
+    "  -t, --theme=THEME    Style paste with pygments theme THEME\n"
+    "  -e, --extension=EXT  Specify MIME-type as EXT\n"
+    "  -L, --line=LINE      Highlight LINE in paste\n"
+    "  -p, --private        Return a less-guessable Id for paste\n"
+    "  -r, --render         Render paste from rst to HTML\n"
+    "  -v, --vanity=NAME    Use NAME as a custom Id\n"
+    "  -#, --progress       Show a progress bar for the upload\n"
+    "  -m, --message=MSG    Use MSG as the note in the database\n";
 
 static const char rem_help [] =
     "Usage: pbpst {-R --remove} [option ...]\n\n"
     "Options:\n"
-    "  -u, --uuid=UUID     Use UUID as authentication credential\n";
+    "  -u, --uuid=UUID      Use UUID as authentication credential\n";
 
 static const char upd_help [] =
     "Usage: pbpst {-U --update} [option ...]\n\n"
     "Options:\n"
-    "  -f, --file=FILE     Use FILE for content of paste\n"
-    "  -l, --lexer=LANG    Lex paste with LANG\n"
-    "  -L, --line=LINE     Highlight LINE\n"
-    "  -r, --render        Render paste from rst to HTML\n"
-    "  -u, --uuid=UUID     Use UUID as authentication credential\n"
-    "  -v, --vanity=NAME   Use NAME as a custom Id\n"
-    "  -#, --progress      Show a progress bar for the upload\n"
-    "  -m, --message=MSG   Use MSG as the note in the database\n";
+    "  -f, --file=FILE      Use FILE for content of paste\n"
+    "  -l, --lexer=LANG     Lex paste with LANG\n"
+    "  -L, --line=LINE      Highlight LINE\n"
+    "  -t, --theme=THEME    Style paste with pygments theme THEME\n"
+    "  -e, --extension=EXT  Specify MIME-type as EXT\n"
+    "  -r, --render         Render paste from rst to HTML\n"
+    "  -u, --uuid=UUID      Use UUID as authentication credential\n"
+    "  -v, --vanity=NAME    Use NAME as a custom Id\n"
+    "  -#, --progress       Show a progress bar for the upload\n"
+    "  -m, --message=MSG    Use MSG as the note in the database\n";
 
 static const char dbs_help [] =
     "Usage: pbpst {-D --database} [option ...]\n\n"
     "Options:\n"
-    "  -i, --init          Initalize a default database (no clobbering)\n"
-    "  -q, --query=STR     Search the database for a paste matching STR\n"
-    "  -d, --delete=UUID   Manually delete the paste with UUID\n";
+    "  -i, --init           Initalize a default database (no clobbering)\n"
+    "  -q, --query=STR      Search the database for a paste matching STR\n"
+    "  -d, --delete=UUID    Manually delete the paste with UUID\n";
 
 enum pb_cmd { NON = 0, SNC = 'S', RMV = 'R', UPD = 'U', DBS = 'D' };
 
 extern struct pbpst_state {
     char * path, * url, * lexer, * vanity, * uuid, * provider,
-         * query, * del, * dbfile, * msg;
+         * query, * del, * dbfile, * msg, * theme, * ext;
     enum pb_cmd cmd;
     uint32_t ln;
     uint16_t help, priv, rend: 8, init: 8, verb: 8, prog: 8;

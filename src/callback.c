@@ -55,7 +55,7 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
     json_t * prov_obj = 0, * uuid_j = 0, * lid_j = 0,
            * label_j = 0, * status_j = 0, * new_paste = 0;
 
-    char * hdln = 0, * lexr = 0;
+    char * hdln = 0, * lexr = 0, * them = 0, * extn = 0;
 
     const char * provider = def_provider ? def_provider : state.provider;
 
@@ -132,11 +132,31 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
         } snprintf(lexr, tlen + 2, "/%s", state.lexer);
     } else { lexr = ""; }
 
-    printf("%s%s%s%s%s\n", provider, rndr, idnt, lexr, hdln);
+    if ( state.theme ) {
+        size_t tlen = strlen(state.theme);
+        them = malloc(tlen + 9);
+        if ( !them ) {
+            fputs("pbpst: Could not store theme modifier: Out of Memory\n",
+                  stderr); goto cleanup;
+        } snprintf(them, tlen + 8, "?style=%s", state.theme);
+    } else { them = ""; }
+
+    if ( state.ext ) {
+        size_t tlen = strlen(state.ext);
+        extn = malloc(tlen + 3);
+        if ( !extn ) {
+            fputs("pbpst: Could not store extension modifier: Out of Memory\n",
+                  stderr); goto cleanup;
+        } snprintf(extn, tlen + 2, ".%s", state.ext);
+    } else { extn = ""; }
+
+    printf("%s%s%s%s%s%s%s\n", provider, rndr, idnt, extn, lexr, them, hdln);
 
     cleanup:
         if ( state.ln ) { free(hdln); }
         if ( state.lexer ) { free(lexr); }
+        if ( state.theme ) { free(them); }
+        if ( state.ext ) { free(extn); }
         json_decref(json);
         json_decref(uuid_j);
         json_decref(lid_j);

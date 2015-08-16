@@ -13,7 +13,8 @@ static json_t * def_prov = 0;
 struct pbpst_state state = {
     .path = 0, .url = 0, .lexer = 0, .vanity = 0,
     .uuid = 0, .provider = 0, .dbfile = 0,
-    .query = 0, .del = 0, .msg = 0, .cmd = NON, .ln = 0,
+    .query = 0, .del = 0, .msg = 0, .theme = 0, .ext = 0,
+    .cmd = NON, .ln = 0,
     .help = false, .priv = false, .rend = false,
     .init = false, .verb = 0, .prog = false
 };
@@ -32,7 +33,7 @@ main (signed argc, char * argv []) {
 
     signed exit_status = EXIT_SUCCESS;
 
-    const char vos [] = "SRUDP:hv:s:f:l:L:pru:b:q:d:im:#";
+    const char vos [] = "SRUDP:hv:s:f:l:t:e:L:pru:b:q:d:im:#";
     for ( signed oi = 0, c = getopt_long(argc, argv, vos, os, &oi);
           c != -1; c = getopt_long(argc, argv, vos, os, &oi) ) {
 
@@ -50,6 +51,8 @@ main (signed argc, char * argv []) {
             case 's': state_var = &state.url;      goto svcase;
             case 'f': state_var = &state.path;     goto svcase;
             case 'l': state_var = &state.lexer;    goto svcase;
+            case 't': state_var = &state.theme;    goto svcase;
+            case 'e': state_var = &state.ext;      goto svcase;
             case 'v': state_var = &state.vanity;   goto svcase;
             case 'u': state_var = &state.uuid;     goto svcase;
             case 'm': state_var = &state.msg;      goto svcase;
@@ -134,6 +137,8 @@ main (signed argc, char * argv []) {
         free(state.path);
         free(state.msg);
         free(state.lexer);
+        free(state.theme);
+        free(state.ext);
         free(state.vanity);
         free(state.uuid);
         free(state.query);
@@ -162,13 +167,13 @@ pbpst_test_options (const struct pbpst_state * s) {
                || s->ln || s->vanity )) || s->uuid ? 'S' : cl; break;
 
         case RMV: cl = s->path || s->url  || s->lexer || s->vanity || s->init
-               || s->ln || s->priv || s->rend || !s->uuid || s->prog
-                ? 'R' : cl; break;
+               || s->ln || s->priv || s->rend || !s->uuid || s->prog || s->theme
+               || s->ext ? 'R' : cl; break;
 
         case UPD: cl = !s->uuid || s->priv || s->query || s->init
                || s->del || s->url ? 'U' : cl; break;
 
-        case DBS: cl = (s->query && s->del) || s->url
+        case DBS: cl = (s->query && s->del) || s->url || s->theme || s->ext
                || s->path || s->lexer || s->vanity || s->ln || s->priv
                || s->rend || s->uuid || s->prog ? 'D' : cl; break;
 
@@ -205,6 +210,8 @@ signal_handler (signed signum) {
     free(state.path);
     free(state.msg);
     free(state.lexer);
+    free(state.theme);
+    free(state.ext);
     free(state.vanity);
     free(state.uuid);
     free(state.query);

@@ -63,6 +63,12 @@ Note: if neither the :option:`s` or :option:`f` options are passed, :program:`pb
 -l, --lexer=LANG
     Lex paste with LANG.
 
+-t, --theme=THEME
+    Style paste using the pygments theme THEME.
+
+-e, --extension=EXT
+    Specify the MIME-type of the file as EXT.
+
 -L, --line=LINE
     Highlight LINE in paste.
 
@@ -97,6 +103,12 @@ Note: if the :option:`f` option is not passed, :program:`pbpst` will paste the c
 
 -l, --lexer=LANG
     Lex paste with LANG.
+
+-t, --theme=THEME
+    Style paste using the pygments theme THEME.
+
+-e, --extension=EXT
+    Specify the MIME-type of the file as EXT.
 
 -L, --line=LINE
     Highlight LINE.
