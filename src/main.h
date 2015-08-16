@@ -43,6 +43,7 @@ static struct option os [] = {
     { "uuid",      required_argument, 0, 'u' },
 
     /* db options */
+    { "init",      no_argument,       0, 'i' },
     { "query",     required_argument, 0, 'q' },
     { "delete",    required_argument, 0, 'd' },
 
@@ -109,7 +110,7 @@ static const char upd_help [] =
 static const char dbs_help [] =
     "Usage: pbpst {-D --database} [option ...]\n\n"
     "Options:\n"
-    "  -n, --noconfirm     Do not ask for confirmation during modification\n"
+    "  -i, --init          Initalize a default database (no clobbering)\n"
     "  -q, --query=STR     Search the database for a paste matching STR\n"
     "  -d, --delete=UUID   Manually delete the paste with UUID\n";
 
@@ -120,7 +121,7 @@ extern struct pbpst_state {
          * query, * del, * dbfile, * msg;
     enum pb_cmd cmd;
     uint32_t ln;
-    uint16_t help, priv, rend, verb: 8, prog: 8;
+    uint16_t help, priv, rend: 8, init: 8, verb: 8, prog: 8;
 } state;
 
 bool

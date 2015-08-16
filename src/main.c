@@ -15,7 +15,7 @@ struct pbpst_state state = {
     .uuid = 0, .provider = 0, .dbfile = 0,
     .query = 0, .del = 0, .msg = 0, .cmd = NON, .ln = 0,
     .help = false, .priv = false, .rend = false,
-    .verb = 0, .prog = false
+    .init = false, .verb = 0, .prog = false
 };
 
 const char * def_provider = 0;
@@ -32,7 +32,7 @@ main (signed argc, char * argv []) {
 
     signed exit_status = EXIT_SUCCESS;
 
-    const char vos [] = "SRUDP:hv:s:f:l:L:pru:b:q:d:m:#";
+    const char vos [] = "SRUDP:hv:s:f:l:L:pru:b:q:d:im:#";
     for ( signed oi = 0, c = getopt_long(argc, argv, vos, os, &oi);
           c != -1; c = getopt_long(argc, argv, vos, os, &oi) ) {
 
@@ -65,6 +65,7 @@ main (signed argc, char * argv []) {
             case 'L': sscanf(optarg, "%" SCNu32, &state.ln); break;
             case '#': state.prog = true; break;
             case 'r': state.rend = true; break;
+            case 'i': state.init = true; break;
             case 'p': state.priv = true; break;
             case 'h': state.help = true; break;
             case 256: state.verb += 1;   break;
@@ -118,7 +119,7 @@ main (signed argc, char * argv []) {
         }
     }
 
-    exit_status = pbpst_dispatch(&state);
+    exit_status = !state.init ? pbpst_dispatch(&state) : EXIT_SUCCESS;
 
     if ( db_swp_flush(mem_db, swp_db_loc) == -1 ) {
         exit_status = EXIT_FAILURE; goto cleanup;
@@ -157,14 +158,14 @@ pbpst_test_options (const struct pbpst_state * s) {
     const char option_err [] = "pbpst: erroneous option(s). See `pbpst -%ch`\n";
     char cl = 0;
     switch ( s->cmd ) {
-        case SNC: cl = (s->url && (s->path || s->lexer || s->rend
+        case SNC: cl = (s->url && (s->path || s->lexer || s->rend || s->init
                || s->ln || s->vanity )) || s->uuid ? 'S' : cl; break;
 
-        case RMV: cl = s->path || s->url  || s->lexer || s->vanity
+        case RMV: cl = s->path || s->url  || s->lexer || s->vanity || s->init
                || s->ln || s->priv || s->rend || !s->uuid || s->prog
                 ? 'R' : cl; break;
 
-        case UPD: cl = !s->uuid || s->priv || s->query
+        case UPD: cl = !s->uuid || s->priv || s->query || s->init
                || s->del || s->url ? 'U' : cl; break;
 
         case DBS: cl = (s->query && s->del) || s->url
