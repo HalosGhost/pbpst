@@ -115,40 +115,28 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
     const char * rndr = state.rend ? "r/" : "",
                * idnt = label_j ? label : state.priv ? lid : lid + 24;
 
-    if ( state.ln ) {
-        hdln = malloc(14);
-        if ( !hdln ) {
-            fputs("pbpst: Could not store line modifier: Out of Memory\n",
-                  stderr); goto cleanup;
-        } snprintf(hdln, 13, "#L-%" PRIu32, state.ln);
-    } else { hdln = ""; }
+    char * state_mod = 0, ** mod_var = 0,
+         * mod_names [] = { "line", "lexer", "theme", "extension" };
 
-    if ( state.lexer ) {
-        size_t tlen = strlen(state.lexer);
-        lexr = malloc(tlen + 3);
-        if ( !lexr ) {
-            fputs("pbpst: Could not store lexer modifier: Out of Memory\n",
-                  stderr); goto cleanup;
-        } snprintf(lexr, tlen + 2, "/%s", state.lexer);
-    } else { lexr = ""; }
+    const char * mod_fmts [] = { "#L-", "/", "?style=", "." };
 
-    if ( state.theme ) {
-        size_t tlen = strlen(state.theme);
-        them = malloc(tlen + 9);
-        if ( !them ) {
-            fputs("pbpst: Could not store theme modifier: Out of Memory\n",
-                  stderr); goto cleanup;
-        } snprintf(them, tlen + 8, "?style=%s", state.theme);
-    } else { them = ""; }
+    for ( uint8_t i = 0; i < 4; i ++ ) {
+        switch ( mod_names[i][1] ) {
+            case 'i': mod_var = &hdln; state_mod = state.ln;    break;
+            case 'e': mod_var = &lexr; state_mod = state.lexer; break;
+            case 'h': mod_var = &them; state_mod = state.theme; break;
+            case 'x': mod_var = &extn; state_mod = state.ext;   break;
+        }
 
-    if ( state.ext ) {
-        size_t tlen = strlen(state.ext);
-        extn = malloc(tlen + 3);
-        if ( !extn ) {
-            fputs("pbpst: Could not store extension modifier: Out of Memory\n",
-                  stderr); goto cleanup;
-        } snprintf(extn, tlen + 2, ".%s", state.ext);
-    } else { extn = ""; }
+        if ( state_mod ) {
+            size_t tlen = strlen(state_mod) + strlen(mod_fmts[i]);
+            *mod_var = malloc(tlen + 2);
+            if ( !mod_var ) {
+                fprintf(stderr, "pbpst: Could not modify %s: Out of Memory\n",
+                                mod_names[i]); goto cleanup;
+            } snprintf(*mod_var, tlen + 1, "%s%s", mod_fmts[i], state_mod);
+        } else { *mod_var = ""; }
+    }
 
     printf("%s%s%s%s%s%s%s\n", provider, rndr, idnt, extn, lexr, them, hdln);
 

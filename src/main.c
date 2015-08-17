@@ -60,12 +60,14 @@ main (signed argc, char * argv []) {
             case 'd': state_var = &state.del;      goto svcase;
             case 'P': state_var = &state.provider; goto svcase;
             case 'b': state_var = &state.dbfile;   goto svcase;
+            case 'L': state_var = &state.ln;       goto svcase;
             svcase:
                 *state_var = (char * )malloc(l);
-                snprintf(*state_var, l, "%s", optarg);
-                break;
+                if ( !*state_var ) {
+                    fputs("pbpst: Could not store arguments: Out of Memory\n",
+                          stderr); goto cleanup;
+                } snprintf(*state_var, l, "%s", optarg); break;
 
-            case 'L': sscanf(optarg, "%" SCNu32, &state.ln); break;
             case '#': state.prog = true; break;
             case 'r': state.rend = true; break;
             case 'i': state.init = true; break;
@@ -146,6 +148,7 @@ main (signed argc, char * argv []) {
         free(state.query);
         free(state.del);
         free(state.provider);
+        free(state.ln);
         json_decref(mem_db);
         json_decref(pastes);
         json_decref(prov_pastes);
@@ -219,6 +222,7 @@ signal_handler (signed signum) {
     free(state.query);
     free(state.del);
     free(state.provider);
+    free(state.ln);
     json_decref(mem_db);
     json_decref(pastes);
     json_decref(prov_pastes);

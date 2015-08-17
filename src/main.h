@@ -124,10 +124,9 @@ enum pb_cmd { NON = 0, SNC = 'S', RMV = 'R', UPD = 'U', DBS = 'D' };
 
 extern struct pbpst_state {
     char * path, * url, * lexer, * vanity, * uuid, * provider,
-         * query, * del, * dbfile, * msg, * theme, * ext;
+         * query, * del, * dbfile, * msg, * theme, * ext, * ln;
     enum pb_cmd cmd;
-    uint32_t ln;
-    uint16_t help, priv, rend: 8, init: 8, verb: 8, prog: 8;
+    uint16_t help, priv, rend, init, verb, prog;
 } state;
 
 bool
