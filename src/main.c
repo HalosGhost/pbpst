@@ -128,6 +128,8 @@ main (signed argc, char * argv []) {
         exit_status = EXIT_FAILURE; goto cleanup;
     }
 
+    if ( exit_status != EXIT_SUCCESS ) { goto cleanup; }
+
     if ( db_swp_cleanup(db_loc, swp_db_loc) == -1 ) {
         exit_status = EXIT_FAILURE; goto cleanup;
     }
