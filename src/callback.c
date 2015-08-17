@@ -96,8 +96,8 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
 
     const char * msg =  state.msg               ? state.msg
                      : !state.msg && state.path ? state.path : "-";
-    new_paste = json_pack(label_j ? "{s:s,s:s,s:s}" : "{s:s,s:s,s:n}", "long", lid,
-                                    "msg", msg, "label", label);
+    new_paste = json_pack(label_j ? "{s:s,s:s,s:s}" : "{s:s,s:s,s:n}", "long",
+                                    lid, "msg", msg, "label", label);
 
     if ( json_object_set(prov_pastes, uuid, new_paste) == -1 ) {
         fputs("pbpst: Failed to create new paste object\n", stderr);
