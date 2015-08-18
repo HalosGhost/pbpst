@@ -9,7 +9,7 @@ pb_paste (const struct pbpst_state * s) {
     CURL * handle = curl_easy_init();
 
     if ( !handle ) {
-        fputs("Failed to get CURL handle", stderr);
+        fputs("pbpst: Failed to get CURL handle\n", stderr);
         return CURLE_FAILED_INIT;
     }
 
@@ -93,7 +93,7 @@ pb_remove (const struct pbpst_state * s) {
     CURL * handle = curl_easy_init();
 
     if ( !handle ) {
-        fputs("Failed to get CURL handle", stderr);
+        fputs("pbpst: Failed to get CURL handle\n", stderr);
         return CURLE_FAILED_INIT;
     }
 
@@ -119,6 +119,36 @@ pb_remove (const struct pbpst_state * s) {
 
     cleanup:
         if ( list ) { curl_slist_free_all(list); }
+        curl_easy_cleanup(handle);
+        free(target);
+        return status;
+}
+
+CURLcode
+pb_list (const struct pbpst_state * s) {
+
+    CURLcode status = CURLE_OK;
+    CURL * handle = curl_easy_init();
+
+    if ( !handle ) {
+        fputs("pbpst: Failed to get CURL handle\n", stderr);
+        return CURLE_FAILED_INIT;
+    }
+
+    curl_easy_setopt(handle, CURLOPT_VERBOSE, s->verb == 2);
+
+    const char * provider = def_provider ? def_provider : s->provider;
+
+    size_t target_len = strlen(provider) + 3;
+    char * target = malloc(target_len);
+    if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
+
+    snprintf(target, target_len, "%s%s", provider, s->llex ? "l" : "ls");
+    curl_easy_setopt(handle, CURLOPT_URL, target);
+
+    status = curl_easy_perform(handle);
+
+    cleanup:
         curl_easy_cleanup(handle);
         free(target);
         return status;

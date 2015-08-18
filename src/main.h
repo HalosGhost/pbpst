@@ -22,40 +22,42 @@ static const char version_str [] = "pbpst 0.6.0\n";
 
 static struct option os [] = {
     /* commands */
-    { "sync",      no_argument,       0, 'S' },
-    { "remove",    no_argument,       0, 'R' },
-    { "update",    no_argument,       0, 'U' },
-    { "database",  no_argument,       0, 'D' },
+    { "sync",        no_argument,       0, 'S' },
+    { "remove",      no_argument,       0, 'R' },
+    { "update",      no_argument,       0, 'U' },
+    { "database",    no_argument,       0, 'D' },
 
     /* sync/upd options */
-    { "shorten",   required_argument, 0, 's' },
-    { "file",      required_argument, 0, 'f' },
-    { "lexer",     required_argument, 0, 'l' },
-    { "theme",     required_argument, 0, 't' },
-    { "extension", required_argument, 0, 'e' },
-    { "line",      required_argument, 0, 'L' },
-    { "private",   no_argument,       0, 'p' }, // sync-only
-    { "render",    no_argument,       0, 'r' },
-    { "vanity",    required_argument, 0, 'v' },
-    { "help",      no_argument,       0, 'h' },
-    { "progress",  no_argument,       0, '#' },
-    { "message",   required_argument, 0, 'm' },
+    { "shorten",     required_argument, 0, 's' },
+    { "file",        required_argument, 0, 'f' },
+    { "lexer",       required_argument, 0, 'l' },
+    { "theme",       required_argument, 0, 't' },
+    { "extension",   required_argument, 0, 'e' },
+    { "line",        required_argument, 0, 'L' },
+    { "private",     no_argument,       0, 'p' }, // sync-only
+    { "render",      no_argument,       0, 'r' },
+    { "vanity",      required_argument, 0, 'v' },
+    { "help",        no_argument,       0, 'h' },
+    { "progress",    no_argument,       0, '#' },
+    { "message",     required_argument, 0, 'm' },
 
     /* for rem and upd */
-    { "uuid",      required_argument, 0, 'u' },
+    { "uuid",        required_argument, 0, 'u' },
 
     /* db options */
-    { "init",      no_argument,       0, 'i' },
-    { "query",     required_argument, 0, 'q' },
-    { "delete",    required_argument, 0, 'd' },
+    { "init",        no_argument,       0, 'i' },
+    { "query",       required_argument, 0, 'q' },
+    { "delete",      required_argument, 0, 'd' },
 
     /* generic options */
-    { "provider",  required_argument, 0, 'P' },
-    { "help",      no_argument,       0, 'h' },
-    { "dbpath",    required_argument, 0, 'b' },
-    { "verbose",   no_argument,       0, 256 },
-    { "version",   no_argument,       0, 257 },
-    { 0,           0,                 0, 0   }
+    { "provider",    required_argument, 0, 'P' },
+    { "dbpath",      required_argument, 0, 'b' },
+    { "verbose",     no_argument,       0, 'V' },
+    { "help",        no_argument,       0, 'h' },
+    { "version",     no_argument,       0, 256 },
+    { "list-lexers", no_argument,       0, 257 },
+    { "list-themes", no_argument,       0, 258 },
+    { 0,             0,                 0, 0   }
 };
 
 static const char gen_help [] =
@@ -63,7 +65,9 @@ static const char gen_help [] =
     "  -h, --help           List this help and exit\n"
     "  -b, --dbpath=PATH    Use the database at PATH\n"
     "  -P, --provider       Specify an alternative pb host\n"
-    "      --verbose        Output verbosely\n"
+    "  -V, --verbose        Output verbosely\n"
+    "      --list-lexers    List available lexers and exit\n"
+    "      --list-themes    List available themes and exit\n"
     "      --version        List the version and exit\n";
 
 static const char cmds_help [] =
@@ -126,7 +130,7 @@ extern struct pbpst_state {
     char * path, * url, * lexer, * vanity, * uuid, * provider,
          * query, * del, * dbfile, * msg, * theme, * ext, * ln;
     enum pb_cmd cmd;
-    uint16_t help, priv, rend, init, verb, prog;
+    uint16_t help, priv, rend, init, verb: 8, prog: 8, llex: 8, lthm: 8;
 } state;
 
 bool

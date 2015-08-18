@@ -33,7 +33,7 @@ main (signed argc, char * argv []) {
 
     signed exit_status = EXIT_SUCCESS;
 
-    const char vos [] = "SRUDP:hv:s:f:l:t:e:L:pru:b:q:d:im:#";
+    const char vos [] = "SRUDP:hv:s:f:l:t:e:L:pru:b:q:d:im:#V";
     for ( signed oi = 0, c = getopt_long(argc, argv, vos, os, &oi);
           c != -1; c = getopt_long(argc, argv, vos, os, &oi) ) {
 
@@ -73,8 +73,10 @@ main (signed argc, char * argv []) {
             case 'i': state.init = true; break;
             case 'p': state.priv = true; break;
             case 'h': state.help = true; break;
-            case 256: state.verb += 1;   break;
-            case 257: printf(version_str); goto cleanup;
+            case 'V': state.verb += 1;   break;
+            case 256: printf(version_str); goto cleanup;
+            case 257: state.llex = true; break;
+            case 258: state.lthm = true; break;
             default:  goto cleanup;
         }
     }
@@ -89,7 +91,7 @@ main (signed argc, char * argv []) {
         } goto cleanup;
     }
 
-    if ( !pbpst_test_options(&state) ) {
+    if ( !(state.llex || state.lthm) && !pbpst_test_options(&state) ) {
         exit_status = EXIT_FAILURE; goto cleanup;
     }
 
@@ -194,6 +196,8 @@ pbpst_test_options (const struct pbpst_state * s) {
 
 signed
 pbpst_dispatch (const struct pbpst_state * s) {
+
+    if ( s->llex || s->lthm ) { return pb_list(s); }
 
     switch ( s->cmd ) {
         case SNC:
