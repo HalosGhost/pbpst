@@ -49,6 +49,12 @@ The following options are available for any operation.
 --version
     List the version and exit.
 
+--list-lexers
+    List the pygments lexers supported by the pb host (respects the conf-time/run-time-set provider value) and exit.
+
+--list-themes
+    List the pygments themes supported by the pb host (respects the conf-time/run-time-set provider value) and exit.
+
 Sync Options
 ------------
 
