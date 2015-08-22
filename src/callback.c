@@ -92,10 +92,10 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
     if ( (!uuid_j && !state.uuid) || !lid_j ) { goto cleanup; }
     const char * uuid  = uuid_j ? json_string_value(uuid_j) : state.uuid,
                * lid   = json_string_value(lid_j),
-               * label = json_string_value(label_j);
+               * label = json_string_value(label_j),
+               * msg   =  state.msg               ? state.msg
+                       : !state.msg && state.path ? state.path : "-";
 
-    const char * msg =  state.msg               ? state.msg
-                     : !state.msg && state.path ? state.path : "-";
     new_paste = json_pack(label_j ? "{s:s,s:s,s:s}" : "{s:s,s:s,s:n}", "long",
                                     lid, "msg", msg, "label", label);
 
