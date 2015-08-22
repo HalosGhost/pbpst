@@ -77,7 +77,7 @@ main (signed argc, char * argv []) {
             case 256: printf(version_str); goto cleanup;
             case 257: state.llex = true; break;
             case 258: state.lthm = true; break;
-            default:  goto cleanup;
+            default:  exit_status = EXIT_FAILURE; goto cleanup;
         }
     }
 
