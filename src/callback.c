@@ -59,7 +59,7 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
 
     const char * provider = def_provider ? def_provider : state.provider;
 
-    if ( !pastes ) { goto cleanup; }
+    if ( !pastes ) { rsize = 0; goto cleanup; }
     prov_pastes = json_object_get(pastes, provider);
     if ( !prov_pastes ) {
         prov_obj = json_pack("{s:{}}", provider);
@@ -73,11 +73,11 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
     label_j  = json_object_get(json, "label");
     status_j = json_object_get(json, "status");
 
-    if ( !status_j ) { goto cleanup; }
+    if ( !status_j ) { rsize = 0; goto cleanup; }
     const char stat = json_string_value(status_j)[0];
     if ( stat == 'a' ) {
         fputs("pbpst: Paste already existed\n", stderr);
-        goto cleanup;
+        rsize = 0; goto cleanup;
     } else if ( stat == 'd' ) {
         json_object_del(prov_pastes, state.uuid);
         if ( state.verb ) {
@@ -89,7 +89,7 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
         } goto cleanup;
     }
 
-    if ( (!uuid_j && !state.uuid) || !lid_j ) { goto cleanup; }
+    if ( (!uuid_j && !state.uuid) || !lid_j ) { rsize = 0; goto cleanup; }
     const char * uuid  = uuid_j ? json_string_value(uuid_j) : state.uuid,
                * lid   = json_string_value(lid_j),
                * label = json_string_value(label_j),
@@ -101,7 +101,7 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
 
     if ( json_object_set(prov_pastes, uuid, new_paste) == -1 ) {
         fputs("pbpst: Failed to create new paste object\n", stderr);
-        goto cleanup;
+        rsize = 0; goto cleanup;
     }
 
     if ( state.verb ) {
