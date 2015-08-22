@@ -14,7 +14,7 @@ struct pbpst_state state = {
     .path = 0, .url = 0, .lexer = 0, .vanity = 0,
     .uuid = 0, .provider = 0, .dbfile = 0,
     .query = 0, .del = 0, .msg = 0, .theme = 0, .ext = 0,
-    .cmd = NON, .ln = 0,
+    .cmd = NON, .ln = 0, .secs = 0,
     .help = false, .priv = false, .rend = false,
     .init = false, .verb = 0, .prog = false
 };
@@ -33,7 +33,7 @@ main (signed argc, char * argv []) {
 
     signed exit_status = EXIT_SUCCESS;
 
-    const char vos [] = "SRUDP:hv:s:f:l:t:e:L:pru:b:q:d:im:#V";
+    const char vos [] = "SRUDP:hv:s:f:l:t:e:L:pru:b:q:d:im:#Vx:";
     for ( signed oi = 0, c = getopt_long(argc, argv, vos, os, &oi);
           c != -1; c = getopt_long(argc, argv, vos, os, &oi) ) {
 
@@ -61,6 +61,7 @@ main (signed argc, char * argv []) {
             case 'P': state_var = &state.provider; goto svcase;
             case 'b': state_var = &state.dbfile;   goto svcase;
             case 'L': state_var = &state.ln;       goto svcase;
+            case 'x': state_var = &state.secs;     goto svcase;
             svcase:
                 *state_var = (char * )malloc(l);
                 if ( !*state_var ) {
@@ -191,7 +192,6 @@ void
 signal_handler (signed signum) {
 
     if ( signum < 1 || signum > 31 ) { return; }
-
     fprintf(stderr, "pbpst: Received %s\n", sys_siglist[signum]);
     pbpst_cleanup(); exit(EXIT_FAILURE);
 }
@@ -211,6 +211,7 @@ pbpst_cleanup (void) {
     free(state.del);
     free(state.provider);
     free(state.ln);
+    free(state.secs);
     json_decref(mem_db);
     json_decref(pastes);
     json_decref(prov_pastes);

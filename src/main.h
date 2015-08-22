@@ -40,6 +40,7 @@ static struct option os [] = {
     { "help",        no_argument,       0, 'h' },
     { "progress",    no_argument,       0, '#' },
     { "message",     required_argument, 0, 'm' },
+    { "sunset",      required_argument, 0, 'x' },
 
     /* for rem and upd */
     { "uuid",        required_argument, 0, 'u' },
@@ -93,6 +94,7 @@ static const char sync_help [] =
     "  -e, --extension=EXT  Specify MIME-type as EXT\n"
     "  -L, --line=LINE      Highlight LINE in paste\n"
     "  -p, --private        Return a less-guessable Id for paste\n"
+    "  -x, --sunset=SECS    Slate the paste for auto-sunset in SECS seconds\n"
     "  -r, --render         Render paste from rst to HTML\n"
     "  -v, --vanity=NAME    Use NAME as a custom Id\n"
     "  -#, --progress       Show a progress bar for the upload\n"
@@ -111,6 +113,7 @@ static const char upd_help [] =
     "  -L, --line=LINE      Highlight LINE\n"
     "  -t, --theme=THEME    Style paste with pygments theme THEME\n"
     "  -e, --extension=EXT  Specify MIME-type as EXT\n"
+    "  -x, --sunset=SECS    Slate the paste for auto-sunset in SECS seconds\n"
     "  -r, --render         Render paste from rst to HTML\n"
     "  -u, --uuid=UUID      Use UUID as authentication credential\n"
     "  -v, --vanity=NAME    Use NAME as a custom Id\n"
@@ -128,7 +131,7 @@ enum pb_cmd { NON = 0, SNC = 'S', RMV = 'R', UPD = 'U', DBS = 'D' };
 
 extern struct pbpst_state {
     char * path, * url, * lexer, * vanity, * uuid, * provider,
-         * query, * del, * dbfile, * msg, * theme, * ext, * ln;
+         * query, * del, * dbfile, * msg, * theme, * ext, * ln, * secs;
     enum pb_cmd cmd;
     uint16_t help, priv, rend, init, verb: 8, prog: 8, llex: 8, lthm: 8;
 } state;
