@@ -33,44 +33,39 @@ pb_paste (const struct pbpst_state * s) {
     if ( s->cmd == SNC ) {
         if ( s->url ) {
             snprintf(target, tlen, "%s%c", provider, 'u');
+            fc = curl_formadd(&post,                &last,
+                              CURLFORM_COPYNAME,    "c",
+                              CURLFORM_PTRCONTENTS, s->url,
+                              CURLFORM_END);
+            if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
         } else if ( s->vanity ) {
             snprintf(target, tlen, "%s~%s", provider, s->vanity);
         } else {
             snprintf(target, tlen, "%s", provider);
         }
 
-        fc = s->url
-           ? curl_formadd(&post,                &last,
-                          CURLFORM_COPYNAME,    "c",
-                          CURLFORM_PTRCONTENTS, s->url,
-                          CURLFORM_END)
-           : curl_formadd(&post,                &last,
-                          CURLFORM_COPYNAME,    "c",
-                          CURLFORM_FILE,        s->path ? s->path : "-",
-                          CURLFORM_CONTENTTYPE, "application/octet-stream",
-                          CURLFORM_END);
-
-        if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
         if ( s->priv ) {
             fc = curl_formadd(&post,                 &last,
                               CURLFORM_COPYNAME,     "p",
                               CURLFORM_COPYCONTENTS, "1",
                               CURLFORM_END);
             if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
-        } curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
+        }
     } else if ( s->cmd == UPD ) {
+        snprintf(target, tlen, "%s%s", provider, s->uuid);
+        curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "PUT");
+    }
+
+    if ( !(s->cmd == SNC && s->url) ) {
         fc = curl_formadd(&post,                &last,
                           CURLFORM_COPYNAME,    "c",
                           CURLFORM_FILE,        s->path ? s->path : "-",
                           CURLFORM_CONTENTTYPE, "application/octet-stream",
                           CURLFORM_END);
-
         if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
-        snprintf(target, tlen, "%s%s", provider, s->uuid);
-        curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
-        curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "PUT");
     }
 
+    curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
     curl_easy_setopt(handle, CURLOPT_URL, target);
     curl_easy_setopt(handle, CURLOPT_XFERINFOFUNCTION, &pb_progress_cb);
     curl_easy_setopt(handle, CURLOPT_NOPROGRESS, (long )!s->prog);
