@@ -113,12 +113,11 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
     }
 
     const char * rndr = state.rend ? "r/" : "",
-               * idnt = label_j ? label : state.priv ? lid : lid + 24;
+               * idnt = label_j ? label : state.priv ? lid : lid + 24,
+               * mod_fmts [] = { "#L-", "/", "?style=", "." };
 
     char * state_mod = 0, ** mod_var = 0,
          * mod_names [] = { "line", "lexer", "theme", "extension" };
-
-    const char * mod_fmts [] = { "#L-", "/", "?style=", "." };
 
     for ( uint8_t i = 0; i < 4; i ++ ) {
         switch ( mod_names[i][1] ) {
