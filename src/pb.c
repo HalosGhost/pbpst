@@ -20,7 +20,7 @@ pb_paste (const struct pbpst_state * s) {
     struct curl_httppost * post = NULL, * last = NULL;
     size_t tlen = strlen(provider) + (
                   s->vanity     ? strlen(s->vanity) + 2 :
-                  s->cmd == UPD ? strlen(s->uuid) + 1   : 2);
+                  s->cmd == UPD ? strlen(s->uuid)   + 1 : 2);
 
     struct curl_slist * list = NULL;
     list = curl_slist_append(list, "Accept: application/json");
