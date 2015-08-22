@@ -139,29 +139,8 @@ main (signed argc, char * argv []) {
     }
 
     cleanup:
-        free(state.url);
-        free(state.path);
-        free(state.msg);
-        free(state.lexer);
-        free(state.theme);
-        free(state.ext);
-        free(state.vanity);
-        free(state.uuid);
-        free(state.query);
-        free(state.del);
-        free(state.provider);
-        free(state.ln);
-        json_decref(mem_db);
-        json_decref(pastes);
-        json_decref(prov_pastes);
-        json_decref(def_prov);
-        if ( swp_db_loc ) { free(swp_db_loc); }
-        if ( db_loc == state.dbfile ) {
-            free(state.dbfile);
-        } else {
-            free(db_loc);
-            free(state.dbfile);
-        } return exit_status;
+        pbpst_cleanup();
+        return exit_status;
 }
 
 bool
@@ -214,7 +193,12 @@ signal_handler (signed signum) {
     if ( signum < 1 || signum > 31 ) { return; }
 
     fprintf(stderr, "pbpst: Received %s\n", sys_siglist[signum]);
-    db_swp_cleanup(db_loc, swp_db_loc);
+    pbpst_cleanup(); exit(EXIT_FAILURE);
+}
+
+void
+pbpst_cleanup (void) {
+
     free(state.url);
     free(state.path);
     free(state.msg);
@@ -237,7 +221,7 @@ signal_handler (signed signum) {
     } else {
         free(db_loc);
         free(state.dbfile);
-    } exit(EXIT_FAILURE);
+    }
 }
 
 // vim: set ts=4 sw=4 et:

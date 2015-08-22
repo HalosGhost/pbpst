@@ -142,6 +142,9 @@ pbpst_dispatch (const struct pbpst_state *);
 void
 signal_handler (signed);
 
+void
+pbpst_cleanup (void);
+
 static char * db_loc = 0, * swp_db_loc = 0;
 extern json_t * mem_db, * pastes, * prov_pastes;
 extern const char * const sys_siglist [];
