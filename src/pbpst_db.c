@@ -149,7 +149,7 @@ db_swp_init (const char * dbl) {
     errno = 0;
     if ( (fd = open(swp_db_name, O_CREAT | O_EXCL, 0666)) == -1 ) {
         errsv = errno;
-        fprintf(stderr, swp_db_err, strerror(errsv), parent, swp_db_name);
+        fprintf(stderr, swp_db_err, strerror(errsv), swp_db_name);
         fd = -1; goto cleanup;
     }
 

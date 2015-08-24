@@ -7,7 +7,7 @@
 static const char swp_db_err [] =
     "pbpst: Could not create the swap db: %s\n"
     "pbpst: Ensure no other instances of pbpst are running and that all pastes"
-    " have been saved\npbpst: Then manually remove: %s/%s\n";
+    " have been saved\npbpst: Then manually remove: %s\n";
 
 #define DEF_DB() json_pack("{s:s,s:{}}", "default_provider",\
                            "https://ptpb.pw/", "pastes")
