@@ -15,10 +15,8 @@ pb_progress_cb (void * client,
     fputs("\x1b[?25l[", stderr);
     for ( curl_off_t i = hashlen; i; -- i ) {
         fputc(i > hashlen - hash ? '#' : '-', stderr);
-    } fputc(']', stderr);
-
-    fprintf(stderr, " %3" CURL_FORMAT_CURL_OFF_T "%%%s", progress,
-                    progress == 100 ? "\x1b[?25h\n" : "\r");
+    } fprintf(stderr, "] %3" CURL_FORMAT_CURL_OFF_T "%%%s", progress,
+                      progress == 100 ? "\x1b[?25h\n" : "\r");
 
     last_progress = progress;
     return 0;
