@@ -192,7 +192,7 @@ void
 signal_handler (signed signum) {
 
     if ( signum < 1 || signum > 31 ) { return; }
-    fprintf(stderr, "pbpst: Received %s\n", sys_siglist[signum]);
+    fprintf(stderr, "pbpst: Received %s\x1b[?25h\n", sys_siglist[signum]);
     pbpst_cleanup(); exit(EXIT_FAILURE);
 }
 

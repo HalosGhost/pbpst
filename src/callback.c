@@ -8,17 +8,17 @@ pb_progress_cb (void * client,
 
     static curl_off_t last_progress;
     curl_off_t progress = ultotal ? ulnow * 100 / ultotal : 0,
-               hashlen  = 72, hash = progress * hashlen / 100;
+               hashlen  = 73, hash = progress * hashlen / 100;
 
     if ( progress == last_progress ) { return 0; }
 
-    fputs(" [", stderr);
+    fputs("\x1b[?25l[", stderr);
     for ( curl_off_t i = hashlen; i; -- i ) {
         fputc(i > hashlen - hash ? '#' : '-', stderr);
     } fputc(']', stderr);
 
-    fprintf(stderr, " %3" CURL_FORMAT_CURL_OFF_T "%%%c", progress,
-                    progress == 100 ? '\n' : '\r');
+    fprintf(stderr, " %3" CURL_FORMAT_CURL_OFF_T "%%%s", progress,
+                    progress == 100 ? "\x1b[?25h\n" : "\r");
 
     last_progress = progress;
     return 0;
