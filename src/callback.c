@@ -1,39 +1,25 @@
 #include "main.h"
 #include "callback.h"
 
-/* adapted from pacman */
-static void
-fill_progress (const uint8_t bar_percent, const uint8_t proglen) {
-
-    /* 8 = 1 space + 1 [ + 1 ] + 5 for percent */
-    const uint8_t hashlen = proglen > 8 ? proglen - 8 : 0,
-                  hash    = bar_percent * hashlen / 100;
-
-    if ( hashlen > 0 ) {
-        fputs(" [", stderr);
-        for ( uint8_t i = hashlen; i; --i ) {
-            fputc(i > (hashlen - hash) ? '#' : '-', stderr);
-        } fputc(']', stderr);
-    }
-
-    /* print display percent after progress bar */
-    if ( proglen >= 5 ) { fprintf(stderr, " %3" PRIu8 "%%", bar_percent); }
-
-    fputc(bar_percent == 100 ? '\n' : '\r', stderr);
-    fflush(stderr);
-}
-
 signed
 pb_progress_cb (void * client,
                 curl_off_t dltotal, curl_off_t dlnow,
                 curl_off_t ultotal, curl_off_t ulnow) {
 
     static curl_off_t last_progress;
-    curl_off_t progress = ultotal ? ulnow * 100 / ultotal : 0;
+    curl_off_t progress = ultotal ? ulnow * 100 / ultotal : 0,
+               hashlen  = 72, hash = progress * hashlen / 100;
 
     if ( progress == last_progress ) { return 0; }
 
-    fill_progress((uint8_t )progress, 80);
+    fputs(" [", stderr);
+    for ( curl_off_t i = hashlen; i; -- i ) {
+        fputc(i > hashlen - hash ? '#' : '-', stderr);
+    } fputc(']', stderr);
+
+    fprintf(stderr, " %3" CURL_FORMAT_CURL_OFF_T "%%%c", progress,
+                    progress == 100 ? '\n' : '\r');
+
     last_progress = progress;
     return 0;
 }
