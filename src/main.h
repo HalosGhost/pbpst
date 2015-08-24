@@ -153,4 +153,8 @@ extern json_t * mem_db, * pastes, * prov_pastes;
 extern const char * const sys_siglist [];
 extern const char * def_provider;
 
+static const char signal_err [] =
+    "pbpst: Received %s\x1b[?25h\n"
+    "pbpst: Note that your swap db will need to be manually checked\n";
+
 // vim: set ts=4 sw=4 et:
