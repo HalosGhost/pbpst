@@ -63,7 +63,7 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
     const char stat = json_string_value(status_j)[0];
     if ( stat == 'a' ) {
         fputs("pbpst: Paste already existed\n", stderr);
-        rsize = 0; goto cleanup;
+        goto cleanup;
     } else if ( stat == 'd' ) {
         json_object_del(prov_pastes, state.uuid);
         if ( state.verb ) {
