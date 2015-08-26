@@ -13,7 +13,7 @@ pb_paste (const struct pbpst_state * s) {
         return CURLE_FAILED_INIT;
     }
 
-    curl_easy_setopt(handle, CURLOPT_VERBOSE, s->verb == 2);
+    curl_easy_setopt(handle, CURLOPT_VERBOSE, s->verb >= 2);
 
     const char * provider = def_provider ? def_provider : s->provider;
 
@@ -130,7 +130,7 @@ pb_list (const struct pbpst_state * s) {
         return CURLE_FAILED_INIT;
     }
 
-    curl_easy_setopt(handle, CURLOPT_VERBOSE, s->verb == 2);
+    curl_easy_setopt(handle, CURLOPT_VERBOSE, s->verb >= 2);
 
     const char * provider = def_provider ? def_provider : s->provider;
 
