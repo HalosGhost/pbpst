@@ -13,6 +13,7 @@
 #include <fcntl.h>     // open()
 #include <unistd.h>    // close()
 #include <errno.h>     // errno
+#include <time.h>      // localtime(), time(), time_t
 #include <jansson.h>
 
 #define BUFFER_SIZE 256

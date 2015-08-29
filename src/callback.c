@@ -37,9 +37,11 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
 
     pastes = json_object_get(mem_db, "pastes");
     json_t * prov_obj = 0, * uuid_j = 0, * lid_j = 0,
-           * label_j = 0, * status_j = 0, * new_paste = 0;
+           * label_j = 0, * status_j = 0, * sunset_j = 0, * new_paste = 0;
 
-    char * hdln = 0, * lexr = 0, * them = 0, * extn = 0;
+
+    char * hdln = 0, * lexr = 0, * them = 0, * extn = 0, * sunset = 0;
+
 
     const char * provider = def_provider ? def_provider : state.provider;
 
@@ -56,6 +58,8 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
     lid_j    = json_object_get(json, "long");
     label_j  = json_object_get(json, "label");
     status_j = json_object_get(json, "status");
+    sunset_j = json_object_get(json, "sunset");
+
 
     if ( !status_j ) { rsize = 0; goto cleanup; }
     const char stat = json_string_value(status_j)[0];
@@ -73,15 +77,34 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
         } goto cleanup;
     }
 
+    if ( sunset_j ) {
+        time_t curtime = time(NULL), offset = 0;
+        if ( sscanf(state.secs, "%ld", &offset) == EOF ) {
+            signed errsv = errno;
+            fprintf(stderr, "pbpst: Failed to scan offset: %s\n",
+                    strerror(errsv)); rsize = 0; goto cleanup;
+        }
+
+        if ( !(sunset = malloc(12)) ) {
+            fprintf(stderr, "pbpst: Failed to store sunset epoch: "
+                    "Out of Memory\n"); rsize = 0; goto cleanup;
+        } snprintf(sunset, 11, "%ld", curtime + offset);
+    }
+
     if ( (!uuid_j && !state.uuid) || !lid_j ) { rsize = 0; goto cleanup; }
     const char * uuid  = uuid_j ? json_string_value(uuid_j) : state.uuid,
                * lid   = json_string_value(lid_j),
                * label = json_string_value(label_j),
                * msg   =  state.msg               ? state.msg
-                       : !state.msg && state.path ? state.path : "-";
+                       : !state.msg && state.path ? state.path : "-",
+               * pfmt  = label_j &&  state.secs ? "{s:s,s:s,s:s,s:s}"
+                       : label_j && !state.secs ? "{s:s,s:s,s:s,s:n}"
+                       :                          "{s:s,s:s,s:n,s:n}";
 
-    new_paste = json_pack(label_j ? "{s:s,s:s,s:s}" : "{s:s,s:s,s:n}", "long",
-                                    lid, "msg", msg, "label", label);
+    new_paste = label_j
+              ? json_pack(pfmt, "long", lid, "msg", msg, "label", label,
+                                "sunset", sunset)
+              : json_pack(pfmt, "long", lid, "msg", msg, "label", "sunset");
 
     if ( json_object_set(prov_pastes, uuid, new_paste) == -1 ) {
         fputs("pbpst: Failed to create new paste object\n", stderr);
@@ -128,6 +151,7 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
         if ( state.lexer ) { free(lexr); }
         if ( state.theme ) { free(them); }
         if ( state.ext ) { free(extn); }
+        if ( state.secs ) { free(sunset); }
         json_decref(json);
         json_decref(uuid_j);
         json_decref(lid_j);
