@@ -48,6 +48,11 @@ label
     A string equal to the vanity label associated with the paste (if one was given).
     If the paste does not have a vanity label, this will be set to ``null``.
 
+sunset
+    A string equivalent to the UTC seconds-since-the-epoch of when the paste will be automatically culled.
+    JS(ON) does not actually support integers, and this future-proofs against the 2038 problem.
+    Note: to avoid the necessity of parsing pb's response, we calculate the time ourself which means that it might not be exact.
+
 Example
 -------
 
@@ -60,7 +65,8 @@ Example
                 "fa3423b6-2c29-4758-a707-bf3f972b93c9": {
                     "long": "AFKg4i_J0ssH6sJKdsYCA8WuR542",
                     "msg": "-",
-                    "label": "~random_junk"
+                    "label": "~random_junk",
+                    "sunset": "1440960243"
                 }
             }
         }

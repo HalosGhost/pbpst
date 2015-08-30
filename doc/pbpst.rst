@@ -81,6 +81,9 @@ Note: if neither the :option:`s` or :option:`f` options are passed, :program:`pb
 -p, --private
     Return a less-guessable Id for paste.
 
+-x, --sunset=SECS
+    Set the paste to expire automatically in SECS seconds.
+
 -r, --render
     Render a ReStructuredText or Markdown paste to HTML.
 
@@ -121,6 +124,9 @@ Note: if the :option:`f` option is not passed, :program:`pbpst` will paste the c
 
 -r, --render
     Render a ReStructuredText or Markdown paste to HTML.
+
+-x, --sunset=SECS
+    Set the paste to expire automatically in SECS seconds.
 
 -u, --uuid=UUID
     Use UUID as authentication credential.
