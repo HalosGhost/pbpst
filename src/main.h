@@ -23,43 +23,45 @@ static const char version_str [] = "pbpst 0.6.0\n";
 
 static struct option os [] = {
     /* commands */
-    { "sync",        no_argument,       0, 'S' },
-    { "remove",      no_argument,       0, 'R' },
-    { "update",      no_argument,       0, 'U' },
-    { "database",    no_argument,       0, 'D' },
+    { "sync",         no_argument,       0, 'S' },
+    { "remove",       no_argument,       0, 'R' },
+    { "update",       no_argument,       0, 'U' },
+    { "database",     no_argument,       0, 'D' },
 
     /* sync/upd options */
-    { "shorten",     required_argument, 0, 's' },
-    { "file",        required_argument, 0, 'f' },
-    { "lexer",       required_argument, 0, 'l' },
-    { "theme",       required_argument, 0, 't' },
-    { "extension",   required_argument, 0, 'e' },
-    { "line",        required_argument, 0, 'L' },
-    { "private",     no_argument,       0, 'p' }, // sync-only
-    { "render",      no_argument,       0, 'r' },
-    { "vanity",      required_argument, 0, 'v' },
-    { "help",        no_argument,       0, 'h' },
-    { "progress",    no_argument,       0, '#' },
-    { "message",     required_argument, 0, 'm' },
-    { "sunset",      required_argument, 0, 'x' },
+    { "shorten",      required_argument, 0, 's' },
+    { "file",         required_argument, 0, 'f' },
+    { "lexer",        required_argument, 0, 'l' },
+    { "theme",        required_argument, 0, 't' },
+    { "extension",    required_argument, 0, 'e' },
+    { "line",         required_argument, 0, 'L' },
+    { "private",      no_argument,       0, 'p' }, // sync-only
+    { "render",       no_argument,       0, 'r' },
+    { "vanity",       required_argument, 0, 'v' },
+    { "help",         no_argument,       0, 'h' },
+    { "progress",     no_argument,       0, '#' },
+    { "message",      required_argument, 0, 'm' },
+    { "sunset",       required_argument, 0, 'x' },
 
     /* for rem and upd */
-    { "uuid",        required_argument, 0, 'u' },
+    { "uuid",         required_argument, 0, 'u' },
 
     /* db options */
-    { "init",        no_argument,       0, 'i' },
-    { "query",       required_argument, 0, 'q' },
-    { "delete",      required_argument, 0, 'd' },
+    { "init",         no_argument,       0, 'i' },
+    { "query",        required_argument, 0, 'q' },
+    { "delete",       required_argument, 0, 'd' },
+    { "prune-local",  no_argument,       0, 'y' },
+    { "prune-remote", no_argument,       0, 259 },
 
     /* generic options */
-    { "provider",    required_argument, 0, 'P' },
-    { "dbpath",      required_argument, 0, 'b' },
-    { "verbose",     no_argument,       0, 'V' },
-    { "help",        no_argument,       0, 'h' },
-    { "version",     no_argument,       0, 256 },
-    { "list-lexers", no_argument,       0, 257 },
-    { "list-themes", no_argument,       0, 258 },
-    { 0,             0,                 0, 0   }
+    { "provider",     required_argument, 0, 'P' },
+    { "dbpath",       required_argument, 0, 'b' },
+    { "verbose",      no_argument,       0, 'V' },
+    { "help",         no_argument,       0, 'h' },
+    { "version",      no_argument,       0, 256 },
+    { "list-lexers",  no_argument,       0, 257 },
+    { "list-themes",  no_argument,       0, 258 },
+    { 0,              0,                 0, 0   }
 };
 
 static const char gen_help [] =
@@ -126,7 +128,9 @@ static const char dbs_help [] =
     "Options:\n"
     "  -i, --init           Initalize a default database (no clobbering)\n"
     "  -q, --query=STR      Search the database for a paste matching STR\n"
-    "  -d, --delete=UUID    Manually delete the paste with UUID\n";
+    "  -d, --delete=UUID    Manually delete the paste with UUID\n"
+    "  -y, --prune-local    Locally delete all expired pastes\n"
+    "      --prune-remote   Remotely delete all expired pastes\n";
 
 enum pb_cmd { NON = 0, SNC = 'S', RMV = 'R', UPD = 'U', DBS = 'D' };
 

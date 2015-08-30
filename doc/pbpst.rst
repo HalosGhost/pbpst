@@ -152,6 +152,14 @@ Database Options
 -d, --delete=UUID
     Remove the paste from the pastes object specified by UUID. Note: This option will respect the default provider and :option:`-P`.
 
+-y, --prune-local
+    Remove all expired paste entries from the local database.
+    Equivalent to running ``-Dd`` for each paste with a sunset time older than time at run-time.
+
+--prune-remote
+    Delete (local and upstream) all expired pastes.
+    Equivalent to running ``-Ru`` for each paste with a sunset time older than time at run-time.
+
 Examples
 --------
 
