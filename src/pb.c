@@ -65,6 +65,14 @@ pb_paste (const struct pbpst_state * s) {
         if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
     }
 
+    if ( s->secs ) {
+        fc = curl_formadd(&post,                 &last,
+                          CURLFORM_COPYNAME,     "s",
+                          CURLFORM_COPYCONTENTS, s->secs,
+                          CURLFORM_END);
+        if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
+    }
+
     curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
     curl_easy_setopt(handle, CURLOPT_URL, target);
     curl_easy_setopt(handle, CURLOPT_XFERINFOFUNCTION, &pb_progress_cb);

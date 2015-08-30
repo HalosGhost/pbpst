@@ -92,19 +92,26 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
     }
 
     if ( (!uuid_j && !state.uuid) || !lid_j ) { rsize = 0; goto cleanup; }
+
     const char * uuid  = uuid_j ? json_string_value(uuid_j) : state.uuid,
                * lid   = json_string_value(lid_j),
                * label = json_string_value(label_j),
                * msg   =  state.msg               ? state.msg
-                       : !state.msg && state.path ? state.path : "-",
-               * pfmt  = label_j &&  state.secs ? "{s:s,s:s,s:s,s:s}"
-                       : label_j && !state.secs ? "{s:s,s:s,s:s,s:n}"
-                       :                          "{s:s,s:s,s:n,s:n}";
+                       : !state.msg && state.path ? state.path : "-";
 
-    new_paste = label_j
-              ? json_pack(pfmt, "long", lid, "msg", msg, "label", label,
-                                "sunset", sunset)
-              : json_pack(pfmt, "long", lid, "msg", msg, "label", "sunset");
+	if ( label_j && state.secs ) {
+		new_paste = json_pack("{s:s,s:s,s:s,s:s}", "long", lid, "msg", msg,
+				              "label", label, "sunset", sunset);
+	} else if ( label_j && !state.secs ) {
+		new_paste = json_pack("{s:s,s:s,s:s,s:n}", "long", lid, "msg", msg,
+				              "label", label);
+	} else if ( !label_j && state.secs ) {
+		new_paste = json_pack("{s:s,s:s,s:n,s:s}", "long", lid, "msg", msg,
+				              "label", "sunset", sunset);
+	} else {
+		new_paste = json_pack("{s:s,s:s,s:n,s:n}", "long", lid, "msg", msg,
+				              "label", "sunset");
+	}
 
     if ( json_object_set(prov_pastes, uuid, new_paste) == -1 ) {
         fputs("pbpst: Failed to create new paste object\n", stderr);
