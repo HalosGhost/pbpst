@@ -276,4 +276,12 @@ db_swp_flush (const json_t * mdb, const char * s_dbl) {
     } return ret;
 }
 
+signed
+pbpst_db (const struct pbpst_state * s) {
+
+    if ( s->init ) { return EXIT_SUCCESS; }
+
+    return EXIT_SUCCESS;
+}
+
 // vim: set ts=4 sw=4 et:

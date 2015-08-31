@@ -127,7 +127,7 @@ main (signed argc, char * argv []) {
         }
     }
 
-    exit_status = !state.init ? pbpst_dispatch(&state) : EXIT_SUCCESS;
+    exit_status = pbpst_dispatch(&state);
 
     if ( db_swp_flush(mem_db, swp_db_loc) == -1 ) {
         exit_status = EXIT_FAILURE; goto cleanup;
@@ -183,7 +183,7 @@ pbpst_dispatch (const struct pbpst_state * s) {
         case SNC:
         case UPD: return pb_paste(s);
         case RMV: return pb_remove(s);
-        case DBS: return EXIT_FAILURE; // replace later
+        case DBS: return pbpst_db(s);
         case NON: return EXIT_FAILURE; // should never get here
     }
 }
