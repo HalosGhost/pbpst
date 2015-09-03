@@ -60,7 +60,6 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
     status_j = json_object_get(json, "status");
     sunset_j = json_object_get(json, "sunset");
 
-
     if ( !status_j ) { rsize = 0; goto cleanup; }
     const char stat = json_string_value(status_j)[0];
     if ( stat == 'a' ) {
