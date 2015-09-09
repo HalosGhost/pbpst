@@ -39,9 +39,7 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
     json_t * prov_obj = 0, * uuid_j = 0, * lid_j = 0,
            * label_j = 0, * status_j = 0, * sunset_j = 0, * new_paste = 0;
 
-
     char * hdln = 0, * lexr = 0, * them = 0, * extn = 0, * sunset = 0;
-
 
     const char * provider = def_provider ? def_provider : state.provider;
 
