@@ -42,12 +42,14 @@ main (signed argc, char * argv []) {
 
         switch ( c ) {
             case 'S': case 'R': case 'U': case 'D':
-                if ( state.cmd ) {
+                if ( !state.cmd ) {
+                    vos = opts_for[(state.cmd = (enum pb_cmd )c)];
+                    optind = 1;
+                } else if ( state.cmd != c ) {
                     fputs("pbpst: You can only run one operation at a time\n",
                           stderr);
                     exit_status = EXIT_FAILURE; goto cleanup;
-                } vos = opts_for[(state.cmd = (enum pb_cmd )c)];
-                optind = 1; break;
+                } break;
 
             case 's': state_var = &state.url;      goto svcase;
             case 'f': state_var = &state.path;     goto svcase;
