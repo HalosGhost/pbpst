@@ -134,6 +134,14 @@ static const char dbs_help [] =
 
 enum pb_cmd { NON = 0, SNC = 'S', RMV = 'R', UPD = 'U', DBS = 'D' };
 
+static const char * opts_for [] = {
+    [NON] = "SRUDh",
+    [SNC] = "SRUDhP:Vb:s:f:l:t:e:L:px:rv:#m:",
+    [RMV] = "SRUDhP:Vb:u:",
+    [UPD] = "SRUDhP:Vb:f:l:L:t:e:x:ru:v:#m:",
+    [DBS] = "SRUDhP:Vb:iq:d:y"
+};
+
 extern struct pbpst_state {
     char * path, * url, * lexer, * vanity, * uuid, * provider,
          * query, * del, * dbfile, * msg, * theme, * ext, * ln, * secs;

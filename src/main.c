@@ -33,7 +33,7 @@ main (signed argc, char * argv []) {
 
     signed exit_status = EXIT_SUCCESS;
 
-    const char vos [] = "SRUDP:hv:s:f:l:t:e:L:pru:b:q:d:im:#Vx:";
+    const char * vos = opts_for[NON];
     for ( signed oi = 0, c = getopt_long(argc, argv, vos, os, &oi);
           c != -1; c = getopt_long(argc, argv, vos, os, &oi) ) {
 
@@ -46,7 +46,8 @@ main (signed argc, char * argv []) {
                     fputs("pbpst: You can only run one operation at a time\n",
                           stderr);
                     exit_status = EXIT_FAILURE; goto cleanup;
-                } state.cmd = (enum pb_cmd )c; break;
+                } vos = opts_for[(state.cmd = (enum pb_cmd )c)];
+                optind = 1; break;
 
             case 's': state_var = &state.url;      goto svcase;
             case 'f': state_var = &state.path;     goto svcase;

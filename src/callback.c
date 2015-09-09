@@ -101,7 +101,7 @@ pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
                               "label", label, "sunset", sunset);
     } else if ( label_j && !state.secs ) {
         new_paste = json_pack("{s:s,s:s,s:s,s:n}", "long", lid, "msg", msg,
-                              "label", label);
+                              "label", label, "sunset");
     } else if ( !label_j && state.secs ) {
         new_paste = json_pack("{s:s,s:s,s:n,s:s}", "long", lid, "msg", msg,
                               "label", "sunset", sunset);
