@@ -148,30 +148,21 @@ main (signed argc, char * argv []) {
 bool
 pbpst_test_options (const struct pbpst_state * s) {
 
-    const char option_err [] = "pbpst: erroneous option(s). See `pbpst -%ch`\n";
     char cl = 0;
     switch ( s->cmd ) {
         case SNC: cl = (s->url && (s->path || s->lexer || s->rend || s->init
-               || s->ln || s->vanity )) || s->uuid ? 'S' : cl; break;
+               || s->ln || s->vanity)) || !(s->path || s->url) ? 'S' : cl; break;
 
-        case RMV: cl = s->path || s->url  || s->lexer || s->vanity || s->init
-               || s->ln || s->priv || s->rend || !s->uuid || s->prog || s->theme
-               || s->ext ? 'R' : cl; break;
-
-        case UPD: cl = !s->uuid || s->priv || s->query || s->init
-               || s->del || s->url ? 'U' : cl; break;
-
-        case DBS: cl = (s->query && s->del) || s->url || s->theme || s->ext
-               || s->path || s->lexer || s->vanity || s->ln || s->priv
-               || s->rend || s->uuid || s->prog ? 'D' : cl; break;
-
+        case RMV: break;
+        case UPD: cl = !s->uuid || s->priv || s->url ? 'U' : cl; break;
+        case DBS: cl = s->query && s->del ? 'D' : cl; break;
         case NON: cl = 'N'; break;
     }
 
     if ( cl == 'N' ) {
         fprintf(stderr, "%s%s%s", cmds_help, gen_help, more_info);
     } else if ( cl != 0 ) {
-        fprintf(stderr, option_err, cl);
+        fprintf(stderr, "pbpst: erroneous option(s). See `pbpst -%ch`\n", cl);
     } return cl == 0;
 }
 
