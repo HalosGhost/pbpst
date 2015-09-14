@@ -211,12 +211,8 @@ pbpst_cleanup (void) {
     json_decref(prov_pastes);
     json_decref(def_prov);
     if ( swp_db_loc ) { free(swp_db_loc); }
-    if ( db_loc == state.dbfile ) {
-        free(state.dbfile);
-    } else {
-        free(db_loc);
-        free(state.dbfile);
-    }
+    if ( db_loc != state.dbfile ) { free(db_loc); }
+    free(state.dbfile);
 }
 
 // vim: set ts=4 sw=4 et:
