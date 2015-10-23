@@ -100,7 +100,7 @@ pb_remove (const struct pbpst_state * s) {
         return CURLE_FAILED_INIT;
     }
 
-    curl_easy_setopt(handle, CURLOPT_VERBOSE, s->verb == 2);
+    curl_easy_setopt(handle, CURLOPT_VERBOSE, s->verb >= 2);
 
     struct curl_slist * list = NULL;
     list = curl_slist_append(list, "Accept: application/json");
