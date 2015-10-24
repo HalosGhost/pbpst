@@ -26,8 +26,12 @@ pb_paste (const struct pbpst_state * s) {
     list = curl_slist_append(list, "Accept: application/json");
     curl_easy_setopt(handle, CURLOPT_HTTPHEADER, list);
 
+    struct CurlResponse * response_data = malloc(sizeof(struct CurlResponse));
     char * target = malloc(tlen);
-    if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
+    if ( !response_data || !target ) {
+        status = CURLE_OUT_OF_MEMORY;
+        goto cleanup;
+    }
 
     CURLFORMcode fc;
     if ( s->cmd == SNC ) {
@@ -78,13 +82,23 @@ pb_paste (const struct pbpst_state * s) {
     curl_easy_setopt(handle, CURLOPT_XFERINFOFUNCTION, &pb_progress_cb);
     curl_easy_setopt(handle, CURLOPT_NOPROGRESS, (long )!s->prog);
     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &pb_write_cb);
+    curl_easy_setopt(handle, CURLOPT_WRITEDATA, response_data);
 
     status = curl_easy_perform(handle);
+    if ( status == EXIT_FAILURE ) { goto cleanup; }
+
+    if ( s->url ) {
+        printf("%s", response_data->mem);
+    } else {
+        status = print_url(s, response_data->mem);
+    }
 
     cleanup:
         if ( list ) { curl_slist_free_all(list); }
         curl_easy_cleanup(handle);
         curl_formfree(post);
+        if ( response_data->mem ) { free(response_data->mem); }
+        if ( response_data ) { free(response_data); }
         free(target);
         return status;
 }
@@ -108,6 +122,7 @@ pb_remove (const struct pbpst_state * s) {
 
     const char * provider = def_provider ? def_provider : s->provider;
 
+    struct CurlResponse * response_data = malloc(sizeof(struct CurlResponse));
     size_t target_len = strlen(provider) + strlen(s->uuid) + 1;
     char * target = malloc(target_len);
     if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
@@ -117,12 +132,18 @@ pb_remove (const struct pbpst_state * s) {
     curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "DELETE");
     curl_easy_setopt(handle, CURLOPT_URL, target);
     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &pb_write_cb);
+    curl_easy_setopt(handle, CURLOPT_WRITEDATA, response_data);
 
     status = curl_easy_perform(handle);
+    if ( status == EXIT_FAILURE ) { goto cleanup; }
+
+    status = print_url(s, response_data->mem);
 
     cleanup:
         if ( list ) { curl_slist_free_all(list); }
         curl_easy_cleanup(handle);
+        if ( response_data->mem ) { free(response_data->mem); }
+        if ( response_data ) { free(response_data); }
         free(target);
         return status;
 }
