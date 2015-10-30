@@ -212,27 +212,38 @@ print_url (const struct pbpst_state * s, const char * userdata) {
         } snprintf(sunset, 11, "%ld", curtime + offset);
     }
 
-    if ( (!uuid_j && !s->uuid) || !lid_j ) { status = EXIT_FAILURE; goto cleanup; }
+    if ( (!uuid_j && !s->uuid) || !lid_j ) {
+        status = EXIT_FAILURE;
+        goto cleanup;
+    }
 
     const char * uuid  = uuid_j ? json_string_value(uuid_j) : s->uuid,
                * lid   = json_string_value(lid_j),
                * label = json_string_value(label_j),
-               * msg   =  s->msg               ? s->msg
+               * msg   =  s->msg            ? s->msg
                        : !s->msg && s->path ? s->path : "-";
 
+    char * fmtpc = malloc(sizeof(char) * 19);
+    if ( !fmtpc ) {
+        fputs("pbpst: Could not Generate paste format specifier\n", stderr);
+        goto cleanup;
+    } snprintf(fmtpc, 18, "{s:s,s:s,s:%c,s:%c}", label_j ? 's' : 'n'
+                                               , s->secs ? 's' : 'n');
+
+    const char * cfmtpc = fmtpc;
     if ( label_j && s->secs ) {
-        new_paste = json_pack("{s:s,s:s,s:s,s:s}", "long", lid, "msg", msg,
+        new_paste = json_pack(cfmtpc, "long", lid, "msg", msg,
                               "label", label, "sunset", sunset);
     } else if ( label_j && !s->secs ) {
-        new_paste = json_pack("{s:s,s:s,s:s,s:n}", "long", lid, "msg", msg,
+        new_paste = json_pack(cfmtpc, "long", lid, "msg", msg,
                               "label", label, "sunset");
     } else if ( !label_j && s->secs ) {
-        new_paste = json_pack("{s:s,s:s,s:n,s:s}", "long", lid, "msg", msg,
+        new_paste = json_pack(cfmtpc, "long", lid, "msg", msg,
                               "label", "sunset", sunset);
     } else {
-        new_paste = json_pack("{s:s,s:s,s:n,s:n}", "long", lid, "msg", msg,
+        new_paste = json_pack(cfmtpc, "long", lid, "msg", msg,
                               "label", "sunset");
-    }
+    } cfmtpc = 0; free(fmtpc);
 
     if ( json_object_set(prov_pastes, uuid, new_paste) == -1 ) {
         fputs("pbpst: Failed to create new paste object\n", stderr);
