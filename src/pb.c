@@ -1,5 +1,6 @@
 #include "main.h"
 #include "pb.h"
+#include "pbpst_db.h"
 #include "callback.h"
 
 CURLcode
@@ -87,9 +88,14 @@ pb_paste (const struct pbpst_state * s) {
     status = curl_easy_perform(handle);
     if ( status == EXIT_FAILURE ) { goto cleanup; }
 
+
     if ( s->url ) {
         printf("%s", response_data->mem);
     } else {
+        status = db_add_entry(s, response_data->mem) == EXIT_SUCCESS
+               ? EXIT_SUCCESS : EXIT_FAILURE;
+        if ( status == EXIT_FAILURE ) { goto cleanup; }
+
         status = print_url(s, response_data->mem);
     }
 
@@ -137,7 +143,7 @@ pb_remove (const struct pbpst_state * s) {
     status = curl_easy_perform(handle);
     if ( status == EXIT_FAILURE ) { goto cleanup; }
 
-    status = print_url(s, response_data->mem);
+    status = db_remove_entry(s) == EXIT_SUCCESS ? EXIT_SUCCESS : EXIT_FAILURE;
 
     cleanup:
         if ( list ) { curl_slist_free_all(list); }
@@ -159,22 +165,10 @@ print_url (const struct pbpst_state * s, const char * userdata) {
     }
 
     CURLcode status = EXIT_SUCCESS;
-    pastes = json_object_get(mem_db, "pastes");
-    json_t * prov_obj = 0, * uuid_j = 0, * lid_j = 0,
-           * label_j = 0, * status_j = 0, * sunset_j = 0, * new_paste = 0;
+    json_t * uuid_j = 0, * lid_j = 0, * label_j = 0,
+           * status_j = 0, * sunset_j = 0;
 
     char * hdln = 0, * lexr = 0, * them = 0, * extn = 0, * sunset = 0;
-
-    const char * provider = def_provider ? def_provider : s->provider;
-
-    if ( !pastes ) { status = EXIT_FAILURE; goto cleanup; }
-    prov_pastes = json_object_get(pastes, provider);
-    if ( !prov_pastes ) {
-        prov_obj = json_pack("{s:{}}", provider);
-        json_object_update(pastes, prov_obj);
-        json_decref(prov_obj);
-        prov_pastes = json_object_get(pastes, provider);
-    }
 
     uuid_j   = json_object_get(json, "uuid");
     lid_j    = json_object_get(json, "long");
@@ -182,73 +176,9 @@ print_url (const struct pbpst_state * s, const char * userdata) {
     status_j = json_object_get(json, "status");
     sunset_j = json_object_get(json, "sunset");
 
-    if ( !status_j ) { status = EXIT_FAILURE; goto cleanup; }
-    const char stat = json_string_value(status_j)[0];
-    if ( stat == 'a' ) {
-        fputs("pbpst: Paste already existed\n", stderr);
-        goto cleanup;
-    } else if ( stat == 'd' ) {
-        json_object_del(prov_pastes, s->uuid);
-        if ( s->verb ) {
-            json_t * value;
-            const char * key;
-            json_object_foreach(json, key, value) {
-                printf("%s: %s\n", key, json_string_value(value));
-            }
-        } goto cleanup;
-    }
-
-    if ( sunset_j ) {
-        time_t curtime = time(NULL), offset = 0;
-        if ( sscanf(s->secs, "%ld", &offset) == EOF ) {
-            signed errsv = errno;
-            fprintf(stderr, "pbpst: Failed to scan offset: %s\n",
-                    strerror(errsv)); status = EXIT_FAILURE; goto cleanup;
-        }
-
-        if ( !(sunset = malloc(12)) ) {
-            fprintf(stderr, "pbpst: Failed to store sunset epoch: "
-                    "Out of Memory\n"); status = EXIT_FAILURE; goto cleanup;
-        } snprintf(sunset, 11, "%ld", curtime + offset);
-    }
-
-    if ( (!uuid_j && !s->uuid) || !lid_j ) {
-        status = EXIT_FAILURE;
-        goto cleanup;
-    }
-
-    const char * uuid  = uuid_j ? json_string_value(uuid_j) : s->uuid,
-               * lid   = json_string_value(lid_j),
-               * label = json_string_value(label_j),
-               * msg   =  s->msg            ? s->msg
-                       : !s->msg && s->path ? s->path : "-";
-
-    char * fmtpc = malloc(sizeof(char) * 19);
-    if ( !fmtpc ) {
-        fputs("pbpst: Could not Generate paste format specifier\n", stderr);
-        goto cleanup;
-    } snprintf(fmtpc, 18, "{s:s,s:s,s:%c,s:%c}", label_j ? 's' : 'n'
-                                               , s->secs ? 's' : 'n');
-
-    const char * cfmtpc = fmtpc;
-    if ( label_j && s->secs ) {
-        new_paste = json_pack(cfmtpc, "long", lid, "msg", msg,
-                              "label", label, "sunset", sunset);
-    } else if ( label_j && !s->secs ) {
-        new_paste = json_pack(cfmtpc, "long", lid, "msg", msg,
-                              "label", label, "sunset");
-    } else if ( !label_j && s->secs ) {
-        new_paste = json_pack(cfmtpc, "long", lid, "msg", msg,
-                              "label", "sunset", sunset);
-    } else {
-        new_paste = json_pack(cfmtpc, "long", lid, "msg", msg,
-                              "label", "sunset");
-    } cfmtpc = 0; free(fmtpc);
-
-    if ( json_object_set(prov_pastes, uuid, new_paste) == -1 ) {
-        fputs("pbpst: Failed to create new paste object\n", stderr);
-        status = EXIT_FAILURE; goto cleanup;
-    }
+    const char * lid      = json_string_value(lid_j),
+               * label    = json_string_value(label_j),
+               * provider = def_provider ? def_provider : s->provider;
 
     if ( s->verb ) {
         json_t * value;
@@ -281,9 +211,7 @@ print_url (const struct pbpst_state * s, const char * userdata) {
                                 mod_names[i]); goto cleanup;
             } snprintf(*mod_var, tlen + 1, "%s%s", mod_fmts[i], state_mod);
         } else { *mod_var = ""; }
-    }
-
-    printf("%s%s%s%s%s%s%s\n", provider, rndr, idnt, extn, lexr, them, hdln);
+    } printf("%s%s%s%s%s%s%s\n", provider, rndr, idnt, extn, lexr, them, hdln);
 
     cleanup:
         if ( s->ln )    { free(hdln);   }
@@ -296,7 +224,6 @@ print_url (const struct pbpst_state * s, const char * userdata) {
         json_decref(lid_j);
         json_decref(label_j);
         json_decref(status_j);
-        json_decref(new_paste);
         return status;
 }
 

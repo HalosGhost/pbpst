@@ -279,11 +279,133 @@ db_swp_flush (const json_t * mdb, const char * s_dbl) {
 signed
 pbpst_db (const struct pbpst_state * s) {
 
-    if ( s->init ) {
-        return EXIT_SUCCESS;
-    } else {
+    return s->init ? EXIT_SUCCESS       :
+           s->del  ? db_remove_entry(s) :
+                     EXIT_FAILURE       ;
+}
+
+signed
+db_add_entry (const struct pbpst_state * s, const char * userdata) {
+
+    json_error_t err;
+    json_t * json = json_loads(userdata, 0, &err);
+    if ( !json ) {
+        fprintf(stderr, "pbpst: %s at %d:%d\n", err.text, err.line, err.column);
         return EXIT_FAILURE;
     }
+
+    signed status = EXIT_SUCCESS;
+    pastes = json_object_get(mem_db, "pastes");
+    json_t * prov_obj = 0, * uuid_j = 0, * lid_j = 0,
+           * label_j = 0, * status_j = 0, * sunset_j = 0, * new_paste = 0;
+
+    char * sunset = 0;
+    const char * provider = def_provider ? def_provider : s->provider;
+
+    if ( !pastes ) { status = EXIT_FAILURE; goto cleanup; }
+    prov_pastes = json_object_get(pastes, provider);
+    if ( !prov_pastes ) {
+        prov_obj = json_pack("{s:{}}", provider);
+        json_object_update(pastes, prov_obj);
+        json_decref(prov_obj);
+        prov_pastes = json_object_get(pastes, provider);
+    }
+
+    uuid_j   = json_object_get(json, "uuid");
+    lid_j    = json_object_get(json, "long");
+    label_j  = json_object_get(json, "label");
+    status_j = json_object_get(json, "status");
+    sunset_j = json_object_get(json, "sunset");
+
+    if ( !status_j ) { status = EXIT_FAILURE; goto cleanup; }
+    const char stat = json_string_value(status_j)[0];
+    if ( stat == 'a' ) {
+        fputs("pbpst: Paste already existed\n", stderr);
+        goto cleanup;
+    }
+
+    if ( sunset_j ) {
+        time_t curtime = time(NULL), offset = 0;
+        if ( sscanf(s->secs, "%ld", &offset) == EOF ) {
+            signed errsv = errno;
+            fprintf(stderr, "pbpst: Failed to scan offset: %s\n",
+                    strerror(errsv)); status = EXIT_FAILURE; goto cleanup;
+        }
+
+        if ( !(sunset = malloc(12)) ) {
+            fprintf(stderr, "pbpst: Failed to store sunset epoch: "
+                    "Out of Memory\n"); status = EXIT_FAILURE; goto cleanup;
+        } snprintf(sunset, 11, "%ld", curtime + offset);
+    }
+
+    if ( (!uuid_j && !s->uuid) || !lid_j ) {
+        status = EXIT_FAILURE;
+        goto cleanup;
+    }
+
+    const char * uuid  = uuid_j ? json_string_value(uuid_j) : s->uuid,
+               * lid   = json_string_value(lid_j),
+               * label = json_string_value(label_j),
+               * msg   =  s->msg            ? s->msg
+                       : !s->msg && s->path ? s->path : "-";
+
+    char * fmtpc = malloc(sizeof(char) * 19);
+    if ( !fmtpc ) {
+        fputs("pbpst: Could not store paste format specifier: Out of Memory\n",
+			  stderr); goto cleanup;
+    } snprintf(fmtpc, 18, "{s:s,s:s,s:%c,s:%c}", label_j ? 's' : 'n'
+                                               , s->secs ? 's' : 'n');
+
+    const char * cfmtpc = fmtpc;
+    if ( label_j && s->secs ) {
+        new_paste = json_pack(cfmtpc, "long", lid, "msg", msg,
+                              "label", label, "sunset", sunset);
+    } else if ( label_j && !s->secs ) {
+        new_paste = json_pack(cfmtpc, "long", lid, "msg", msg,
+                              "label", label, "sunset");
+    } else if ( !label_j && s->secs ) {
+        new_paste = json_pack(cfmtpc, "long", lid, "msg", msg,
+                              "label", "sunset", sunset);
+    } else {
+        new_paste = json_pack(cfmtpc, "long", lid, "msg", msg,
+                              "label", "sunset");
+    } cfmtpc = 0; free(fmtpc);
+
+    if ( json_object_set(prov_pastes, uuid, new_paste) == -1 ) {
+        fputs("pbpst: Failed to save new paste object\n", stderr);
+        status = EXIT_FAILURE; goto cleanup;
+    }
+
+    cleanup:
+        if ( s->secs ) { free(sunset); }
+        json_decref(json);
+        json_decref(uuid_j);
+        json_decref(lid_j);
+        json_decref(label_j);
+        json_decref(status_j);
+        json_decref(new_paste);
+        return status;
+}
+
+signed
+db_remove_entry (const struct pbpst_state * s) {
+
+    signed status = EXIT_SUCCESS;
+    pastes = json_object_get(mem_db, "pastes");
+
+    if ( !pastes ) { status = EXIT_FAILURE; goto cleanup; }
+    const char * provider = def_provider ? def_provider : s->provider;
+    prov_pastes = json_object_get(pastes, provider);
+
+    if ( !prov_pastes ) {
+        fprintf(stderr, "pbpst: No paste found with the uuid: %s\n", s->uuid);
+        status = EXIT_FAILURE; goto cleanup;
+    }
+
+    json_object_del(prov_pastes, s->uuid);
+
+    cleanup:
+        return status;
 }
 
 // vim: set ts=4 sw=4 et:

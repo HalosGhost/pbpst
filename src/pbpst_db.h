@@ -30,4 +30,10 @@ db_swp_flush (const json_t *, const char *);
 signed
 pbpst_db (const struct pbpst_state *);
 
+signed
+db_add_entry (const struct pbpst_state *, const char *);
+
+signed
+db_remove_entry (const struct pbpst_state *);
+
 // vim: set ts=4 sw=4 et:
