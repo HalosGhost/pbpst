@@ -352,7 +352,7 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
     char * fmtpc = malloc(sizeof(char) * 19);
     if ( !fmtpc ) {
         fputs("pbpst: Could not store paste format specifier: Out of Memory\n",
-			  stderr); goto cleanup;
+              stderr); goto cleanup;
     } snprintf(fmtpc, 18, "{s:s,s:s,s:%c,s:%c}", label_j ? 's' : 'n'
                                                , s->secs ? 's' : 'n');
 
@@ -397,12 +397,13 @@ db_remove_entry (const struct pbpst_state * s) {
     const char * provider = def_provider ? def_provider : s->provider;
     prov_pastes = json_object_get(pastes, provider);
 
+    char * uuid = s->cmd == 'R' ? s->uuid : s->del;
     if ( !prov_pastes ) {
-        fprintf(stderr, "pbpst: No paste found with the uuid: %s\n", s->uuid);
+        fprintf(stderr, "pbpst: No paste found with the uuid: %s\n", uuid);
         status = EXIT_FAILURE; goto cleanup;
     }
 
-    json_object_del(prov_pastes, s->del);
+    json_object_del(prov_pastes, uuid);
 
     cleanup:
         return status;
