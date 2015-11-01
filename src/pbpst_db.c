@@ -402,7 +402,7 @@ db_remove_entry (const struct pbpst_state * s) {
         status = EXIT_FAILURE; goto cleanup;
     }
 
-    json_object_del(prov_pastes, s->uuid);
+    json_object_del(prov_pastes, s->del);
 
     cleanup:
         return status;
