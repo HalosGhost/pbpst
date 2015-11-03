@@ -173,13 +173,13 @@ pbpst_dispatch (const struct pbpst_state * s) {
 
     if ( s->llex || s->lthm ) { return pb_list(s); }
 
-	const char * provider = def_provider ? def_provider : s->provider,
-	           * uuid     = s->uuid      ? s->uuid      : s->del;
+    const char * provider = def_provider ? def_provider : s->provider,
+               * uuid     = s->uuid      ? s->uuid      : s->del;
 
     switch ( s->cmd ) {
         case SNC:
         case UPD: return pb_paste(s);
-        case RMV: return pb_remove(s, provider, uuid);
+        case RMV: return pb_remove(provider, uuid, s->verb);
         case DBS: return pbpst_db(s);
         case NON: return EXIT_FAILURE; // should never get here
     }

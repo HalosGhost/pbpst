@@ -279,9 +279,11 @@ db_swp_flush (const json_t * mdb, const char * s_dbl) {
 signed
 pbpst_db (const struct pbpst_state * s) {
 
-    return s->init ? EXIT_SUCCESS       :
-           s->del  ? db_remove_entry(s) :
-                     EXIT_FAILURE       ;
+    const char * provider = def_provider ? def_provider : s->provider;
+
+    return s->init ? EXIT_SUCCESS                      :
+           s->del  ? db_remove_entry(provider, s->del) :
+                     EXIT_FAILURE                      ;
 }
 
 signed
@@ -388,16 +390,14 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
 }
 
 signed
-db_remove_entry (const struct pbpst_state * s) {
+db_remove_entry (const char * provider, const char * uuid) {
 
     signed status = EXIT_SUCCESS;
     pastes = json_object_get(mem_db, "pastes");
 
     if ( !pastes ) { status = EXIT_FAILURE; goto cleanup; }
-    const char * provider = def_provider ? def_provider : s->provider;
     prov_pastes = json_object_get(pastes, provider);
 
-    char * uuid = s->cmd == 'R' ? s->uuid : s->del;
     if ( !prov_pastes ) {
         fprintf(stderr, "pbpst: No paste found with the uuid: %s\n", uuid);
         status = EXIT_FAILURE; goto cleanup;

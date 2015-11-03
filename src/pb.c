@@ -110,8 +110,7 @@ pb_paste (const struct pbpst_state * s) {
 }
 
 CURLcode
-pb_remove (const struct pbpst_state * s, const char * provider,
-		   const char * uuid) {
+pb_remove (const char * provider, const char * uuid, const uint16_t verb) {
 
     CURLcode status = CURLE_OK;
     CURL * handle = curl_easy_init();
@@ -121,7 +120,7 @@ pb_remove (const struct pbpst_state * s, const char * provider,
         return CURLE_FAILED_INIT;
     }
 
-    curl_easy_setopt(handle, CURLOPT_VERBOSE, s->verb >= 2);
+    curl_easy_setopt(handle, CURLOPT_VERBOSE, verb >= 2);
 
     struct curl_slist * list = NULL;
     list = curl_slist_append(list, "Accept: application/json");
@@ -142,7 +141,8 @@ pb_remove (const struct pbpst_state * s, const char * provider,
     status = curl_easy_perform(handle);
     if ( status == EXIT_FAILURE ) { goto cleanup; }
 
-    status = db_remove_entry(s) == EXIT_SUCCESS ? EXIT_SUCCESS : EXIT_FAILURE;
+    status = db_remove_entry(provider, uuid) == EXIT_SUCCESS ? EXIT_SUCCESS
+                                                             : EXIT_FAILURE;
 
     cleanup:
         if ( list ) { curl_slist_free_all(list); }
