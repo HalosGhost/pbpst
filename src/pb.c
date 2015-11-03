@@ -110,7 +110,8 @@ pb_paste (const struct pbpst_state * s) {
 }
 
 CURLcode
-pb_remove (const struct pbpst_state * s) {
+pb_remove (const struct pbpst_state * s, const char * provider,
+		   const char * uuid) {
 
     CURLcode status = CURLE_OK;
     CURL * handle = curl_easy_init();
@@ -126,14 +127,12 @@ pb_remove (const struct pbpst_state * s) {
     list = curl_slist_append(list, "Accept: application/json");
     curl_easy_setopt(handle, CURLOPT_HTTPHEADER, list);
 
-    const char * provider = def_provider ? def_provider : s->provider;
-
     struct CurlResponse * response_data = malloc(sizeof(struct CurlResponse));
-    size_t target_len = strlen(provider) + strlen(s->uuid) + 1;
+    size_t target_len = strlen(provider) + strlen(uuid) + 1;
     char * target = malloc(target_len);
     if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
 
-    snprintf(target, target_len, "%s%s", provider, s->uuid);
+    snprintf(target, target_len, "%s%s", provider, uuid);
 
     curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "DELETE");
     curl_easy_setopt(handle, CURLOPT_URL, target);

@@ -4,7 +4,7 @@ CURLcode
 pb_paste (const struct pbpst_state *);
 
 CURLcode
-pb_remove (const struct pbpst_state *);
+pb_remove (const struct pbpst_state *, const char *, const char *);
 
 CURLcode
 print_url (const struct pbpst_state *, const char *);
