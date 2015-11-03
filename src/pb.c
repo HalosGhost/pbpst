@@ -3,6 +3,8 @@
 #include "pbpst_db.h"
 #include "callback.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
 CURLcode
 pb_paste (const struct pbpst_state * s) {
 
@@ -154,6 +156,37 @@ pb_remove (const char * provider, const char * uuid, const uint16_t verb) {
 }
 
 CURLcode
+pb_list (const struct pbpst_state * s) {
+
+    CURLcode status = CURLE_OK;
+    CURL * handle = curl_easy_init();
+
+    if ( !handle ) {
+        fputs("pbpst: Failed to get CURL handle\n", stderr);
+        return CURLE_FAILED_INIT;
+    }
+
+    curl_easy_setopt(handle, CURLOPT_VERBOSE, s->verb >= 2);
+
+    const char * provider = def_provider ? def_provider : s->provider;
+
+    size_t target_len = strlen(provider) + 3;
+    char * target = malloc(target_len);
+    if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
+
+    snprintf(target, target_len, "%s%s", provider, s->llex ? "l" : "ls");
+    curl_easy_setopt(handle, CURLOPT_URL, target);
+
+    status = curl_easy_perform(handle);
+
+    cleanup:
+        curl_easy_cleanup(handle);
+        free(target);
+        return status;
+}
+#pragma clang diagnostic pop
+
+CURLcode
 print_url (const struct pbpst_state * s, const char * userdata) {
 
     json_error_t err;
@@ -226,32 +259,4 @@ print_url (const struct pbpst_state * s, const char * userdata) {
         return status;
 }
 
-CURLcode
-pb_list (const struct pbpst_state * s) {
-
-    CURLcode status = CURLE_OK;
-    CURL * handle = curl_easy_init();
-
-    if ( !handle ) {
-        fputs("pbpst: Failed to get CURL handle\n", stderr);
-        return CURLE_FAILED_INIT;
-    }
-
-    curl_easy_setopt(handle, CURLOPT_VERBOSE, s->verb >= 2);
-
-    const char * provider = def_provider ? def_provider : s->provider;
-
-    size_t target_len = strlen(provider) + 3;
-    char * target = malloc(target_len);
-    if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
-
-    snprintf(target, target_len, "%s%s", provider, s->llex ? "l" : "ls");
-    curl_easy_setopt(handle, CURLOPT_URL, target);
-
-    status = curl_easy_perform(handle);
-
-    cleanup:
-        curl_easy_cleanup(handle);
-        free(target);
-        return status;
-}
+// vim: set ts=4 sw=4 et:
