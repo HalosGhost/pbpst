@@ -42,16 +42,13 @@ static struct option os [] = {
     { "progress",     no_argument,       0, '#' },
     { "message",      required_argument, 0, 'm' },
     { "sunset",       required_argument, 0, 'x' },
-
-    /* for rem and upd */
-    { "uuid",         required_argument, 0, 'u' },
+    { "uuid",         required_argument, 0, 'u' }, // rem/upd
 
     /* db options */
     { "init",         no_argument,       0, 'i' },
     { "query",        required_argument, 0, 'q' },
     { "delete",       required_argument, 0, 'd' },
-    { "prune-local",  no_argument,       0, 'y' },
-    { "prune-remote", no_argument,       0, 259 },
+    { "prune",        no_argument,       0, 'y' }, // rem/db
 
     /* generic options */
     { "provider",     required_argument, 0, 'P' },
@@ -106,7 +103,8 @@ static const char sync_help [] =
 static const char rem_help [] =
     "Usage: pbpst {-R --remove} [option ...]\n\n"
     "Options:\n"
-    "  -u, --uuid=UUID      Use UUID as authentication credential\n";
+    "  -u, --uuid=UUID      Use UUID as authentication credential\n"
+    "  -y, --prune          Remotely delete all expired pastes\n";
 
 static const char upd_help [] =
     "Usage: pbpst {-U --update} [option ...]\n\n"
@@ -129,8 +127,7 @@ static const char dbs_help [] =
     "  -i, --init           Initalize a default database (no clobbering)\n"
     "  -q, --query=STR      Search the database for a paste matching STR\n"
     "  -d, --delete=UUID    Manually delete the paste with UUID\n"
-    "  -y, --prune-local    Locally delete all expired pastes\n"
-    "      --prune-remote   Remotely delete all expired pastes\n";
+    "  -y, --prune          Locally delete all expired pastes\n";
 
 enum pb_cmd { NON = 0, SNC = 'S', RMV = 'R', UPD = 'U', DBS = 'D' };
 
