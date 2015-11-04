@@ -182,6 +182,7 @@ pb_list (const struct pbpst_state * s) {
     curl_easy_setopt(handle, CURLOPT_URL, target);
 
     status = curl_easy_perform(handle);
+    puts("");
 
     cleanup:
         if ( list ) { curl_slist_free_all(list); }
