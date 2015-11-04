@@ -166,6 +166,10 @@ pb_list (const struct pbpst_state * s) {
         return CURLE_FAILED_INIT;
     }
 
+    struct curl_slist * list = NULL;
+    list = curl_slist_append(list, "Accept: application/json");
+    curl_easy_setopt(handle, CURLOPT_HTTPHEADER, list);
+
     curl_easy_setopt(handle, CURLOPT_VERBOSE, s->verb >= 2);
 
     const char * provider = def_provider ? def_provider : s->provider;
@@ -180,6 +184,7 @@ pb_list (const struct pbpst_state * s) {
     status = curl_easy_perform(handle);
 
     cleanup:
+        if ( list ) { curl_slist_free_all(list); }
         curl_easy_cleanup(handle);
         free(target);
         return status;
