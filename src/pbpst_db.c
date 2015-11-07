@@ -399,11 +399,14 @@ db_remove_entry (const char * provider, const char * uuid) {
     prov_pastes = json_object_get(pastes, provider);
 
     if ( !prov_pastes ) {
-        fprintf(stderr, "pbpst: No paste found with the uuid: %s\n", uuid);
+        fprintf(stderr, "pbpst: No pastes were found for %s\n", provider);
         status = EXIT_FAILURE; goto cleanup;
     }
 
-    json_object_del(prov_pastes, uuid);
+    if ( json_object_del(prov_pastes, uuid) ) {
+        fprintf(stderr, "pbpst: No paste was found with uuid: %s\n", uuid);
+        status = EXIT_FAILURE;
+    }
 
     cleanup:
         return status;
