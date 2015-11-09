@@ -10,14 +10,7 @@
 
 json_t * mem_db, * pastes = 0, * prov_pastes = 0;
 static json_t * def_prov = 0;
-struct pbpst_state state = {
-    .path = 0, .url = 0, .lexer = 0, .vanity = 0,
-    .uuid = 0, .provider = 0, .dbfile = 0,
-    .query = 0, .del = 0, .msg = 0, .theme = 0, .ext = 0,
-    .cmd = NON, .ln = 0, .secs = 0,
-    .help = false, .priv = false, .rend = false,
-    .init = false, .verb = 0, .prog = false
-};
+struct pbpst_state state;
 
 const char * def_provider = 0;
 
