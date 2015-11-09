@@ -68,6 +68,7 @@ main (signed argc, char * argv []) {
             case '#': state.prog = true; break;
             case 'r': state.rend = true; break;
             case 'i': state.init = true; break;
+            case 'y': state.prun = true; break;
             case 'p': state.priv = true; break;
             case 'h': state.help = true; break;
             case 'V': state.verb += 1;   break;
@@ -172,7 +173,8 @@ pbpst_dispatch (const struct pbpst_state * s) {
     switch ( s->cmd ) {
         case SNC:
         case UPD: return pb_paste(s);
-        case RMV: return pb_remove(provider, uuid, s->verb);
+        case RMV: return (s->prun ? pb_prune(s)
+                                  : pb_remove(provider, uuid, s->verb));
         case DBS: return pbpst_db(s);
         case NON: return EXIT_FAILURE; // should never get here
     }

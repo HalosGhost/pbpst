@@ -1,4 +1,5 @@
 #include "pbpst_db.h"
+#include "pb.h"
 
 char *
 db_locate (const struct pbpst_state * s) {
@@ -283,6 +284,7 @@ pbpst_db (const struct pbpst_state * s) {
 
     return s->init ? EXIT_SUCCESS                      :
            s->del  ? db_remove_entry(provider, s->del) :
+           s->prun ? pb_prune(s)                       :
                      EXIT_FAILURE                      ;
 }
 
