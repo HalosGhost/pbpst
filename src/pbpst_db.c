@@ -440,7 +440,8 @@ db_query (const struct pbpst_state * s) {
 
         const char * l = json_string_value(jv) ? json_string_value(jv)
                                                : json_string_value(jl),
-                   * u = json_string_value(js) ,
+                   * u = json_string_value(js) ? json_string_value(js)
+                                               : "N/A",
                    * m = json_string_value(jm) ;
 
         size_t len = strlen(key)            +
@@ -450,7 +451,12 @@ db_query (const struct pbpst_state * s) {
                      json_string_length(jm) + 9;
 
         char * outstr = malloc(len + 1);
-        snprintf(outstr, len, "%s\t%s%s\t%s\t%s\n", key, provider, l, m, u ? u : "N/A");
+        if ( !outstr ) {
+            fputs("pbpst: Could not format output: Out of Memory\n", stderr);
+            status = EXIT_FAILURE; goto cleanup;
+        }
+
+        snprintf(outstr, len, "%s\t%s%s\t%s\t%s\n", key, provider, l, m, u);
         if ( strstr(outstr, s->query) ) { printf("%s", outstr); }
         free(outstr);
     }
