@@ -451,7 +451,7 @@ db_query (const struct pbpst_state * s) {
 
         char * outstr = malloc(len + 1);
         snprintf(outstr, len, "%s\t%s%s\t%s\t%s\n", key, provider, l, m, u ? u : "N/A");
-        printf("%s", outstr);
+        if ( strstr(outstr, s->query) ) { printf("%s", outstr); }
         free(outstr);
     }
 
