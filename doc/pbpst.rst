@@ -50,10 +50,10 @@ The following options are available for any operation.
     List the version and exit.
 
 --list-lexers
-    List the pygments lexers supported by the pb host (respects the conf-time/run-time-set provider value) and exit.
+    List the pygments lexers supported by the pb provider and exit.
 
 --list-themes
-    List the pygments themes supported by the pb host (respects the conf-time/run-time-set provider value) and exit.
+    List the pygments themes supported by the pb provider and exit.
 
 Sync Options
 ------------
@@ -151,7 +151,7 @@ Database Options
     Initialize the database with a default provider and a pastes object, and exit.
 
 -q, --query=STR
-    Search each paste in the pastes object for text matching STR. Matches will be printed to :file:`stdout` with the form ``<uuid> <provider>/<longid> <msg>``.
+    Search each paste in the pastes object for text matching STR. Matches will be printed to :file:`stdout` with the form ``<uuid>\t<provider>/<id>\t<msg>\t<sunset>`` where ``<id>`` is either the long id or a vanity label if one exists.
 
 -d, --delete=UUID
     Remove the paste from the pastes object specified by UUID. Note: This option will respect the default provider and :option:`-P`.
