@@ -97,7 +97,7 @@ main (signed argc, char * argv []) {
         struct stat st;
 
         errno = 0;
-        if ( !stat(state.path, &st) ) {
+        if ( stat(state.path, &st) ) {
             exit_status = errno;
             fprintf(stderr, "pbpst: Error checking file: %s\n",
                     strerror(exit_status)); goto cleanup;
