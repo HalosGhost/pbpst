@@ -93,6 +93,22 @@ main (signed argc, char * argv []) {
         exit_status = EXIT_FAILURE; goto cleanup;
     }
 
+    if ( state.path ) {
+        struct stat st;
+
+        errno = 0;
+        if ( !stat(state.path, &st) ) {
+            exit_status = errno;
+            fprintf(stderr, "pbpst: Error checking file: %s\n",
+                    strerror(exit_status)); goto cleanup;
+        }
+
+        if ( st.st_size > PB_FILE_MAX ) {
+            fputs("pbpst: File too large\n", stderr);
+            exit_status = EXIT_FAILURE; goto cleanup;
+        }
+    }
+
     db_loc = db_locate(&state);
     if ( !db_loc ) {
         exit_status = EXIT_FAILURE; goto cleanup;

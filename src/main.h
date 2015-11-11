@@ -8,7 +8,7 @@
 #include <inttypes.h>  // SCNu32
 #include <stdlib.h>    // EXIT_SUCCESS, EXIT_FAILURE
 #include <curl/curl.h> // curl_easy_*()
-#include <sys/stat.h>  // fstat(), open(), mkdir()
+#include <sys/stat.h>  // stat(), open(), mkdir()
 #include <string.h>    // strerror()
 #include <fcntl.h>     // open()
 #include <unistd.h>    // close()
@@ -17,7 +17,7 @@
 #include <jansson.h>
 
 #define BUFFER_SIZE 256
-#define FILE_MAX 67108864 // 64 MiB
+#define PB_FILE_MAX 67108864 // 64 MiB
 
 static const char version_str [] = "pbpst 0.6.0\n";
 
