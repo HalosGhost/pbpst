@@ -280,7 +280,7 @@ db_swp_flush (const json_t * mdb, const char * s_dbl) {
 signed
 pbpst_db (const struct pbpst_state * s) {
 
-    const char * provider = def_provider ? def_provider : s->provider;
+    const char * provider = s->provider ? s->provider : def_provider;
 
     return s->init  ? EXIT_SUCCESS                      :
            s->query ? db_query(s)                       :
@@ -305,7 +305,7 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
            * label_j = 0, * status_j = 0, * sunset_j = 0, * new_paste = 0;
 
     char * sunset = 0;
-    const char * provider = def_provider ? def_provider : s->provider;
+    const char * provider = s->provider ? s->provider : def_provider;
 
     if ( !pastes ) { status = EXIT_FAILURE; goto cleanup; }
     prov_pastes = json_object_get(pastes, provider);
@@ -421,7 +421,7 @@ db_query (const struct pbpst_state * s) {
     signed status = EXIT_SUCCESS;
     pastes = json_object_get(mem_db, "pastes");
 
-    const char * provider = def_provider ? def_provider : s->provider;
+    const char * provider = s->provider ? s->provider : def_provider;
     if ( !pastes ) { status = EXIT_FAILURE; goto cleanup; }
     prov_pastes = json_object_get(pastes, provider);
 

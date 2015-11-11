@@ -167,8 +167,8 @@ pbpst_dispatch (const struct pbpst_state * s) {
 
     if ( s->llex || s->lthm ) { return pb_list(s); }
 
-    const char * provider = def_provider ? def_provider : s->provider,
-               * uuid     = s->uuid      ? s->uuid      : s->del;
+    const char * provider = s->provider ? s->provider : def_provider,
+               * uuid     = s->uuid     ? s->uuid     : s->del;
 
     switch ( s->cmd ) {
         case SNC:

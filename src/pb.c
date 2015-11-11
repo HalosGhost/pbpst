@@ -18,7 +18,7 @@ pb_paste (const struct pbpst_state * s) {
 
     curl_easy_setopt(handle, CURLOPT_VERBOSE, s->verb >= 2);
 
-    const char * provider = def_provider ? def_provider : s->provider;
+    const char * provider = s->provider ? s->provider : def_provider;
 
     struct curl_httppost * post = NULL, * last = NULL;
     size_t tlen = strlen(provider) + (
@@ -172,7 +172,7 @@ pb_list (const struct pbpst_state * s) {
 
     curl_easy_setopt(handle, CURLOPT_VERBOSE, s->verb >= 2);
 
-    const char * provider = def_provider ? def_provider : s->provider;
+    const char * provider = s->provider ? s->provider : def_provider;
 
     size_t target_len = strlen(provider) + 3;
     char * target = malloc(target_len);
@@ -216,7 +216,7 @@ print_url (const struct pbpst_state * s, const char * userdata) {
 
     const char * lid      = json_string_value(lid_j),
                * label    = json_string_value(label_j),
-               * provider = def_provider ? def_provider : s->provider;
+               * provider = s->provider ? s->provider : def_provider;
 
     if ( s->verb ) {
         json_t * value;
@@ -271,7 +271,7 @@ pb_prune (const struct pbpst_state * s) {
     signed status = EXIT_SUCCESS;
     pastes = json_object_get(mem_db, "pastes");
 
-    const char * provider = def_provider ? def_provider : s->provider;
+    const char * provider = s->provider ? s->provider : def_provider;
     if ( !pastes ) { status = EXIT_FAILURE; goto cleanup; }
     prov_pastes = json_object_get(pastes, provider);
 
