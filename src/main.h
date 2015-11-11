@@ -136,7 +136,7 @@ static const char * opts_for [] = {
     [SNC] = "SRUDhP:Vb:s:f:l:t:e:L:px:rv:#m:",
     [RMV] = "SRUDhP:Vb:u:y",
     [UPD] = "SRUDhP:Vb:f:l:L:t:e:x:ru:v:#m:",
-    [DBS] = "SRUDhP:Vb:id:y"
+    [DBS] = "SRUDhP:Vb:id:yq:"
 };
 
 extern struct pbpst_state {

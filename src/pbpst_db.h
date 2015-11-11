@@ -36,4 +36,7 @@ db_add_entry (const struct pbpst_state *, const char *);
 signed
 db_remove_entry (const char *, const char *);
 
+signed
+db_query (const struct pbpst_state *);
+
 // vim: set ts=4 sw=4 et:

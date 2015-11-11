@@ -282,10 +282,11 @@ pbpst_db (const struct pbpst_state * s) {
 
     const char * provider = def_provider ? def_provider : s->provider;
 
-    return s->init ? EXIT_SUCCESS                      :
-           s->del  ? db_remove_entry(provider, s->del) :
-           s->prun ? pb_prune(s)                       :
-                     EXIT_FAILURE                      ;
+    return s->init  ? EXIT_SUCCESS                      :
+           s->query ? db_query(s)                       :
+           s->del   ? db_remove_entry(provider, s->del) :
+           s->prun  ? pb_prune(s)                       :
+                      EXIT_FAILURE                      ;
 }
 
 signed
@@ -408,6 +409,50 @@ db_remove_entry (const char * provider, const char * uuid) {
     if ( json_object_del(prov_pastes, uuid) ) {
         fprintf(stderr, "pbpst: No paste was found with uuid: %s\n", uuid);
         status = EXIT_FAILURE;
+    }
+
+    cleanup:
+        return status;
+}
+
+signed
+db_query (const struct pbpst_state * s) {
+
+    signed status = EXIT_SUCCESS;
+    pastes = json_object_get(mem_db, "pastes");
+
+    const char * provider = def_provider ? def_provider : s->provider;
+    if ( !pastes ) { status = EXIT_FAILURE; goto cleanup; }
+    prov_pastes = json_object_get(pastes, provider);
+
+    if ( !prov_pastes ) {
+        fprintf(stderr, "pbpst: No pastes found for: %s\n", provider);
+        status = EXIT_FAILURE; goto cleanup;
+    }
+
+    const char * key;
+    json_t * val;
+    json_object_foreach (prov_pastes, key, val) {
+        json_t * jl = json_object_get(val, "long"),
+               * js = json_object_get(val, "sunset"),
+               * jm = json_object_get(val, "msg"),
+               * jv = json_object_get(val, "label");
+
+        const char * l = json_string_value(jv) ? json_string_value(jv)
+                                               : json_string_value(jl),
+                   * u = json_string_value(js) ,
+                   * m = json_string_value(jm) ;
+
+        size_t len = strlen(key)            +
+                     strlen(provider)       +
+                     strlen(l)              +
+                     json_string_length(js) +
+                     json_string_length(jm) + 9;
+
+        char * outstr = malloc(len + 1);
+        snprintf(outstr, len, "%s\t%s%s\t%s\t%s\n", key, provider, l, m, u ? u : "N/A");
+        printf("%s", outstr);
+        free(outstr);
     }
 
     cleanup:
