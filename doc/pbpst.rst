@@ -175,6 +175,9 @@ pbpst -Ru <UUID>
 pbpst -Uu <UUID> -f <filepath>
     update a paste to the file at <filepath> using <UUID> for authentication
 
+gpg -o - -c <filepath> | pbpst -S
+    encrypt file at <filepath> with GPG symmetric cipher and paste it which can be retrieved and decrypted using ``curl <pasteurl> | gpg -d``
+
 Bugs
 ----
 
