@@ -167,7 +167,8 @@ pbpst_test_options (const struct pbpst_state * s) {
 
         case RMV: cl = !s->uuid && !s->prun ? 'R' : cl; break;
         case UPD: cl = !s->uuid ? 'U' : cl; break;
-        case DBS: cl = s->query && s->del ? 'D' : cl; break;
+        case DBS: cl = !s->init && !s->query && !s->del && !s->prun
+                     ? 'D' : cl; break;
         case NON: cl = 'N'; break;
     }
 
