@@ -143,8 +143,7 @@ pb_remove (const char * provider, const char * uuid, const uint16_t verb) {
     status = curl_easy_perform(handle);
     if ( status == EXIT_FAILURE ) { goto cleanup; }
 
-    status = db_remove_entry(provider, uuid) == EXIT_SUCCESS ? EXIT_SUCCESS
-                                                             : EXIT_FAILURE;
+    db_remove_entry(provider, uuid);
 
     cleanup:
         if ( list ) { curl_slist_free_all(list); }
