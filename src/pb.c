@@ -265,16 +265,15 @@ print_url (const struct pbpst_state * s, const char * userdata) {
 signed
 pb_prune (const struct pbpst_state * s) {
 
-    signed status = EXIT_SUCCESS;
     pastes = json_object_get(mem_db, "pastes");
 
     const char * provider = s->provider ? s->provider : def_provider;
-    if ( !pastes ) { status = EXIT_FAILURE; goto cleanup; }
+    if ( !pastes ) { return EXIT_FAILURE; }
     prov_pastes = json_object_get(pastes, provider);
 
     if ( !prov_pastes ) {
         fprintf(stderr, "pbpst: No pastes found for: %s\n", provider);
-        status = EXIT_FAILURE; goto cleanup;
+        return EXIT_FAILURE;
     }
 
     int64_t curtime = (int64_t )time(NULL);
@@ -290,7 +289,7 @@ pb_prune (const struct pbpst_state * s) {
         if ( stclen && sscanf(stc, "%" SCNd64, &stime) == EOF ) {
             signed errsv = errno;
             fprintf(stderr, "pbpst: Failed to scan offset: %s\n",
-                    strerror(errsv)); status = EXIT_FAILURE; goto cleanup;
+                    strerror(errsv)); return EXIT_FAILURE;
         }
 
         if ( stime > 0 && curtime > stime ) {
@@ -300,10 +299,7 @@ pb_prune (const struct pbpst_state * s) {
                 db_remove_entry(provider, key);
             }
         }
-    }
-
-    cleanup:
-        return status;
+    } return EXIT_SUCCESS;
 }
 
 // vim: set ts=4 sw=4 et:
