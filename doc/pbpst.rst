@@ -178,6 +178,17 @@ pbpst -Uu <UUID> -f <filepath>
 gpg -o - -c <filepath> | pbpst -S
     encrypt file at <filepath> with GPG symmetric cipher and paste it which can be retrieved and decrypted using ``curl <pasteurl> | gpg -d``
 
+Errors
+------
+
+:program:`pbpst` does everything within its power to make sure that user data is preserved wherever possible.
+Much of its design follows this principle (for example, this is why there is a swap database).
+This means that if it ever sees something go wrong during execution, it tries to fail out in a way that is most likely to preserve user data.
+
+As a result, if something goes wrong and :program:`pbpst` determines it needs to fail out, it may decide to not remove the swap db in case it contains data relevant to the user that needs to be manually merged into the main database.
+However, sometimes, :program:`pbpst` may fail out and choose to not clean up the swap db, but the swap db will be empty.
+This case triggers a contingency where :program:`pbpst` will detect the empty swap db and clean it up anyway.
+
 Bugs
 ----
 
