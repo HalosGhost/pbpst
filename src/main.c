@@ -143,14 +143,7 @@ main (signed argc, char * argv []) {
     exit_status = pbpst_dispatch(&state);
 
     if ( db_swp_flush(mem_db, swp_db_loc) == -1 ) {
-        exit_status = EXIT_FAILURE;
-
-        struct stat st;
-        stat(swp_db_loc, &st);
-        if ( st.st_size == 0 ) {
-            remove(swp_db_loc);
-            fputs("pbpst: removed empty swap (contingency)\n", stderr);
-        } goto cleanup;
+        exit_status = EXIT_FAILURE; goto cleanup;
     }
 
     if ( exit_status != EXIT_SUCCESS ) { goto cleanup; }
@@ -232,7 +225,15 @@ pbpst_cleanup (void) {
     json_decref(pastes);
     json_decref(prov_pastes);
     json_decref(def_prov);
-    if ( swp_db_loc ) { free(swp_db_loc); }
+
+    if ( swp_db_loc ) {
+        struct stat st;
+        if ( stat(swp_db_loc, &st) == 0 && st.st_size == 0 ) {
+            remove(swp_db_loc);
+            fputs("pbpst: removed empty swap (contingency)\n", stderr);
+        } free(swp_db_loc);
+    }
+
     if ( db_loc != state.dbfile ) { free(db_loc); }
     free(state.dbfile);
 }
