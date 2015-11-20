@@ -83,6 +83,7 @@ pb_paste (const struct pbpst_state * s) {
     curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
     curl_easy_setopt(handle, CURLOPT_URL, target);
     curl_easy_setopt(handle, CURLOPT_XFERINFOFUNCTION, &pb_progress_cb);
+    curl_easy_setopt(handle, CURLOPT_NOPROGRESS, (long )false);
     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &pb_write_cb);
     curl_easy_setopt(handle, CURLOPT_WRITEDATA, response_data);
 
