@@ -19,7 +19,7 @@
 #define BUFFER_SIZE 256
 #define PB_FILE_MAX 67108864 // 64 MiB
 
-static const char version_str [] = "pbpst 0.6.0\n";
+static const char version_str [] = "pbpst 0.9.0\n";
 
 static struct option os [] = {
     /* commands */
