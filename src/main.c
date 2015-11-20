@@ -13,6 +13,7 @@ static json_t * def_prov = 0;
 struct pbpst_state state;
 
 const char * def_provider = 0;
+bool point_of_no_return = false;
 
 signed
 main (signed argc, char * argv []) {
@@ -202,7 +203,9 @@ signal_handler (signed signum) {
 
     if ( signum < 1 || signum > 31 ) { return; }
     fprintf(stderr, signal_err, sys_siglist[signum]);
-    pbpst_cleanup(); exit(EXIT_FAILURE);
+    if ( point_of_no_return ) {
+        fputs("pbpst: You need to manually check your swap db\n", stderr);
+    } pbpst_cleanup(); exit(EXIT_FAILURE);
 }
 
 void

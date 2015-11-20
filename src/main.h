@@ -162,9 +162,8 @@ static char * db_loc = 0, * swp_db_loc = 0;
 extern json_t * mem_db, * pastes, * prov_pastes;
 extern const char * const sys_siglist [];
 extern const char * def_provider;
+extern bool point_of_no_return;
 
-static const char signal_err [] =
-    "pbpst: Received %s\x1b[?25h\n"
-    "pbpst: Note that your swap db will need to be manually checked\n";
+static const char signal_err [] = "pbpst: Received %s\x1b[?25h\n";
 
 // vim: set ts=4 sw=4 et:

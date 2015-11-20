@@ -22,6 +22,7 @@ pb_progress_cb (void * client,
                           progress == 100 ? "\x1b[?25h\n" : "\r");
     }
 
+    point_of_no_return = progress == 100;
     last_progress = progress;
     return 0;
 }
