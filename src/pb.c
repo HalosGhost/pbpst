@@ -90,7 +90,6 @@ pb_paste (const struct pbpst_state * s) {
     status = curl_easy_perform(handle);
     if ( status == EXIT_FAILURE ) { goto cleanup; }
 
-
     if ( s->url ) {
         printf("%s", response_data->mem);
     } else {
