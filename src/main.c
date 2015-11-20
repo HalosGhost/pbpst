@@ -233,7 +233,9 @@ pbpst_cleanup (void) {
         struct stat st;
         if ( stat(swp_db_loc, &st) == 0 && st.st_size == 0 ) {
             remove(swp_db_loc);
-            fputs("pbpst: removed empty swap (contingency)\n", stderr);
+            if ( point_of_no_return ) {
+                fputs("pbpst: removed empty swap (contingency)\n", stderr);
+            }
         } free(swp_db_loc);
     }
 
