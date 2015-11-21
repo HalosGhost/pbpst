@@ -130,7 +130,7 @@ _pbpst() {
             _pbpst_action_sync
             ;;
         U*)
-            _pbpst_action_upgrade
+            _pbpst_action_update
             ;;
     esac
 }
