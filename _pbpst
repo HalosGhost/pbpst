@@ -88,7 +88,7 @@ _pbpst_action_sync() {
 _pbpst_action_remove() {
     _arguments -s : \
         "$_pbpst_opts_common[@]" \
-        "$_pbpst_opts_sync[@]"
+        "$_pbpst_opts_remove[@]"
 }
 
 # handles --update operation
