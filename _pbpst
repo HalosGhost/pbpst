@@ -1,0 +1,136 @@
+#compdef pbpst
+
+# copy this file to /usr/share/zsh/site-functions/_pbpst
+
+typeset -A opt_args
+setopt extendedglob
+
+# options for passing to _arguments: main pbpst operations
+_pbpst_opts_operations=(
+    {-S,--sync}'[Create a paste]'
+    {-R,--remove}'[Remove a paste]'
+    {-U,--update}'[Update a paste]'
+    {-D,--database}'[Operate on the database]'
+)
+
+# options for passing to _arguments: options common to all commands
+_pbpst_opts_common=(
+    {-h,--help}'[List this help and exit]'
+    {-b,--dbpath}'[Use the database at PATH]:database_location:_files -/'
+    {-P,--provider}'[Specify an alternative pb host]'
+    {-V,--verbose}'[Output verbosely]'
+    '--list-lexers[List available lexers and exit]'
+    '--list-themes[List available themes and exit]'
+    '--version[List the version and exit]'
+)
+
+# options for passing to _arguments: options for -S
+_pbpst_opts_sync=(
+    {-s,--shorten}'[Create a redirect to URL instead of pasting]'
+    {-f,--file}'[Create a paste from FILE]'
+    {-l,--lexer}'[Lex paste with LANG]'
+    {-t,--theme}'[Style paste with pygments theme THEME]'
+    {-e,--extension}'[Specify MIME-type as EXT]'
+    {-L,--line}'[Highlight LINE in paste]'
+    {-p,--private}'[Return a less-guessable Id for paste]'
+    {-x,--sunset}'[Slate the paste for auto-sunset in SECS seconds]'
+    {-r,--render}'[Render paste from rst to HTML]'
+    {-v,--vanity}'[Use NAME as a custom Id]'
+    {-\#,--progress}'[Show a progress bar for the upload]'
+    {-m,--message}'[Use MSG as the note in the database]'
+)
+
+# options for passing to _arguments: options for -R
+_pbpst_opts_remove=(
+    {-u,--uuid}'[Use UUID as authentication credential]'
+    {-y,--prune}'[Remotely delete all expired pastes]'
+)
+
+# options for passing to _arguments: options for -U
+_pbpst_opts_update=(
+    {-f,--file}'[Create a paste from FILE]'
+    {-l,--lexer}'[Lex paste with LANG]'
+    {-t,--theme}'[Style paste with pygments theme THEME]'
+    {-e,--extension}'[Specify MIME-type as EXT]'
+    {-L,--line}'[Highlight LINE in paste]'
+    {-p,--private}'[Return a less-guessable Id for paste]'
+    {-x,--sunset}'[Slate the paste for auto-sunset in SECS seconds]'
+    {-r,--render}'[Render paste from rst to HTML]'
+    {-u,--uuid}'[Use UUID as authentication credential]'
+    {-v,--vanity}'[Use NAME as a custom Id]'
+    {-\#,--progress}'[Show a progress bar for the upload]'
+    {-m,--message}'[Use MSG as the note in the database]'
+)
+
+# options for passing to _arguments: options for -D
+_pbpst_opts_database=(
+    {-i,--init}'[Initalize a default database (no clobbering)]'
+    {-q,--query}'[Search the database for a paste matching STR]'
+    {-d,--delete}'[Manually delete the paste with UUID]'
+    {-y,--prune}'[Remotely delete all expired pastes]'
+)
+
+# handles cases where no operation has yet been given
+_pbpst_action_none() {
+    _arguments -s : \
+        "$_pbpst_opts_operations[@]" \
+        "$_pbpst_opts_common[@]"
+}
+
+# handles --sync operation
+_pbpst_action_sync() {
+    _arguments -s : \
+        "$_pbpst_opts_common[@]" \
+        "$_pbpst_opts_sync[@]"
+}
+
+# handles --remove operation
+_pbpst_action_remove() {
+    _arguments -s : \
+        "$_pbpst_opts_common[@]" \
+        "$_pbpst_opts_sync[@]"
+}
+
+# handles --update operation
+_pbpst_action_update() {
+    _arguments -s : \
+        "$_pbpst_opts_common[@]" \
+        "$_pbpst_opts_update[@]"
+}
+
+# handles --database operation
+_pbpst_action_database() {
+    _arguments -s : \
+        "$_pbpst_opts_common[@]" \
+        "$_pbpst_opts_database[@]"
+}
+
+# main dispatcher
+_pbpst() {
+    local -a args cmds;
+    local tmp
+    args=( ${${${(M)words:#-*}#-}:#-*} )
+    for tmp in $words; do
+        cmds+=("${${_pbpst_opts_operations[(r)*$tmp\[*]%%\[*}#*\)}")
+    done
+    case $args in #$words[2] in
+        h*)
+            _pbpst_action_none
+            ;;
+        *h*)
+            _message "no more arguments"
+            ;;
+        D*)
+            _pbpst_action_database
+            ;;
+        R*)
+            _pbpst_action_remove
+            ;;
+        S*)
+            _pbpst_action_sync
+            ;;
+        U*)
+            _pbpst_action_upgrade
+            ;;
+    esac
+}
