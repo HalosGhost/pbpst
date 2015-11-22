@@ -114,24 +114,12 @@ _pbpst() {
         cmds+=("${${_pbpst_opts_operations[(r)*$tmp\[*]%%\[*}#*\)}")
     done
     case $args in #$words[2] in
-        h*)
-            _pbpst_action_none
-            ;;
-        *h*)
-            _message "no more arguments"
-            ;;
-        D*)
-            _pbpst_action_database
-            ;;
-        R*)
-            _pbpst_action_remove
-            ;;
-        S*)
-            _pbpst_action_sync
-            ;;
-        U*)
-            _pbpst_action_update
-            ;;
+        h*)  _pbpst_action_none           ;;
+        *h*) _message "no more arguments" ;;
+        D*)  _pbpst_action_database       ;;
+        R*)  _pbpst_action_remove         ;;
+        S*)  _pbpst_action_sync           ;;
+        U*)  _pbpst_action_update         ;;
     esac
 }
 
