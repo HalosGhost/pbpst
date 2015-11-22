@@ -134,3 +134,5 @@ _pbpst() {
             ;;
     esac
 }
+
+_pbpst()
