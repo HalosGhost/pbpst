@@ -16,7 +16,7 @@ _pbpst_opts_operations=(
 # options for passing to _arguments: options common to all operations
 _pbpst_opts_common=(
     {-h,--help}'[Display syntax for the given operation]'
-    {-b,--dbpath}'[Use the database at PATH]'
+    {-b,--dbpath}'[Use the database at PATH]:db_location:_files -/'
     {-P,--provider}'[Specify an alternative pb host]'
     {-V,--verbose}'[Output verbosely]'
     '--list-lexers[List available lexers and exit]'
@@ -27,7 +27,7 @@ _pbpst_opts_common=(
 # options for passing to _arguments: options for -S
 _pbpst_opts_sync=(
     {-s,--shorten}'[Create a redirect to URL instead of pasting]'
-    {-f,--file}'[Create a paste from FILE]'
+    {-f,--file}'[Create a paste from FILE]:file_path:_files -/'
     {-l,--lexer}'[Lex paste with LANG]'
     {-t,--theme}'[Style paste with pygments theme THEME]'
     {-e,--extension}'[Specify MIME-type as EXT]'
@@ -48,7 +48,7 @@ _pbpst_opts_remove=(
 
 # options for passing to _arguments: options for -U
 _pbpst_opts_update=(
-    {-f,--file}'[Create a paste from FILE]'
+    {-f,--file}'[Create a paste from FILE]:file_path:_files -/'
     {-l,--lexer}'[Lex paste with LANG]'
     {-t,--theme}'[Style paste with pygments theme THEME]'
     {-e,--extension}'[Specify MIME-type as EXT]'
