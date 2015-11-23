@@ -31,8 +31,6 @@ Once you have all the dependencies installed (and you have run ``modprobe fuse``
 
     tup upd
 
-Running the above will generate the executable ``src/pbpst``, the man pages ``doc/pbpst.1``, and ``doc/pbpst_db.5``.
-From here, you (or a packager for your distribution) can place these wherever is seen fit on the system to complete the installation.
-The typical locations would be ``/usr/bin`` for the executable, ``/usr/share/man`` for the man pages (for packagers), and ``/usr/local/bin`` and ``/usr/local/share/man``, respectively, for an end user.
+Now, you can simply use ``make DESTDIR=<dest> PREFIX=<pre> install`` to install (or ``make DESTDIR=<dest> PREFIX=<pre> uninstall`` to uninstall).
 
 If you are an Arch Linux user, all the heavy lifting has been done for you, and you can build/install `pbpst-git <https://aur.archlinux.org/packages/pbpst-git/>`_ using ``makepkg`` or your favorite AUR helper if you are so inclined.
