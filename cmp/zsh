@@ -6,18 +6,19 @@ typeset -A opt_args
 setopt extendedglob
 
 # options for passing to _arguments: main pbpst operations
-_pbpst_opts_operations=(
+_pbpst_opts_commands=(
     {-S,--sync}'[Create a paste]'
     {-R,--remove}'[Remove a paste]'
     {-U,--update}'[Update a paste]'
     {-D,--database}'[Operate on the database]'
-)
+    {-h,--help}'[List help and exit]'
+    )
 
 # options for passing to _arguments: options common to all commands
 _pbpst_opts_common=(
-    {-h,--help}'[List this help and exit]'
-    {-b,--dbpath}'[Use the database at PATH]'
+    {-b,--dbpath}'[Use the database at PATH]:database_location:_files -/'
     {-P,--provider}'[Specify an alternative pb host]'
+    {-h,--help}'[Display syntax for the given operation]'
     {-V,--verbose}'[Output verbosely]'
     '--list-lexers[List available lexers and exit]'
     '--list-themes[List available themes and exit]'
@@ -70,16 +71,17 @@ _pbpst_opts_database=(
     {-y,--prune}'[Remotely delete all expired pastes]'
 )
 
+
 # handles cases where no operation has yet been given
 _pbpst_action_none() {
     _arguments -s : \
-        "$_pbpst_opts_operations[@]" \
-        "$_pbpst_opts_common[@]"
+        "$_pbpst_opts_commands[@]" \
 }
 
 # handles --sync operation
 _pbpst_action_sync() {
     _arguments -s : \
+        '(--sync -S)'{-S,--sync} \
         "$_pbpst_opts_common[@]" \
         "$_pbpst_opts_sync[@]"
 }
@@ -87,6 +89,7 @@ _pbpst_action_sync() {
 # handles --remove operation
 _pbpst_action_remove() {
     _arguments -s : \
+        '(--remove -R)'{-R,--remove} \
         "$_pbpst_opts_common[@]" \
         "$_pbpst_opts_remove[@]"
 }
@@ -94,6 +97,7 @@ _pbpst_action_remove() {
 # handles --update operation
 _pbpst_action_update() {
     _arguments -s : \
+        '(--update -U)'{-U,--update} \
         "$_pbpst_opts_common[@]" \
         "$_pbpst_opts_update[@]"
 }
@@ -101,6 +105,7 @@ _pbpst_action_update() {
 # handles --database operation
 _pbpst_action_database() {
     _arguments -s : \
+        '(--database -D)'{-D,--database} \
         "$_pbpst_opts_common[@]" \
         "$_pbpst_opts_database[@]"
 }
@@ -111,16 +116,41 @@ _pbpst() {
     local tmp
     args=( ${${${(M)words:#-*}#-}:#-*} )
     for tmp in $words; do
-        cmds+=("${${_pbpst_opts_operations[(r)*$tmp\[*]%%\[*}#*\)}")
+        cmds+=("${${_pbpst_opts_commands[(r)*$tmp\[*]%%\[*}#*\)}")
     done
     case $args in #$words[2] in
-        h*)  _pbpst_action_none           ;;
+        h*)
+            if (( ${(c)#args} <= 1 && ${(w)#cmds} <= 1 )); then
+                _pbpst_action_none
+            else
+                _message "no more arguments"
+            fi
+            ;;
         *h*) _message "no more arguments" ;;
         D*)  _pbpst_action_database       ;;
         R*)  _pbpst_action_remove         ;;
         S*)  _pbpst_action_sync           ;;
         U*)  _pbpst_action_update         ;;
+        *)
+            case ${(M)words:#--*} in
+                *--help*)
+                    if (( ${(w)#cmds} == 1 )); then
+                        _pbpst_action_none
+                    else
+                        return 0;
+                    fi
+                    ;;
+                *--sync*)
+                    _pbpst_action_sync     ;;
+                *--remove*)
+                    _pbpst_action_remove   ;;
+                *--database*)
+                    _pbpst_action_database ;;
+                *)
+                    _pbpst_action_none     ;;
+        esac
+        ;;
     esac
 }
 
-_pbpst()
+_pbpst "@" || _message "Error"
