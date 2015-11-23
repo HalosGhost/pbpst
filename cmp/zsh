@@ -16,7 +16,7 @@ _pbpst_opts_operations=(
 # options for passing to _arguments: options common to all commands
 _pbpst_opts_common=(
     {-h,--help}'[List this help and exit]'
-    {-b,--dbpath}'[Use the database at PATH]:database_location:_files -/'
+    {-b,--dbpath}'[Use the database at PATH]'
     {-P,--provider}'[Specify an alternative pb host]'
     {-V,--verbose}'[Output verbosely]'
     '--list-lexers[List available lexers and exit]'
