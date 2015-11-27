@@ -40,9 +40,11 @@ _pbpst_opts_sync=(
     {-m,--message}'[Use MSG as the note in the database]'
 )
 
+_uuids="$(pbpst -Dq '' | awk '{ print $1 }')"
+
 # options for passing to _arguments: options for -R
 _pbpst_opts_remove=(
-    {-u,--uuid}'[Use UUID as authentication credential]'
+    {-u,--uuid}"[Use UUID as authentication credential]:UUID:($_uuids)"
     {-y,--prune}'[Remotely delete all expired pastes]'
 )
 
@@ -66,7 +68,7 @@ _pbpst_opts_update=(
 _pbpst_opts_database=(
     {-i,--init}'[Initalize a default database (no clobbering)]'
     {-q,--query}'[Search the database for a paste matching STR]'
-    {-d,--delete}'[Manually delete the paste with UUID]'
+    {-d,--delete}"[Manually delete the paste with UUID]:UUID:($_uuids)"
     {-y,--prune}'[Remotely delete all expired pastes]'
 )
 
