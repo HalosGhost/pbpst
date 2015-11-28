@@ -60,7 +60,7 @@ _pbpst_opts_update=(
     {-p,--private}'[Return a less-guessable Id for paste]'
     {-x,--sunset}'[Slate the paste for auto-sunset in SECS seconds]'
     {-r,--render}'[Render paste from rst to HTML]'
-    {-u,--uuid}'[Use UUID as authentication credential]'
+    {-u,--uuid}"[Use UUID as authentication credential]:UUID:($_uuids)"
     {-v,--vanity}'[Use NAME as a custom Id]'
     {-\#,--progress}'[Show a progress bar for the upload]'
     {-m,--message}'[Use MSG as the note in the database]'
