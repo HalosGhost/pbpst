@@ -40,7 +40,11 @@ _pbpst_opts_sync=(
     {-m,--message}'[Use MSG as the note in the database]'
 )
 
-_uuids="$(pbpst -Dq '' | awk '{ print $1 }')"
+_uuids() {
+    local -a uuid
+    uuid=( $(_call_program uuid pbpst -Qd '') )
+    compadd "$@" -a uuid
+}
 
 # options for passing to _arguments: options for -R
 _pbpst_opts_remove=(
