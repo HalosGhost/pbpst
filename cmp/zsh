@@ -13,11 +13,13 @@ _pbpst_opts_operations=(
     {-D,--database}'[Operate on the database]'
 )
 
+_schm="http\:// https\://"
+
 # options for passing to _arguments: options common to all operations
 _pbpst_opts_common=(
     {-h,--help}'[Display syntax for the given operation]'
     {-b,--dbpath}'[Use the database at PATH]:Database location:_files -/'
-    {-P,--provider}'[Specify an alternative pb host]:URL:(http\:// https\://)'
+    {-P,--provider}"[Specify an alternative pb host]:URL:($_schm)"
     {-V,--verbose}'[Output verbosely]'
     '--list-lexers[List available lexers and exit]'
     '--list-themes[List available themes and exit]'
@@ -26,7 +28,7 @@ _pbpst_opts_common=(
 
 # options for passing to _arguments: options for -S
 _pbpst_opts_sync=(
-    {-s,--shorten}'[Create a redirect to URL instead of pasting]:URL:(http\:// https\://)'
+    {-s,--shorten}"[Create a redirect to URL instead of pasting]:URL:($_schm)"
     {-f,--file}'[Create a paste from FILE]:Path to file:_files -/'
     {-l,--lexer}'[Lex paste with LANG]'
     {-t,--theme}'[Style paste with pygments theme THEME]'
@@ -122,7 +124,7 @@ _pbpst() {
     done
     case $args in #$words[2] in
         h*) (( ${(c)#args} <= 1 && ${(w)#cmds} <= 1 )) && \
-                          _pbpst_action_none || \
+                          _pbpst_action_none           || \
                           _message "no more arguments" ;;
         *h*)              _message "no more arguments" ;;
         S*|*--sync*)      _pbpst_action_sync           ;;
