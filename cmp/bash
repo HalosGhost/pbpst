@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+# Halfwit
+# Generate completion, check for strings already there
+_compgen() {
+  local i r
+  COMPREPLY=($(compgen -W '$*' -- "$cur"))
+  for ((i=1; i < ${#COMP_WORDS[@]}-1; i++)); do
+    for r in ${!COMPREPLY[@]}; do
+      if [[ ${COMP_WORDS[i]} = ${COMPREPLY[r]} ]]; then
+        unset 'COMPREPLY[r]'; break
+      fi
+    done
+  done
+}
+
+_make_list() {
+  local list= x y
+  for x; do
+    for y in '0 --' '1 -'; do
+      eval 'set -- ${'$x'[${y% *}]}'
+      list+=\ ${@/#/${y#* }}
+    done
+  done
+  _compgen $list
+}
+
+_incomp() {
+  local r="\s-(-${1#* }\s|\w*${1% *})"; [[ $COMP_LINE =~ $r ]]
+}
+
+_uuid() {
+  _compgen "$(
+    pbpst -Dq '' 2>/dev/null | awk '{ print $1 }'
+  )"
+}
+
+_schm() {
+    local options="http\:// https\://"
+    COMPREPLY=( $(compgen -W "${options}" -- "${cur}") )
+}
+
+_pbpst_file() {
+  compopt -o filenames; _filedir './*'
+}
+
+_pbpst() {
+  local common core cur database prev remove sync upgrade o wantfiles
+  COMPREPLY=()
+  _get_comp_words_by_ref cur prev
+  database=('init query delete prune' 'i q d y')
+  remove=('uuid prune' 'u y')
+  sync=('shorten file lexer theme extension line private sunset render vanity progress message'
+        's f l t e L p x r v # m')
+  upgrade=('file lexer theme extension line private sunset render uuid vanity progress message'
+           'f l t e L p x r u v # m')
+  common=('help dbpath provider verbose list-lexers list-themes version' 'h b P V')
+  core=('sync remove update database' 'S R U D')
+
+  # operations for which we want to other completion options
+  for o in 'D database' 'R remove' 'S sync' 'U upgrade'; do
+    _incomp "$o" && break
+  done
+
+  if [[ $prev = 'pbpst' ]]; then
+    _make_list core common
+  elif [[ $prev = -@(P|-providers) ]]; then
+    _schm
+  elif [[ $prev = @(*f|*b) || $prev = --@(dbpath|file) ]]; then
+    _pbpst_file
+  elif [[ ! $prev =~ ^-*[Vbh] &&
+    ! $prev = --@(version|help|dbpath) ]]
+  then
+    [[ $cur = -* ]] && _make_list "${o#* }" common ||
+      case ${o% *} in
+        D)
+          { _incomp 'd delete' && _uuid; } ||
+            _make_list database ;;
+        R)
+          { _incomp 'u uuid' && _uuid; } ||
+            _make_list remove ;;
+        S)
+          { _incomp 's shorten' && _schm; } ||
+            _make_list sync ;;
+        U)
+          { _incomp 'u uuid' && _uuid; } ||
+          _make_list upgrade ;;
+      esac
+  fi
+  true
+}
+
+complete -F _pbpst -o default pbpst
+
+# ex:et ts=2 sw=2 ft=sh
