@@ -194,7 +194,10 @@ print_url (const struct pbpst_state * s, const char * userdata) {
     json_error_t err;
     json_t * json = json_loads(userdata, 0, &err);
     if ( !json ) {
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         fprintf(stderr, "pbpst: %s at %d:%d\n", err.text, err.line, err.column);
+        #pragma clang diagnostic pop
         return EXIT_FAILURE;
     }
 
@@ -241,8 +244,12 @@ print_url (const struct pbpst_state * s, const char * userdata) {
             size_t tlen = strlen(state_mod) + strlen(mod_fmts[i]);
             *mod_var = malloc(tlen + 2);
             if ( !mod_var ) {
+                #pragma clang diagnostic push
+                #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
                 fprintf(stderr, "pbpst: Could not modify %s: Out of Memory\n",
-                                mod_names[i]); goto cleanup;
+                                mod_names[i]);
+                #pragma clang diagnostic pop
+                goto cleanup;
             } snprintf(*mod_var, tlen + 1, "%s%s", mod_fmts[i], state_mod);
         } else { *mod_var = ""; }
     } printf("%s%s%s%s%s%s%s\n", provider, rndr, idnt, extn, lexr, them, hdln);
@@ -271,7 +278,10 @@ pb_prune (const struct pbpst_state * s) {
     prov_pastes = json_object_get(pastes, provider);
 
     if ( !prov_pastes ) {
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         fprintf(stderr, "pbpst: No pastes found for: %s\n", provider);
+        #pragma clang diagnostic pop
         return EXIT_FAILURE;
     }
 
@@ -287,8 +297,12 @@ pb_prune (const struct pbpst_state * s) {
 
         if ( stclen && sscanf(stc, "%" SCNd64, &stime) == EOF ) {
             signed errsv = errno;
+            #pragma clang diagnostic push
+            #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
             fprintf(stderr, "pbpst: Failed to scan offset: %s\n",
-                    strerror(errsv)); return EXIT_FAILURE;
+                    strerror(errsv));
+            #pragma clang diagnostic pop
+            return EXIT_FAILURE;
         }
 
         if ( stime > 0 && curtime > stime ) {

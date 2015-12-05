@@ -19,7 +19,10 @@ signed
 main (signed argc, char * argv []) {
 
     if ( argc <= 1 ) {
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         fprintf(stderr, "%s%s%s", cmds_help, gen_help, more_info);
+        #pragma clang diagnostic pop
         return EXIT_FAILURE;
     }
 
@@ -100,8 +103,12 @@ main (signed argc, char * argv []) {
         errno = 0;
         if ( stat(state.path, &st) ) {
             exit_status = errno;
+            #pragma clang diagnostic push
+            #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
             fprintf(stderr, "pbpst: Error checking file: %s\n",
-                    strerror(exit_status)); goto cleanup;
+                    strerror(exit_status));
+            #pragma clang diagnostic pop
+            goto cleanup;
         }
 
         if ( st.st_size > PB_FILE_MAX ) {
@@ -174,9 +181,15 @@ pbpst_test_options (const struct pbpst_state * s) {
     }
 
     if ( cl == 'N' ) {
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         fprintf(stderr, "%s%s%s", cmds_help, gen_help, more_info);
+        #pragma clang diagnostic pop
     } else if ( cl != 0 ) {
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         fprintf(stderr, "pbpst: erroneous option(s). See `pbpst -%ch`\n", cl);
+        #pragma clang diagnostic pop
     } return cl == 0;
 }
 
@@ -202,7 +215,11 @@ void
 signal_handler (signed signum) {
 
     if ( signum < 1 || signum > 31 ) { return; }
+
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
     fprintf(stderr, signal_err, sys_siglist[signum]);
+    #pragma clang diagnostic pop
     if ( point_of_no_return ) {
         fputs("pbpst: You need to manually check your swap db\n", stderr);
     } pbpst_cleanup(); exit(EXIT_FAILURE);

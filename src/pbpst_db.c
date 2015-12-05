@@ -1,6 +1,26 @@
 #include "pbpst_db.h"
 #include "pb.h"
 
+signed
+print_err2 (const char * action, const char * explanation) {
+
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+    signed ret = fprintf(stderr, "pbpst: %s: %s\n", action, explanation);
+    #pragma clang diagnostic pop
+    return ret;
+}
+
+signed
+print_err3 (const char * str1, const char * str2, const char * str3) {
+
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+    signed ret = fprintf(stderr, "pbpst: %s %s: %s\n", str1, str2, str3);
+    #pragma clang diagnostic pop
+    return ret;
+}
+
 char *
 db_locate (const struct pbpst_state * s) {
 
@@ -23,15 +43,15 @@ db_locate (const struct pbpst_state * s) {
         errno = 0;
         if ( !getcwd(cwd, PATH_MAX - 1) ) {
             errsv = errno;
-            fprintf(stderr, "pbpst: Could not save cwd: %s\n", strerror(errsv));
+            print_err2("Could not save cwd", strerror(errsv));
             return 0;
         }
 
         errno = 0;
         if ( chdir(dbl) == -1 ) {
             errsv = errno;
-            fprintf(stderr, "pbpst: Could not cd to %s: %s\n", dbl,
-                    strerror(errsv)); return 0;
+            print_err3("Could not cd to", dbl, strerror(errsv));
+            return 0;
         }
 
         for ( uint8_t i = 0; i < 2; i ++ ) {
@@ -45,12 +65,20 @@ db_locate (const struct pbpst_state * s) {
                     errno = 0;
                     if ( mkdir(str, 0777) == -1 ) {
                         errsv = errno;
+                        #pragma clang diagnostic push
+                        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
                         fprintf(stderr, "pbpst: Could not create %s/%s: %s\n",
-                                dbl, str, strerror(errsv)); return 0;
+                                dbl, str, strerror(errsv));
+                        #pragma clang diagnostic pop
+                        return 0;
                     }
                 } else {
+                    #pragma clang diagnostic push
+                    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
                     fprintf(stderr, "pbpst: Could not cd to %s/%s: %s\n",
-                            dbl, str, strerror(errsv)); return 0;
+                            dbl, str, strerror(errsv));
+                    #pragma clang diagnostic pop
+                    return 0;
                 }
             }
         }
@@ -58,14 +86,14 @@ db_locate (const struct pbpst_state * s) {
         errno = 0;
         if ( chdir(cwd) == -1 ) {
             errsv = errno;
-            fprintf(stderr, "pbpst: Could not return to %s: %s\n",
-                    cwd, strerror(errsv)); return 0;
+            print_err3("Could not return to", cwd, strerror(errsv));
+            return 0;
         }
 
         db_len = strlen(dbl) + 23;
         db = (char * )malloc(db_len);
         if ( !db ) {
-            fprintf(stderr, "pbpst: Could not save db path: Out of Memory\n");
+            print_err2("Could not save db path", "Out of Memory");
             return 0;
         }
 
@@ -82,16 +110,16 @@ db_locate (const struct pbpst_state * s) {
         if ( errsv == EEXIST ) {
             return fdb;
         } else {
-            fprintf(stderr, "pbpst: Failed to open %s: %s\n", fdb,
-                    strerror(errsv)); return 0;
+            print_err3("Failed to open", fdb, strerror(errsv));
+            return 0;
         }
     }
 
     errno = 0;
     if ( close(fd) == -1 ) {
         errsv = errno;
-        fprintf(stderr, "pbpst: Failed to close %s: %s\n", fdb,
-                strerror(errsv)); return 0;
+        print_err3("Failed to close", fdb, strerror(errsv));
+        return 0;
     } return fdb;
 }
 
@@ -105,13 +133,13 @@ db_swp_init (const char * dbl) {
     signed fd = 0;
 
     if ( !pc ) {
-        fprintf(stderr, "pbpst: Could not store db dirname: Out of Memory\n");
+        print_err2("Could not store db dirname", "Out of Memory");
         fd = -1; goto cleanup;
     }
 
     fc = (char * )malloc(len);
     if ( !fc ) {
-        fprintf(stderr, "pbpst: Could not store db basename: Out of Memory\n");
+        print_err2("Could not store db basename", "Out of Memory");
         fd = -1; goto cleanup;
     }
 
@@ -127,21 +155,21 @@ db_swp_init (const char * dbl) {
     errno = 0;
     if ( !getcwd(cwd, PATH_MAX - 1) ) {
         errsv = errno;
-        fprintf(stderr, "pbpst: Could not save cwd: %s\n", strerror(errsv));
+        print_err2("Could not save cwd", strerror(errsv));
         fd = -1; goto cleanup;
     }
 
     errno = 0;
     if ( chdir(parent) == -1 ) {
         errsv = errno;
-        fprintf(stderr, "pbpst: Could not cd to db path: %s\n",
-                strerror(errsv)); fd = -1; goto cleanup;
+        print_err2("Could not cd to db path", strerror(errsv));
+        fd = -1; goto cleanup;
     }
 
     len = strlen(dbl) + 7;
     swp_db_name = (char * )malloc(len);
     if ( !swp_db_name ) {
-        fprintf(stderr, "pbpst: Could not save swap db name: Out of Memory\n");
+        print_err2("Could not save swap db name", "Out of Memory");
         fd = -1; goto cleanup;
     }
 
@@ -150,28 +178,30 @@ db_swp_init (const char * dbl) {
     errno = 0;
     if ( (fd = open(swp_db_name, O_CREAT | O_EXCL, 0666)) == -1 ) {
         errsv = errno;
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         fprintf(stderr, swp_db_err, strerror(errsv), swp_db_name);
+        #pragma clang diagnostic pop
         fd = -1; goto cleanup;
     }
 
     errno = 0;
     if ( close(fd) == -1 ) {
         errsv = errno;
-        fprintf(stderr, "pbpst: Could not close %s: %s\n", swp_db_name,
-                strerror(errsv)); fd = -1; goto cleanup;
+        print_err3("Could not close", swp_db_name, strerror(errsv));
+        fd = -1; goto cleanup;
     }
 
     errno = 0;
     if ( chdir(cwd) == -1 ) {
         errsv = errno;
-        fprintf(stderr, "pbpst: Could not return to %s: %s\n",
-                cwd, strerror(errsv));
+        print_err3("Could not return to", cwd, strerror(errsv));
 
         errno = 0;
         if ( close(fd) == -1 ) {
             errsv = errno;
-            fprintf(stderr, "pbpst: Failed to close %s: %s\n", swp_db_name,
-                    strerror(errsv)); fd = -1; goto cleanup;
+            print_err3("Failed to close", swp_db_name, strerror(errsv));
+            fd = -1; goto cleanup;
         }
     }
 
@@ -192,8 +222,12 @@ db_swp_cleanup (const char * dbl, const char * s_dbl) {
     errno = 0;
     if ( rename(s_dbl, dbl) == -1 ) {
         signed errsv = errno;
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         fprintf(stderr, "pbpst: Failed to save %s to %s: %s\n", s_dbl,
-                dbl, strerror(errsv)); return -1;
+                dbl, strerror(errsv));
+        #pragma clang diagnostic pop
+        return -1;
     } return 0;
 }
 
@@ -205,8 +239,12 @@ db_read (const char * dbl) {
     errno = 0;
     if ( !(f = fopen(dbl, "r")) ) {
         errsv = errno;
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         fprintf(stderr, "pbpst: Could not open %s for reading: %s\n", dbl,
-                strerror(errsv)); return 0;
+                strerror(errsv));
+        #pragma clang diagnostic pop
+        return 0;
     }
 
     json_error_t err;
@@ -215,24 +253,21 @@ db_read (const char * dbl) {
         errno = 0;
         if ( (fseek(f, 0, SEEK_END)) == -1 ) {
             errsv = errno;
-            fprintf(stderr, "pbpst: Failed to seek to end of %s: %s\n", dbl,
-                    strerror(errsv)); goto cleanup;
+            print_err3("Failed to seek to end of", dbl, strerror(errsv));
+            goto cleanup;
         }
 
         signed long size = 0;
         errno = 0;
         if ( (size = ftell(f)) == -1 ) {
             errsv = errno;
-            fprintf(stderr, "pbpst: failed to check position in %s: %s\n",
-                    dbl, strerror(errsv)); goto cleanup;
-        }
-
-        if ( size == 0 ) {
-            mdb = DEF_DB();
+            print_err3("Failed to check position in", dbl, strerror(errsv));
             goto cleanup;
         }
 
-        fprintf(stderr, "pbpst: Failed reading %s: %s\n", dbl, err.text);
+        if ( size == 0 ) { mdb = DEF_DB(); goto cleanup; }
+
+        print_err3("Failed reading", dbl, err.text);
         goto cleanup;
     }
 
@@ -240,8 +275,8 @@ db_read (const char * dbl) {
         errno = 0;
         if ( fclose(f) == -1 ) {
             errsv = errno;
-            fprintf(stderr, "pbpst: Could not close %s: %s\n", dbl,
-                    strerror(errsv)); json_decref(mdb); mdb = 0;
+            print_err3("Could not close", dbl, strerror(errsv));
+            json_decref(mdb); mdb = 0;
         } return mdb;
 }
 
@@ -253,8 +288,8 @@ db_swp_flush (const json_t * mdb, const char * s_dbl) {
     errno = 0;
     if ( !(swp_db = fopen(s_dbl, "w")) ) {
         errsv = errno;
-        fprintf(stderr, "pbpst: Could not open swap db: %s\n",
-                strerror(errsv)); return -1;
+        print_err2("Could not open swap db", strerror(errsv));
+        return -1;
     }
 
     signed ret = 0;
@@ -265,15 +300,15 @@ db_swp_flush (const json_t * mdb, const char * s_dbl) {
     errno = 0;
     if ( fflush(swp_db) == EOF ) {
         errsv = errno;
-        fprintf(stderr, "pbpst: Could not flush memory to swap db: %s\n",
-                strerror(errsv)); ret = -1;
+        print_err2("Could not flush memory to swap db", strerror(errsv));
+        ret = -1;
     }
 
     errno = 0;
     if ( fclose(swp_db) == -1 ) {
         errsv = errno;
-        fprintf(stderr, "pbpst: Could not close swap db: %s\n",
-                strerror(errsv)); ret = -1;
+        print_err2("Could not flush memory to swap db", strerror(errsv));
+        ret = -1;
     } return ret;
 }
 
@@ -295,7 +330,10 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
     json_error_t err;
     json_t * json = json_loads(userdata, 0, &err);
     if ( !json ) {
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         fprintf(stderr, "pbpst: %s at %d:%d\n", err.text, err.line, err.column);
+        #pragma clang diagnostic pop
         return EXIT_FAILURE;
     }
 
@@ -333,13 +371,13 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
         time_t curtime = time(NULL), offset = 0;
         if ( sscanf(s->secs, "%ld", &offset) == EOF ) {
             signed errsv = errno;
-            fprintf(stderr, "pbpst: Failed to scan offset: %s\n",
-                    strerror(errsv)); status = EXIT_FAILURE; goto cleanup;
+            print_err2("Failed to scan offset", strerror(errsv));
+            status = EXIT_FAILURE; goto cleanup;
         }
 
         if ( !(sunset = malloc(12)) ) {
-            fprintf(stderr, "pbpst: Failed to store sunset epoch: "
-                    "Out of Memory\n"); status = EXIT_FAILURE; goto cleanup;
+            print_err2("Failed to store sunset epoch", "Out of Memory");
+            status = EXIT_FAILURE; goto cleanup;
         } snprintf(sunset, 11, "%ld", curtime + offset);
     }
 
@@ -402,12 +440,12 @@ db_remove_entry (const char * provider, const char * uuid) {
     prov_pastes = json_object_get(pastes, provider);
 
     if ( !prov_pastes ) {
-        fprintf(stderr, "pbpst: No pastes were found for %s\n", provider);
+        print_err2("No pastes were found for", provider);
         status = EXIT_FAILURE; goto cleanup;
     }
 
     if ( json_object_del(prov_pastes, uuid) ) {
-        fprintf(stderr, "pbpst: No paste was found with uuid: %s\n", uuid);
+        print_err2("No paste was found with uuid", uuid);
         status = EXIT_FAILURE;
     }
 
@@ -426,7 +464,7 @@ db_query (const struct pbpst_state * s) {
     prov_pastes = json_object_get(pastes, provider);
 
     if ( !prov_pastes ) {
-        fprintf(stderr, "pbpst: No pastes found for: %s\n", provider);
+        print_err2("No pastes found for", provider);
         status = EXIT_FAILURE; goto cleanup;
     }
 

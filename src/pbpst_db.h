@@ -12,6 +12,12 @@ static const char swp_db_err [] =
 #define DEF_DB() json_pack("{s:s,s:{}}", "default_provider",\
                            "https://ptpb.pw/", "pastes")
 
+signed
+print_err2 (const char *, const char *);
+
+signed
+print_err3 (const char *, const char *, const char *);
+
 char *
 db_locate (const struct pbpst_state *);
 
