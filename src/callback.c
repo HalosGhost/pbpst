@@ -1,12 +1,12 @@
 #include "main.h"
 #include "callback.h"
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
 signed
 pb_progress_cb (void * client,
                 curl_off_t dltotal, curl_off_t dlnow,
                 curl_off_t ultotal, curl_off_t ulnow) {
+
+    (void )client; (void )dltotal; (void )dlnow; // unused
 
     static curl_off_t last_progress;
     curl_off_t progress = ultotal ? ulnow * 100 / ultotal : 0,
@@ -31,7 +31,6 @@ pb_progress_cb (void * client,
     last_progress = progress;
     return 0;
 }
-#pragma clang diagnostic pop
 
 size_t
 pb_write_cb (char * ptr, size_t size, size_t nmemb, void * userdata) {
