@@ -23,42 +23,42 @@ static const char version_str [] = "pbpst 0.9.0\n";
 
 static struct option os [] = {
     /* commands */
-    { "sync",         no_argument,       0, 'S' },
-    { "remove",       no_argument,       0, 'R' },
-    { "update",       no_argument,       0, 'U' },
-    { "database",     no_argument,       0, 'D' },
+    { "sync",        0, 0, 'S' },
+    { "remove",      0, 0, 'R' },
+    { "update",      0, 0, 'U' },
+    { "database",    0, 0, 'D' },
 
     /* sync/upd options */
-    { "shorten",      required_argument, 0, 's' },
-    { "file",         required_argument, 0, 'f' },
-    { "lexer",        required_argument, 0, 'l' },
-    { "theme",        required_argument, 0, 't' },
-    { "extension",    required_argument, 0, 'e' },
-    { "line",         required_argument, 0, 'L' },
-    { "private",      no_argument,       0, 'p' }, // sync-only
-    { "render",       no_argument,       0, 'r' },
-    { "vanity",       required_argument, 0, 'v' },
-    { "help",         no_argument,       0, 'h' },
-    { "progress",     no_argument,       0, '#' },
-    { "message",      required_argument, 0, 'm' },
-    { "sunset",       required_argument, 0, 'x' },
-    { "uuid",         required_argument, 0, 'u' }, // rem/upd
+    { "shorten",     1, 0, 's' },
+    { "file",        1, 0, 'f' },
+    { "lexer",       1, 0, 'l' },
+    { "theme",       1, 0, 't' },
+    { "extension",   1, 0, 'e' },
+    { "line",        1, 0, 'L' },
+    { "private",     0, 0, 'p' }, // sync-only
+    { "render",      0, 0, 'r' },
+    { "vanity",      1, 0, 'v' },
+    { "help",        0, 0, 'h' },
+    { "progress",    0, 0, '#' },
+    { "message",     1, 0, 'm' },
+    { "sunset",      1, 0, 'x' },
+    { "uuid",        1, 0, 'u' }, // rem/upd
 
     /* db options */
-    { "init",         no_argument,       0, 'i' },
-    { "query",        required_argument, 0, 'q' },
-    { "delete",       required_argument, 0, 'd' },
-    { "prune",        no_argument,       0, 'y' }, // rem/db
+    { "init",        0, 0, 'i' },
+    { "query",       1, 0, 'q' },
+    { "delete",      1, 0, 'd' },
+    { "prune",       0, 0, 'y' }, // rem/db
 
     /* generic options */
-    { "provider",     required_argument, 0, 'P' },
-    { "dbpath",       required_argument, 0, 'b' },
-    { "verbose",      no_argument,       0, 'V' },
-    { "help",         no_argument,       0, 'h' },
-    { "version",      no_argument,       0, 256 },
-    { "list-lexers",  no_argument,       0, 257 },
-    { "list-themes",  no_argument,       0, 258 },
-    { 0,              0,                 0, 0   }
+    { "provider",    1, 0, 'P' },
+    { "dbpath",      1, 0, 'b' },
+    { "verbose",     0, 0, 'V' },
+    { "help",        0, 0, 'h' },
+    { "version",     0, 0, 256 },
+    { "list-lexers", 0, 0, 257 },
+    { "list-themes", 0, 0, 258 },
+    { 0,             0, 0, 0   }
 };
 
 static const char gen_help [] =
