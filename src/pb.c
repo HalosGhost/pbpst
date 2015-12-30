@@ -42,14 +42,7 @@ pb_paste (const struct pbpst_state * s) {
 
     CURLFORMcode fc;
     if ( s->cmd == SNC ) {
-        if ( s->url ) {
-            snprintf(target, tlen, "%s%c", provider, 'u');
-            fc = curl_formadd(&post,                &last,
-                              CURLFORM_COPYNAME,    "c",
-                              CURLFORM_PTRCONTENTS, s->url,
-                              CURLFORM_END);
-            if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
-        } else if ( s->vanity ) {
+        if ( s->vanity ) {
             snprintf(target, tlen, "%s~%s", provider, s->vanity);
         } else {
             snprintf(target, tlen, "%s", provider);
@@ -70,14 +63,12 @@ pb_paste (const struct pbpst_state * s) {
         #pragma clang diagnostic pop
     }
 
-    if ( !(s->cmd == SNC && s->url) ) {
-        fc = curl_formadd(&post,                &last,
-                          CURLFORM_COPYNAME,    "c",
-                          CURLFORM_FILE,        s->path ? s->path : "-",
-                          CURLFORM_CONTENTTYPE, "application/octet-stream",
-                          CURLFORM_END);
-        if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
-    }
+    fc = curl_formadd(&post,                &last,
+                      CURLFORM_COPYNAME,    "c",
+                      CURLFORM_FILE,        s->path ? s->path : "-",
+                      CURLFORM_CONTENTTYPE, "application/octet-stream",
+                      CURLFORM_END);
+    if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
 
     if ( s->secs ) {
         fc = curl_formadd(&post,                 &last,
@@ -100,18 +91,72 @@ pb_paste (const struct pbpst_state * s) {
     status = curl_easy_perform(handle);
     if ( status == EXIT_FAILURE ) { goto cleanup; }
 
-    if ( s->url ) {
-        printf("%s", response_data->mem);
-    } else {
-        status = db_add_entry(s, response_data->mem) == EXIT_SUCCESS
-               ? EXIT_SUCCESS : EXIT_FAILURE;
-        if ( status == EXIT_FAILURE ) { goto cleanup; }
+    status = db_add_entry(s, response_data->mem) == EXIT_SUCCESS
+           ? EXIT_SUCCESS : EXIT_FAILURE;
+    if ( status == EXIT_FAILURE ) { goto cleanup; }
 
-        status = print_url(s, response_data->mem);
-    }
+    status = print_url(s, response_data->mem);
 
     cleanup:
         if ( list ) { curl_slist_free_all(list); }
+        curl_easy_cleanup(handle);
+        curl_formfree(post);
+        if ( response_data->mem ) { free(response_data->mem); }
+        if ( response_data ) { free(response_data); }
+        free(target);
+        return status;
+}
+
+CURLcode
+pb_shorten (const char * provider, const char * url, const uint16_t verb) {
+
+    CURLcode status = CURLE_OK;
+    CURL * handle = curl_easy_init();
+
+    if ( !handle ) {
+        fputs("pbpst: Failed to get CURL handle\n", stderr);
+        return CURLE_FAILED_INIT;
+    }
+
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+    curl_easy_setopt(handle, CURLOPT_VERBOSE, verb >= 2);
+    #pragma clang diagnostic pop
+
+    struct curl_httppost * post = NULL, * last = NULL;
+    size_t tlen = strlen(provider) + 6;
+
+    struct CurlResponse * response_data = malloc(sizeof(struct CurlResponse));
+    char * target = malloc(tlen);
+    if ( !response_data || !target ) {
+        status = CURLE_OUT_OF_MEMORY;
+        goto cleanup;
+    }
+
+    CURLFORMcode fc;
+    fc = curl_formadd(&post,                &last,
+                      CURLFORM_COPYNAME,    "c",
+                      CURLFORM_PTRCONTENTS, url,
+                      CURLFORM_END);
+    if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
+
+    snprintf(target, tlen, "%s%c", provider, 'u');
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+    curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
+    curl_easy_setopt(handle, CURLOPT_URL, target);
+    curl_easy_setopt(handle, CURLOPT_XFERINFOFUNCTION, &pb_progress_cb);
+    curl_easy_setopt(handle, CURLOPT_NOPROGRESS, (long )false);
+    curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &pb_write_cb);
+    curl_easy_setopt(handle, CURLOPT_WRITEDATA, response_data);
+    #pragma clang diagnostic pop
+
+    status = curl_easy_perform(handle);
+    if ( status == EXIT_FAILURE ) { goto cleanup; }
+
+    printf("%s", response_data->mem);
+
+    cleanup:
         curl_easy_cleanup(handle);
         curl_formfree(post);
         if ( response_data->mem ) { free(response_data->mem); }

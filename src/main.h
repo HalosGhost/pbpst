@@ -28,8 +28,10 @@ static struct option os [] = {
     { "update",      0, 0, 'U' },
     { "database",    0, 0, 'D' },
 
-    /* sync/upd options */
+    /* shorten */
     { "shorten",     1, 0, 's' },
+
+    /* sync/upd options */
     { "file",        1, 0, 'f' },
     { "lexer",       1, 0, 'l' },
     { "theme",       1, 0, 't' },
@@ -76,6 +78,7 @@ static const char cmds_help [] =
     "pbpst -- a simple tool to pastebin from the command-line\n\n"
     "Operations:\n"
     "  -S, --sync           Create a paste\n"
+    "  -s, --shorten=URL    Create a redirect to URL\n"
     "  -R, --remove         Delete a paste\n"
     "  -U, --update         Update a paste\n"
     "  -D, --database       Operate on the database\n\n"
@@ -87,7 +90,6 @@ static const char more_info [] =
 static const char sync_help [] =
     "Usage: pbpst {-S --sync} [option ...]\n\n"
     "Options:\n"
-    "  -s, --shorten=URL    Create a redirect to URL instead of pasting\n"
     "  -f, --file=FILE      Create a paste from FILE\n"
     "  -l, --lexer=LANG     Lex paste with LANG\n"
     "  -t, --theme=THEME    Style paste with pygments theme THEME\n"
@@ -99,6 +101,10 @@ static const char sync_help [] =
     "  -v, --vanity=NAME    Use NAME as a custom Id\n"
     "  -#, --progress       Show a progress bar for the upload\n"
     "  -m, --message=MSG    Use MSG as the note in the database\n";
+
+static const char shr_help [] =
+    "Usage: pbpst {-s --shorten} <URL>\n\n"
+    "Options:";
 
 static const char rem_help [] =
     "Usage: pbpst {-R --remove} [option ...]\n\n"
@@ -129,11 +135,12 @@ static const char dbs_help [] =
     "  -d, --delete=UUID    Manually delete the paste with UUID\n"
     "  -y, --prune          Locally delete all expired pastes\n";
 
-enum pb_cmd { NON = 0, SNC = 'S', RMV = 'R', UPD = 'U', DBS = 'D' };
+enum pb_cmd { NON = 0, SNC = 'S', SHR = 's', RMV = 'R', UPD = 'U', DBS = 'D' };
 
 static const char * opts_for [] = {
-    [NON] = "SRUDh",
-    [SNC] = "SRUDhP:Vb:s:f:l:t:e:L:px:rv:#m:",
+    [NON] = "SRUDhs:",
+    [SNC] = "SRUDhP:Vb:f:l:t:e:L:px:rv:#m:",
+    [SHR] = "s:P:V",
     [RMV] = "SRUDhP:Vb:u:y",
     [UPD] = "SRUDhP:Vb:f:l:L:t:e:x:ru:v:#m:",
     [DBS] = "SRUDhP:Vb:id:yq:"

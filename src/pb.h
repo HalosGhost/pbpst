@@ -4,6 +4,9 @@ CURLcode
 pb_paste (const struct pbpst_state *);
 
 CURLcode
+pb_shorten (const char *, const char *, const uint16_t);
+
+CURLcode
 pb_remove (const char *, const char *, const uint16_t);
 
 CURLcode

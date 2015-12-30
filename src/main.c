@@ -48,7 +48,14 @@ main (signed argc, char * argv []) {
                     exit_status = EXIT_FAILURE; goto cleanup;
                 } break;
 
-            case 's': state_var = &state.url;      goto svcase;
+            case 's':
+                if ( !state.cmd ) {
+                    vos = opts_for[(state.cmd = (enum pb_cmd )c)];
+                    optind = 1;
+                } else {
+                    state_var = &state.url; goto svcase;
+                } break;
+
             case 'f': state_var = &state.path;     goto svcase;
             case 'l': state_var = &state.lexer;    goto svcase;
             case 't': state_var = &state.theme;    goto svcase;
@@ -86,6 +93,7 @@ main (signed argc, char * argv []) {
     if ( state.help ) {
         switch ( state.cmd ) {
             case SNC: printf("%s%s",   sync_help, gen_help);            break;
+            case SHR: printf("%s%s",   shr_help,  gen_help);            break;
             case RMV: printf("%s%s",   rem_help,  gen_help);            break;
             case UPD: printf("%s%s",   upd_help,  gen_help);            break;
             case DBS: printf("%s%s",   dbs_help,  gen_help);            break;
@@ -170,9 +178,8 @@ pbpst_test_options (const struct pbpst_state * s) {
 
     char cl = 0;
     switch ( s->cmd ) {
-        case SNC: cl = (s->url && (s->path || s->lexer || s->rend || s->init
-               || s->ln || s->vanity)) ? 'S' : cl; break;
-
+        case SNC: cl = !s->path ? 'S' : cl; break;
+        case SHR: break;
         case RMV: cl = !s->uuid && !s->prun ? 'R' : cl; break;
         case UPD: cl = !s->uuid ? 'U' : cl; break;
         case DBS: cl = !s->init && !s->query && !s->del && !s->prun
@@ -204,6 +211,7 @@ pbpst_dispatch (const struct pbpst_state * s) {
     switch ( s->cmd ) {
         case SNC:
         case UPD: return pb_paste(s);
+        case SHR: return pb_shorten(provider, s->url, s->verb);
         case RMV: return (s->prun ? pb_prune(s)
                                   : pb_remove(provider, uuid, s->verb));
         case DBS: return pbpst_db(s);
