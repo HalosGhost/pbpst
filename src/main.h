@@ -136,7 +136,7 @@ enum pb_cmd { NON = 0, SNC = 'S', SHR = 's', RMV = 'R', UPD = 'U', DBS = 'D' };
 static const char * opts_for [] = {
     [NON] = "SRUDhs:",
     [SNC] = "SRUDhP:Vb:f:l:t:e:L:px:rv:#m:",
-    [SHR] = "s:P:V",
+    [SHR] = "s:P:Vb:",
     [RMV] = "SRUDhP:Vb:u:y",
     [UPD] = "SRUDhP:Vb:f:l:L:t:e:x:ru:v:#m:",
     [DBS] = "SRUDhP:Vb:id:yq:"
