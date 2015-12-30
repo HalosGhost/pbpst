@@ -102,10 +102,6 @@ static const char sync_help [] =
     "  -#, --progress       Show a progress bar for the upload\n"
     "  -m, --message=MSG    Use MSG as the note in the database\n";
 
-static const char shr_help [] =
-    "Usage: pbpst {-s --shorten} <URL>\n\n"
-    "Options:";
-
 static const char rem_help [] =
     "Usage: pbpst {-R --remove} [option ...]\n\n"
     "Options:\n"
