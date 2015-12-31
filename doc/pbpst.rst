@@ -19,6 +19,9 @@ Operations
 -S, --sync
     Create a paste.
 
+-s, --shorten=URL
+    Create a redirect to URL.
+
 -R, --remove
     Delete a paste.
 
@@ -58,10 +61,7 @@ The following options are available for any operation.
 Sync Options
 ------------
 
-Note: if neither the :option:`s` or :option:`f` options are passed, :program:`pbpst` will paste the contents of :file:`stdin`.
-
--s, --shorten=URL
-    Create a redirect to URL instead of pasting.
+Note: if the :option:`f` option is not passed, :program:`pbpst` will paste the contents of :file:`stdin`.
 
 -f, --file=FILE
     Create a paste from FILE.
