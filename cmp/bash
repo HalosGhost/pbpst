@@ -62,7 +62,7 @@ _pbpst() {
 
   if [[ $prev = 'pbpst' ]]; then
     _make_list core common
-  elif [[ $prev = -@(P|-providers) ]]; then
+  elif [[ $prev = -@(P|-providers|s|-shorten) ]]; then
     _schm
   elif [[ $prev = @(*f|*b) || $prev = --@(dbpath|file) ]]; then
     _pbpst_file
@@ -72,7 +72,6 @@ _pbpst() {
         D) { _incomp 'd delete'  && _uuid; } || _make_list database ;;
         R) { _incomp 'u uuid'    && _uuid; } || _make_list remove   ;;
         S)                                      _make_list sync     ;;
-        s)   _incomp 's shorten' && _schm                           ;;
         U) { _incomp 'u uuid'    && _uuid; } || _make_list upgrade  ;;
       esac
   fi
