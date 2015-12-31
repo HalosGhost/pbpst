@@ -5,15 +5,16 @@
 typeset -A opt_args
 setopt extendedglob
 
+_schm="http\:// https\://"
+
 # options for passing to _arguments: main pbpst operations
 _pbpst_opts_operations=(
     {-S,--sync}'[Create a paste]'
+    {-s,--shorten}"[Create a redirect to URL]:URL:($_schm)"
     {-R,--remove}'[Remove a paste]'
     {-U,--update}'[Update a paste]'
     {-D,--database}'[Operate on the database]'
 )
-
-_schm="http\:// https\://"
 
 # options for passing to _arguments: options common to all operations
 _pbpst_opts_common=(
@@ -28,7 +29,6 @@ _pbpst_opts_common=(
 
 # options for passing to _arguments: options for -S
 _pbpst_opts_sync=(
-    {-s,--shorten}"[Create a redirect to URL instead of pasting]:URL:($_schm)"
     {-f,--file}'[Create a paste from FILE]:Path to file:_files -./'
     {-l,--lexer}'[Lex paste with LANG]'
     {-t,--theme}'[Style paste with pygments theme THEME]'

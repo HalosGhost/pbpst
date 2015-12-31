@@ -48,12 +48,12 @@ _pbpst() {
   _get_comp_words_by_ref cur prev
   database=('init query delete prune' 'i q d y')
   remove=('uuid prune' 'u y')
-  sync=('shorten file lexer theme extension line private sunset render vanity progress message'
-        's f l t e L p x r v # m')
+  sync=('file lexer theme extension line private sunset render vanity progress message'
+        'f l t e L p x r v # m')
   upgrade=('file lexer theme extension line private sunset render uuid vanity progress message'
            'f l t e L p x r u v # m')
   common=('help dbpath provider verbose list-lexers list-themes version' 'h b P V')
-  core=('sync remove update database' 'S R U D')
+  core=('sync shorten remove update database' 'S s R U D')
 
   # operations for which we want to other completion options
   for o in 'D database' 'R remove' 'S sync' 'U upgrade'; do
@@ -71,7 +71,8 @@ _pbpst() {
       case ${o% *} in
         D) { _incomp 'd delete'  && _uuid; } || _make_list database ;;
         R) { _incomp 'u uuid'    && _uuid; } || _make_list remove   ;;
-        S) { _incomp 's shorten' && _schm; } || _make_list sync     ;;
+        S)                                      _make_list sync     ;;
+        s)   _incomp 's shorten' && _schm                           ;;
         U) { _incomp 'u uuid'    && _uuid; } || _make_list upgrade  ;;
       esac
   fi
