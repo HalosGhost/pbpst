@@ -135,4 +135,4 @@ _pbpst() {
     esac
 }
 
-_pbpst "@" || _message "Error"
+_pbpst "$@"
