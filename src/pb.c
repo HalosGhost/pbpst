@@ -205,7 +205,10 @@ pb_remove (const char * provider, const char * uuid, const uint16_t verb) {
     #pragma clang diagnostic pop
 
     status = curl_easy_perform(handle);
-    if ( status == CURLE_OK ) { db_remove_entry(provider, uuid); }
+    if ( status == CURLE_OK ) {
+        puts("Paste deleted");
+        db_remove_entry(provider, uuid);
+    }
 
     cleanup:
         if ( list ) { curl_slist_free_all(list); }

@@ -440,12 +440,12 @@ db_remove_entry (const char * provider, const char * uuid) {
     prov_pastes = json_object_get(pastes, provider);
 
     if ( !prov_pastes ) {
-        print_err2("No pastes were found for", provider);
+        print_err2("No pastes in-database found for", provider);
         status = EXIT_FAILURE; goto cleanup;
     }
 
     if ( json_object_del(prov_pastes, uuid) ) {
-        print_err2("No paste was found with uuid", uuid);
+        print_err2("No paste in-database found with uuid", uuid);
         status = EXIT_FAILURE;
     }
 
