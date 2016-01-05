@@ -39,8 +39,8 @@ The following options are available for any operation.
 -h, --help
     Print usage information and exit.
 
--P, --provider
-    Specify an alternative pb host, default is https://ptpb.pw.
+-P, --provider=HOST
+    Use HOST as pb provider; default is https://ptpb.pw.
 
 -b, --dbpath=PATH
     Specify a file to use as the local database.
@@ -100,7 +100,7 @@ Remove Options
 --------------
 
 -u, --uuid=UUID
-    Use UUID as authentication credential.
+    Delete (local and upstream) paste identified by UUID.
 
 -y, --prune
     Delete (local and upstream) all expired pastes.
@@ -154,7 +154,7 @@ Database Options
     Search each paste in the pastes object for text matching STR. Matches will be printed to :file:`stdout` with the form ``<uuid>\t<provider>/<id>\t<msg>\t<sunset>`` where ``<id>`` is either the long id or a vanity label if one exists.
 
 -d, --delete=UUID
-    Remove the paste from the pastes object specified by UUID. Note: This option will respect the default provider and :option:`-P`.
+    Remove (locally) the paste from the pastes object specified by UUID. Note: This option will respect the default provider and :option:`-P`.
 
 -y, --prune
     Remove all expired paste entries from the local database.

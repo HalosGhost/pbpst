@@ -67,7 +67,7 @@ static const char gen_help [] =
     "\n"
     "  -h, --help           List this help and exit\n"
     "  -b, --dbpath=PATH    Use the database at PATH\n"
-    "  -P, --provider       Specify an alternative pb host\n"
+    "  -P, --provider=HOST  Use HOST as the pb provider\n"
     "  -V, --verbose        Output verbosely\n"
     "      --list-lexers    List available lexers and exit\n"
     "      --list-themes    List available themes and exit\n"
@@ -105,7 +105,7 @@ static const char sync_help [] =
 static const char rem_help [] =
     "Usage: pbpst {-R --remove} [option ...]\n\n"
     "Options:\n"
-    "  -u, --uuid=UUID      Use UUID as authentication credential\n"
+    "  -u, --uuid=UUID      Remotely delete paste with UUID\n"
     "  -y, --prune          Remotely delete all expired pastes\n";
 
 static const char upd_help [] =
@@ -128,7 +128,7 @@ static const char dbs_help [] =
     "Options:\n"
     "  -i, --init           Initalize a default database (no clobbering)\n"
     "  -q, --query=STR      Search the database for a paste matching STR\n"
-    "  -d, --delete=UUID    Manually delete the paste with UUID\n"
+    "  -d, --delete=UUID    Locally delete paste with UUID\n"
     "  -y, --prune          Locally delete all expired pastes\n";
 
 enum pb_cmd { NON = 0, SNC = 'S', SHR = 's', RMV = 'R', UPD = 'U', DBS = 'D' };
