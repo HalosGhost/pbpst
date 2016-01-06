@@ -58,6 +58,9 @@ The following options are available for any operation.
 --list-themes
     List the pygments themes supported by the pb provider and exit.
 
+--list-formats
+    List the pygments formatters supported by the pb provider and exit.
+
 Sync Options
 ------------
 
@@ -69,7 +72,7 @@ Note: if the :option:`f` option is not passed, :program:`pbpst` will paste the c
 -l, --lexer=LANG
     Lex paste with LANG.
 
--t, --theme=THEME
+-T, --theme=THEME
     Style paste using the pygments theme THEME.
 
 -e, --extension=EXT
@@ -86,6 +89,9 @@ Note: if the :option:`f` option is not passed, :program:`pbpst` will paste the c
 
 -r, --render
     Render a ReStructuredText or Markdown paste to HTML.
+
+-t, --term
+    Handle Asciinema videos.
 
 -v, --vanity=NAME
     Use NAME as a custom Id.
@@ -117,7 +123,7 @@ Note: if the :option:`f` option is not passed, :program:`pbpst` will paste the c
 -l, --lexer=LANG
     Lex paste with LANG.
 
--t, --theme=THEME
+-T, --theme=THEME
     Style paste using the pygments theme THEME.
 
 -e, --extension=EXT
@@ -128,6 +134,9 @@ Note: if the :option:`f` option is not passed, :program:`pbpst` will paste the c
 
 -r, --render
     Render a ReStructuredText or Markdown paste to HTML.
+
+-t, --term
+    Handle Asciinema videos.
 
 -x, --sunset=SECS
     Set the paste to expire automatically in SECS seconds.
