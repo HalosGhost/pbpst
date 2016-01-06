@@ -24,6 +24,7 @@ _pbpst_opts_common=(
     {-V,--verbose}'[Output verbosely]'
     '--list-lexers[List available lexers and exit]'
     '--list-themes[List available themes and exit]'
+    '--list-formats[List available formatters and exit]'
     '--version[List the version and exit]'
 )
 
@@ -31,12 +32,13 @@ _pbpst_opts_common=(
 _pbpst_opts_sync=(
     {-f,--file}'[Create a paste from FILE]:Path to file:_files -./'
     {-l,--lexer}'[Lex paste with LANG]'
-    {-t,--theme}'[Style paste with pygments theme THEME]'
+    {-T,--theme}'[Style paste with pygments theme THEME]'
     {-e,--extension}'[Specify MIME-type as EXT]'
     {-L,--line}'[Highlight LINE in paste]'
     {-p,--private}'[Return a less-guessable Id for paste]'
     {-x,--sunset}'[Slate the paste for auto-sunset in SECS seconds]'
     {-r,--render}'[Render paste from rst to HTML]'
+    {-t,--term}'[Handle asciinema videos]'
     {-v,--vanity}'[Use NAME as a custom Id]'
     {-\#,--progress}'[Show a progress bar for the upload]'
     {-m,--message}'[Use MSG as the note in the database]'
@@ -54,12 +56,13 @@ _pbpst_opts_remove=(
 _pbpst_opts_update=(
     {-f,--file}'[Create a paste from FILE]:Path to file:_files -./'
     {-l,--lexer}'[Lex paste with LANG]'
-    {-t,--theme}'[Style paste with pygments theme THEME]'
+    {-T,--theme}'[Style paste with pygments theme THEME]'
     {-e,--extension}'[Specify MIME-type as EXT]'
     {-L,--line}'[Highlight LINE in paste]'
     {-p,--private}'[Return a less-guessable Id for paste]'
     {-x,--sunset}'[Slate the paste for auto-sunset in SECS seconds]'
     {-r,--render}'[Render paste from rst to HTML]'
+    {-t,--term}'[Handle asciinema videos]'
     {-u,--uuid}"[Use UUID as authentication credential]:UUID:($_uuids)"
     {-v,--vanity}'[Use NAME as a custom Id]'
     {-\#,--progress}'[Show a progress bar for the upload]'
