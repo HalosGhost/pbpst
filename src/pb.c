@@ -301,7 +301,8 @@ print_url (const struct pbpst_state * s, const char * userdata) {
         } printf("murl: ");
     }
 
-    const char * rndr = s->rend ? "r/" : "",
+    const char * rndr = s->rend ? "r/" :
+                        s->term ? "t/" : "",
                * idnt = label_j ? label : s->priv ? lid : lid + 24,
                * mod_fmts [] = { "#L-", "/", "?style=", "." };
 

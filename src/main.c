@@ -58,7 +58,7 @@ main (signed argc, char * argv []) {
 
             case 'f': state_var = &state.path;     goto svcase;
             case 'l': state_var = &state.lexer;    goto svcase;
-            case 't': state_var = &state.theme;    goto svcase;
+            case 'T': state_var = &state.theme;    goto svcase;
             case 'e': state_var = &state.ext;      goto svcase;
             case 'v': state_var = &state.vanity;   goto svcase;
             case 'u': state_var = &state.uuid;     goto svcase;
@@ -78,6 +78,7 @@ main (signed argc, char * argv []) {
 
             case '#': state.prog = true; break;
             case 'r': state.rend = true; break;
+            case 't': state.term = true; break;
             case 'i': state.init = true; break;
             case 'y': state.prun = true; break;
             case 'p': state.priv = true; break;

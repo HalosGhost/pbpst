@@ -34,11 +34,12 @@ static struct option os [] = {
     /* sync/upd options */
     { "file",         1, 0, 'f' },
     { "lexer",        1, 0, 'l' },
-    { "theme",        1, 0, 't' },
+    { "theme",        1, 0, 'T' },
     { "extension",    1, 0, 'e' },
     { "line",         1, 0, 'L' },
     { "private",      0, 0, 'p' }, // sync-only
     { "render",       0, 0, 'r' },
+    { "term",         0, 0, 't' },
     { "vanity",       1, 0, 'v' },
     { "help",         0, 0, 'h' },
     { "progress",     0, 0, '#' },
@@ -94,12 +95,13 @@ static const char sync_help [] =
     "Options:\n"
     "  -f, --file=FILE      Create a paste from FILE\n"
     "  -l, --lexer=LANG     Lex paste with LANG\n"
-    "  -t, --theme=THEME    Style paste with pygments theme THEME\n"
+    "  -T, --theme=THEME    Style paste with pygments theme THEME\n"
     "  -e, --extension=EXT  Specify MIME-type as EXT\n"
     "  -L, --line=LINE      Highlight LINE in paste\n"
     "  -p, --private        Return a less-guessable Id for paste\n"
     "  -x, --sunset=SECS    Slate the paste for auto-sunset in SECS seconds\n"
     "  -r, --render         Render paste from rst to HTML\n"
+    "  -t, --term           Handle Asciinema videos\n"
     "  -v, --vanity=NAME    Use NAME as a custom Id\n"
     "  -#, --progress       Show a progress bar for the upload\n"
     "  -m, --message=MSG    Use MSG as the note in the database\n";
@@ -116,10 +118,11 @@ static const char upd_help [] =
     "  -f, --file=FILE      Use FILE for content of paste\n"
     "  -l, --lexer=LANG     Lex paste with LANG\n"
     "  -L, --line=LINE      Highlight LINE\n"
-    "  -t, --theme=THEME    Style paste with pygments theme THEME\n"
+    "  -T, --theme=THEME    Style paste with pygments theme THEME\n"
     "  -e, --extension=EXT  Specify MIME-type as EXT\n"
     "  -x, --sunset=SECS    Slate the paste for auto-sunset in SECS seconds\n"
     "  -r, --render         Render paste from rst to HTML\n"
+    "  -t, --term           Handle Asciinema videos\n"
     "  -u, --uuid=UUID      Use UUID as authentication credential\n"
     "  -v, --vanity=NAME    Use NAME as a custom Id\n"
     "  -#, --progress       Show a progress bar for the upload\n"
@@ -137,10 +140,10 @@ enum pb_cmd { NON = 0, SNC = 'S', SHR = 's', RMV = 'R', UPD = 'U', DBS = 'D' };
 
 static const char * opts_for [] = {
     [NON] = "SRUDhs:",
-    [SNC] = "SRUDhP:Vb:f:l:t:e:L:px:rv:#m:",
+    [SNC] = "SRUDhP:Vb:f:l:T:e:L:px:rtv:#m:",
     [SHR] = "s:P:Vb:",
     [RMV] = "SRUDhP:Vb:u:y",
-    [UPD] = "SRUDhP:Vb:f:l:L:t:e:x:ru:v:#m:",
+    [UPD] = "SRUDhP:Vb:f:l:L:T:e:x:rtu:v:#m:",
     [DBS] = "SRUDhP:Vb:id:yq:"
 };
 
@@ -148,8 +151,8 @@ extern struct pbpst_state {
     char * path, * url, * lexer, * vanity, * uuid, * provider,
          * query, * del, * dbfile, * msg, * theme, * ext, * ln, * secs;
     enum pb_cmd cmd;
-    uint16_t help: 16, priv: 16, rend: 8, init: 8, prun: 8, verb: 8, prog: 8,
-             llex: 8, lthm: 8, lfrm: 8;
+    uint16_t help: 16, priv: 8, rend: 8, term: 8, init: 8, prun: 8, verb: 8,
+             prog: 8, llex: 8, lthm: 8, lfrm: 8;
 } state;
 
 bool
