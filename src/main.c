@@ -86,6 +86,7 @@ main (signed argc, char * argv []) {
             case 256: printf(version_str); goto cleanup;
             case 257: state.llex = true; break;
             case 258: state.lthm = true; break;
+            case 259: state.lfrm = true; break;
             default:  exit_status = EXIT_FAILURE; goto cleanup;
         }
     }
@@ -101,7 +102,8 @@ main (signed argc, char * argv []) {
         } goto cleanup;
     }
 
-    if ( !(state.llex || state.lthm) && !pbpst_test_options(&state) ) {
+    if ( !(state.llex || state.lthm || state.lfrm) &&
+         !pbpst_test_options(&state) ) {
         exit_status = EXIT_FAILURE; goto cleanup;
     }
 
@@ -203,7 +205,7 @@ pbpst_test_options (const struct pbpst_state * s) {
 signed
 pbpst_dispatch (const struct pbpst_state * s) {
 
-    if ( s->llex || s->lthm ) { return pb_list(s); }
+    if ( s->llex || s->lthm || s->lfrm ) { return pb_list(s); }
 
     const char * provider = s->provider ? s->provider : def_provider,
                * uuid     = s->uuid     ? s->uuid     : s->del;

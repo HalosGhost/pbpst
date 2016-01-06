@@ -245,7 +245,9 @@ pb_list (const struct pbpst_state * s) {
     char * target = malloc(target_len);
     if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
 
-    snprintf(target, target_len, "%s%s", provider, s->llex ? "l" : "ls");
+    const char * const route = s->llex ? "l"  :
+                               s->lthm ? "ls" : "lf";
+    snprintf(target, target_len, "%s%s", provider, route);
 
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"

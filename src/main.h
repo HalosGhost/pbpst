@@ -23,44 +23,45 @@ static const char version_str [] = "pbpst 0.9.0\n";
 
 static struct option os [] = {
     /* commands */
-    { "sync",        0, 0, 'S' },
-    { "remove",      0, 0, 'R' },
-    { "update",      0, 0, 'U' },
-    { "database",    0, 0, 'D' },
+    { "sync",         0, 0, 'S' },
+    { "remove",       0, 0, 'R' },
+    { "update",       0, 0, 'U' },
+    { "database",     0, 0, 'D' },
 
     /* shorten */
-    { "shorten",     1, 0, 's' },
+    { "shorten",      1, 0, 's' },
 
     /* sync/upd options */
-    { "file",        1, 0, 'f' },
-    { "lexer",       1, 0, 'l' },
-    { "theme",       1, 0, 't' },
-    { "extension",   1, 0, 'e' },
-    { "line",        1, 0, 'L' },
-    { "private",     0, 0, 'p' }, // sync-only
-    { "render",      0, 0, 'r' },
-    { "vanity",      1, 0, 'v' },
-    { "help",        0, 0, 'h' },
-    { "progress",    0, 0, '#' },
-    { "message",     1, 0, 'm' },
-    { "sunset",      1, 0, 'x' },
-    { "uuid",        1, 0, 'u' }, // rem/upd
+    { "file",         1, 0, 'f' },
+    { "lexer",        1, 0, 'l' },
+    { "theme",        1, 0, 't' },
+    { "extension",    1, 0, 'e' },
+    { "line",         1, 0, 'L' },
+    { "private",      0, 0, 'p' }, // sync-only
+    { "render",       0, 0, 'r' },
+    { "vanity",       1, 0, 'v' },
+    { "help",         0, 0, 'h' },
+    { "progress",     0, 0, '#' },
+    { "message",      1, 0, 'm' },
+    { "sunset",       1, 0, 'x' },
+    { "uuid",         1, 0, 'u' }, // rem/upd
 
     /* db options */
-    { "init",        0, 0, 'i' },
-    { "query",       1, 0, 'q' },
-    { "delete",      1, 0, 'd' },
-    { "prune",       0, 0, 'y' }, // rem/db
+    { "init",         0, 0, 'i' },
+    { "query",        1, 0, 'q' },
+    { "delete",       1, 0, 'd' },
+    { "prune",        0, 0, 'y' }, // rem/db
 
     /* generic options */
-    { "provider",    1, 0, 'P' },
-    { "dbpath",      1, 0, 'b' },
-    { "verbose",     0, 0, 'V' },
-    { "help",        0, 0, 'h' },
-    { "version",     0, 0, 256 },
-    { "list-lexers", 0, 0, 257 },
-    { "list-themes", 0, 0, 258 },
-    { 0,             0, 0, 0   }
+    { "provider",     1, 0, 'P' },
+    { "dbpath",       1, 0, 'b' },
+    { "verbose",      0, 0, 'V' },
+    { "help",         0, 0, 'h' },
+    { "version",      0, 0, 256 },
+    { "list-lexers",  0, 0, 257 },
+    { "list-themes",  0, 0, 258 },
+    { "list-formats", 0, 0, 259 },
+    { 0,              0, 0, 0   }
 };
 
 static const char gen_help [] =
@@ -71,6 +72,7 @@ static const char gen_help [] =
     "  -V, --verbose        Output verbosely\n"
     "      --list-lexers    List available lexers and exit\n"
     "      --list-themes    List available themes and exit\n"
+    "      --list-formats   List available formatters and exit\n"
     "      --version        List the version and exit\n";
 
 static const char cmds_help [] =
@@ -146,7 +148,8 @@ extern struct pbpst_state {
     char * path, * url, * lexer, * vanity, * uuid, * provider,
          * query, * del, * dbfile, * msg, * theme, * ext, * ln, * secs;
     enum pb_cmd cmd;
-    uint16_t help, priv, rend, init: 8, prun: 8, verb: 8, prog: 8, llex: 8, lthm: 8;
+    uint16_t help: 16, priv: 16, rend: 8, init: 8, prun: 8, verb: 8, prog: 8,
+             llex: 8, lthm: 8, lfrm: 8;
 } state;
 
 bool
