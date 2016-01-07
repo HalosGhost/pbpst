@@ -181,8 +181,7 @@ pbpst_test_options (const struct pbpst_state * s) {
 
     char cl = 0;
     switch ( s->cmd ) {
-        case SNC: cl = !s->path ? 'S' : cl; break;
-        case SHR: break;
+        case SNC: case SHR: break;
         case RMV: cl = !s->uuid && !s->prun ? 'R' : cl; break;
         case UPD: cl = !s->uuid ? 'U' : cl; break;
         case DBS: cl = !s->init && !s->query && !s->del && !s->prun
