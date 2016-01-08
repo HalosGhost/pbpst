@@ -285,6 +285,8 @@ pb_list (const struct pbpst_state * s) {
     cleanup:
         if ( list ) { curl_slist_free_all(list); }
         curl_easy_cleanup(handle);
+        if ( response_data->mem ) { free(response_data->mem); }
+        if ( response_data ) { free(response_data); }
         free(target);
         return status;
 }
