@@ -241,6 +241,7 @@ pb_list (const struct pbpst_state * s) {
 
     const char * provider = s->provider ? s->provider : def_provider;
 
+    struct CurlResponse * response_data = malloc(sizeof(struct CurlResponse));
     size_t target_len = strlen(provider) + 3;
     char * target = malloc(target_len);
     if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
@@ -252,10 +253,34 @@ pb_list (const struct pbpst_state * s) {
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
     curl_easy_setopt(handle, CURLOPT_URL, target);
+    curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &pb_write_cb);
+    curl_easy_setopt(handle, CURLOPT_WRITEDATA, response_data);
     #pragma clang diagnostic pop
 
     status = curl_easy_perform(handle);
-    puts("");
+
+    size_t idx;
+    json_error_t err;
+    json_t * value, * json = json_loads(response_data->mem, 0, &err);
+    if ( !json ) {
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+        fprintf(stderr, "pbpst: %s at %d:%d\n", err.text, err.line, err.column);
+        #pragma clang diagnostic pop
+        return EXIT_FAILURE;
+    }
+
+    json_array_foreach (json, idx, value) {
+        if ( json_is_array(value) ) {
+            size_t inner_idx;
+            json_t * inner_value;
+            json_array_foreach(value, inner_idx, inner_value) {
+                printf("%s ", json_string_value(inner_value));
+            } puts("");
+        } else if ( json_is_string(value) ) {
+            puts(json_string_value(value));
+        }
+    }
 
     cleanup:
         if ( list ) { curl_slist_free_all(list); }
