@@ -308,7 +308,8 @@ print_url (const struct pbpst_state * s, const char * userdata) {
     json_t * uuid_j = 0, * lid_j = 0, * label_j = 0,
            * status_j = 0, * sunset_j = 0;
 
-    char * hdln = 0, * lexr = 0, * them = 0, * extn = 0, * sunset = 0;
+    char * hdln = 0, * lexr = 0, * form = 0, * them = 0, * extn = 0,
+         * sunset = 0;
 
     uuid_j   = json_object_get(json, "uuid");
     lid_j    = json_object_get(json, "long");
@@ -331,17 +332,18 @@ print_url (const struct pbpst_state * s, const char * userdata) {
     const char * rndr = s->rend ? "r/" :
                         s->term ? "t/" : "",
                * idnt = label_j ? label : s->priv ? lid : lid + 24,
-               * mod_fmts [] = { "#L-", "/", "?style=", "." };
+               * mod_fmts [] = { "#L-", "/", "?style=", ".", "/" };
 
     char * state_mod = 0, ** mod_var = 0,
-         * mod_names [] = { "line", "lexer", "theme", "extension" };
+         * mod_names [] = { "line", "lexer", "theme", "extension", "format" };
 
-    for ( uint8_t i = 0; i < 4; i ++ ) {
+    for ( uint8_t i = 0; i < 5; i ++ ) {
         switch ( mod_names[i][1] ) {
-            case 'i': mod_var = &hdln; state_mod = s->ln;    break;
-            case 'e': mod_var = &lexr; state_mod = s->lexer; break;
-            case 'h': mod_var = &them; state_mod = s->theme; break;
-            case 'x': mod_var = &extn; state_mod = s->ext;   break;
+            case 'i': mod_var = &hdln; state_mod = s->ln;     break;
+            case 'e': mod_var = &lexr; state_mod = s->lexer;  break;
+            case 'h': mod_var = &them; state_mod = s->theme;  break;
+            case 'x': mod_var = &extn; state_mod = s->ext;    break;
+            case 'o': mod_var = &form; state_mod = s->format; break;
         }
 
         if ( state_mod ) {
@@ -356,14 +358,16 @@ print_url (const struct pbpst_state * s, const char * userdata) {
                 goto cleanup;
             } snprintf(*mod_var, tlen + 1, "%s%s", mod_fmts[i], state_mod);
         } else { *mod_var = ""; }
-    } printf("%s%s%s%s%s%s%s\n", provider, rndr, idnt, extn, lexr, them, hdln);
+    } printf("%s%s%s%s%s%s%s%s\n", provider, rndr, idnt, extn, lexr, form,
+             them, hdln);
 
     cleanup:
-        if ( s->ln )    { free(hdln);   }
-        if ( s->lexer ) { free(lexr);   }
-        if ( s->theme ) { free(them);   }
-        if ( s->ext )   { free(extn);   }
-        if ( s->secs )  { free(sunset); }
+        if ( s->ln )     { free(hdln);   }
+        if ( s->lexer )  { free(lexr);   }
+        if ( s->format ) { free(form);   }
+        if ( s->theme )  { free(them);   }
+        if ( s->ext )    { free(extn);   }
+        if ( s->secs )   { free(sunset); }
         json_decref(json);
         json_decref(uuid_j);
         json_decref(lid_j);

@@ -59,6 +59,7 @@ main (signed argc, char * argv []) {
             case 'f': state_var = &state.path;     goto svcase;
             case 'l': state_var = &state.lexer;    goto svcase;
             case 'T': state_var = &state.theme;    goto svcase;
+            case 'F': state_var = &state.format;   goto svcase;
             case 'e': state_var = &state.ext;      goto svcase;
             case 'v': state_var = &state.vanity;   goto svcase;
             case 'u': state_var = &state.uuid;     goto svcase;
@@ -243,6 +244,7 @@ pbpst_cleanup (void) {
     free(state.msg);
     free(state.lexer);
     free(state.theme);
+    free(state.format);
     free(state.ext);
     free(state.vanity);
     free(state.uuid);
