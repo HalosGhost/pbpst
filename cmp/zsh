@@ -44,11 +44,16 @@ _pbpst_opts_sync=(
     {-m,--message}'[Use MSG as the note in the database]'
 )
 
-_uuids="$(pbpst -Dq '' | awk '{ print $1 }')"
+_uuids() {
+     local -a uuid
+     uuid=( $(pbpst -Dq '' | awk '{ print $1 }') )
+     typeset -U uuid
+     compadd "$@" -a uuid
+}
 
 # options for passing to _arguments: options for -R
 _pbpst_opts_remove=(
-    {-u,--uuid}"[Use UUID as authentication credential]:UUID:($_uuids)"
+    {-u,--uuid}'[Use UUID as authentication credential]:UUID:_uuids'
     {-y,--prune}'[Remotely delete all expired pastes]'
 )
 
@@ -63,7 +68,7 @@ _pbpst_opts_update=(
     {-x,--sunset}'[Slate the paste for auto-sunset in SECS seconds]'
     {-r,--render}'[Render paste from rst to HTML]'
     {-t,--term}'[Handle asciinema videos]'
-    {-u,--uuid}"[Use UUID as authentication credential]:UUID:($_uuids)"
+    {-u,--uuid}'[Use UUID as authentication credential]:UUID:_uuids'
     {-v,--vanity}'[Use NAME as a custom Id]'
     {-\#,--progress}'[Show a progress bar for the upload]'
     {-m,--message}'[Use MSG as the note in the database]'
@@ -73,7 +78,7 @@ _pbpst_opts_update=(
 _pbpst_opts_database=(
     {-i,--init}'[Initalize a default database (no clobbering)]'
     {-q,--query}'[Search the database for a paste matching STR]'
-    {-d,--delete}"[Manually delete the paste with UUID]:UUID:($_uuids)"
+    {-d,--delete}'[Manually delete the paste with UUID]:UUID:_uuids'
     {-y,--prune}'[Remotely delete all expired pastes]'
 )
 
