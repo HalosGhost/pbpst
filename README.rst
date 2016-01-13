@@ -25,11 +25,8 @@ In addition to the two external runtime dependencies listed above, ``pbpst`` use
 
 The same caveats about versions apply to these make dependencies as apply to the runtime dependencies; tl;dr: keep up-to-date and everything should be okay.
 
-Once you have all the dependencies installed (and you have run ``modprobe fuse`` if you did not already have the fuse filesystem loaded), all you have to do for a complete build of ``pbpst`` is to run the following from any directory in the source tree:
-
-.. code:: term
-
-    tup upd
+Once you have all the dependencies installed (and you have run ``modprobe fuse`` if you did not already have the fuse filesystem loaded), all you have to do for a complete build of ``pbpst`` is to run the following: ``make``
+(Note that the default ``make`` rule just creates the ``dist`` directory and then runs ``tup upd``)
 
 Now, you can simply use ``make DESTDIR=<dest> PREFIX=<pre> install`` to install (or ``make DESTDIR=<dest> PREFIX=<pre> uninstall`` to uninstall).
 
