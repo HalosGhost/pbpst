@@ -7,11 +7,11 @@ BSHDIR ?= $(DESTDIR)$(PREFIX)/share/bash-completions
 .PHONY: install uninstall
 
 install:
-	@install -Dm755 src/pbpst      $(BINDIR)/pbpst
-	@install -Dm644 doc/pbpst.1    $(DOCDIR)/man1/pbpst.1
-	@install -Dm644 doc/pbpst_db.5 $(DOCDIR)/man5/pbpst_db.5
-	@install -Dm644 cmp/zsh        $(ZSHDIR)/site-functions/_pbpst
-	@install -Dm644 cmp/bash       $(BSHDIR)/completions/pbpst
+	@install -Dm755 dist/pbpst      $(BINDIR)/pbpst
+	@install -Dm644 dist/pbpst.1    $(DOCDIR)/man1/pbpst.1
+	@install -Dm644 dist/pbpst_db.5 $(DOCDIR)/man5/pbpst_db.5
+	@install -Dm644 cmp/zsh         $(ZSHDIR)/site-functions/_pbpst
+	@install -Dm644 cmp/bash        $(BSHDIR)/completions/pbpst
 
 uninstall:
 	@rm -f $(BINDIR)/pbpst
