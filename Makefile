@@ -4,14 +4,21 @@ BINDIR ?= $(DESTDIR)$(PREFIX)/bin
 ZSHDIR ?= $(DESTDIR)$(PREFIX)/share/zsh
 BSHDIR ?= $(DESTDIR)$(PREFIX)/share/bash-completions
 
-.PHONY: install uninstall
+.PHONY: all clean install uninstall
+
+all:
+	@mkdir -p ./dist
+	@tup upd
+
+clean:
+	@rm -rf ./dist
 
 install:
 	@install -Dm755 dist/pbpst      $(BINDIR)/pbpst
 	@install -Dm644 dist/pbpst.1    $(DOCDIR)/man1/pbpst.1
 	@install -Dm644 dist/pbpst_db.5 $(DOCDIR)/man5/pbpst_db.5
-	@install -Dm644 cmp/zsh         $(ZSHDIR)/site-functions/_pbpst
-	@install -Dm644 cmp/bash        $(BSHDIR)/completions/pbpst
+	@install -Dm644 dist/zsh        $(ZSHDIR)/site-functions/_pbpst
+	@install -Dm644 dist/bash       $(BSHDIR)/completions/pbpst
 
 uninstall:
 	@rm -f $(BINDIR)/pbpst
