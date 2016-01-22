@@ -101,8 +101,10 @@ pb_paste (const struct pbpst_state * s) {
         if ( list ) { curl_slist_free_all(list); }
         curl_easy_cleanup(handle);
         curl_formfree(post);
-        if ( response_data->mem ) { free(response_data->mem); }
-        if ( response_data ) { free(response_data); }
+        if ( response_data ) {
+            if ( response_data->mem ) { free(response_data->mem); }
+            free(response_data);
+        }
         free(target);
         return status;
 }
@@ -215,8 +217,10 @@ pb_remove (const char * provider, const char * uuid, const uint16_t verb) {
     cleanup:
         if ( list ) { curl_slist_free_all(list); }
         curl_easy_cleanup(handle);
-        if ( response_data->mem ) { free(response_data->mem); }
-        if ( response_data ) { free(response_data); }
+        if ( response_data ) {
+            if ( response_data->mem ) { free(response_data->mem); }
+            free(response_data);
+        }
         free(target);
         return status;
 }
@@ -288,8 +292,10 @@ pb_list (const struct pbpst_state * s) {
     cleanup:
         if ( list ) { curl_slist_free_all(list); }
         curl_easy_cleanup(handle);
-        if ( response_data->mem ) { free(response_data->mem); }
-        if ( response_data ) { free(response_data); }
+        if ( response_data ) {
+            if ( response_data->mem ) { free(response_data->mem); }
+            free(response_data);
+        }
         free(target);
         return status;
 }
