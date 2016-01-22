@@ -413,7 +413,7 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
     }
 
     cleanup:
-        if ( s->secs ) { free(sunset); }
+        if ( sunset ) { free(sunset); }
         json_decref(json);
         json_decref(uuid_j);
         json_decref(lid_j);
