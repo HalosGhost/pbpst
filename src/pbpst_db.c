@@ -196,13 +196,6 @@ db_swp_init (const char * dbl) {
     if ( chdir(cwd) == -1 ) {
         errsv = errno;
         print_err3("Could not return to", cwd, strerror(errsv));
-
-        errno = 0;
-        if ( close(fd) == -1 ) {
-            errsv = errno;
-            print_err3("Failed to close", swp_db_name, strerror(errsv));
-            fd = -1; goto cleanup;
-        }
     }
 
     cleanup:
