@@ -358,7 +358,7 @@ print_url (const struct pbpst_state * s, const char * userdata) {
         if ( state_mod ) {
             size_t tlen = strlen(state_mod) + strlen(mod_fmts[i]);
             *mod_var = malloc(tlen + 2);
-            if ( !mod_var ) {
+            if ( !*mod_var ) {
                 #pragma clang diagnostic push
                 #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
                 fprintf(stderr, "pbpst: Could not modify %s: Out of Memory\n",
