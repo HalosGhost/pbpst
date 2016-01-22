@@ -23,8 +23,8 @@ pb_paste (const struct pbpst_state * s) {
 
     struct curl_httppost * post = NULL, * last = NULL;
     size_t tlen = strlen(provider) + (
-                  s->vanity     ? strlen(s->vanity) + 2 :
-                  s->cmd == UPD ? strlen(s->uuid)   + 1 : 2);
+                  s->vanity                ? strlen(s->vanity) + 2 :
+                  s->cmd == UPD && s->uuid ? strlen(s->uuid)   + 1 : 2);
 
     struct curl_slist * list = NULL;
     list = curl_slist_append(list, "Accept: application/json");
@@ -55,7 +55,7 @@ pb_paste (const struct pbpst_state * s) {
                               CURLFORM_END);
             if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
         }
-    } else if ( s->cmd == UPD ) {
+    } else if ( s->cmd == UPD && s->uuid ) {
         snprintf(target, tlen, "%s%s", provider, s->uuid);
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
