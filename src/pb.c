@@ -127,6 +127,7 @@ pb_shorten (const char * provider, const char * url, const uint16_t verb) {
     size_t tlen = strlen(provider) + 6;
 
     struct CurlResponse * response_data = malloc(sizeof(struct CurlResponse));
+    response_data->mem = 0;
     char * target = malloc(tlen);
     if ( !response_data || !target ) {
         status = CURLE_OUT_OF_MEMORY;
@@ -243,6 +244,7 @@ pb_list (const struct pbpst_state * s) {
     const char * provider = s->provider ? s->provider : def_provider;
 
     struct CurlResponse * response_data = malloc(sizeof(struct CurlResponse));
+    response_data->mem = 0;
     size_t target_len = strlen(provider) + 3;
     char * target = malloc(target_len);
     if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
