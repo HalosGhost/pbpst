@@ -14,10 +14,10 @@ clean:
 	@rm -rf -- ./dist
 	@rm -rf -- cov-int
 	@rm -f -- pbpst.tgz make.sh
-	@mkdir -p ./dist
 
 cov-build: clean
 	@tup generate make.sh
+	@mkdir -p ./dist
 	@cov-build --dir cov-int ./make.sh
 	@tar czvf pbpst.tgz cov-int
 
