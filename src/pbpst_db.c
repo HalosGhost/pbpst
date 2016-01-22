@@ -360,7 +360,7 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
         goto cleanup;
     }
 
-    if ( sunset_j ) {
+    if ( sunset_j && s->secs ) {
         time_t curtime = time(NULL), offset = 0;
         if ( sscanf(s->secs, "%ld", &offset) == EOF ) {
             signed errsv = errno;
