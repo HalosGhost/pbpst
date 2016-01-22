@@ -190,6 +190,7 @@ pb_remove (const char * provider, const char * uuid, const uint16_t verb) {
     #pragma clang diagnostic pop
 
     struct CurlResponse * response_data = malloc(sizeof(struct CurlResponse));
+    response_data->mem = 0;
     size_t target_len = strlen(provider) + strlen(uuid) + 1;
     char * target = malloc(target_len);
     if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
