@@ -11,9 +11,7 @@ all:
 	@tup upd
 
 clean:
-	@rm -rf -- ./dist
-	@rm -rf -- cov-int
-	@rm -f -- pbpst.tgz make.sh
+	@rm -rf -- ./dist cov-int pbpst.tgz make.sh
 
 cov-build: clean
 	@tup generate make.sh
