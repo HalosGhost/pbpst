@@ -38,7 +38,7 @@ pb_paste (const struct pbpst_state * s) {
     if ( !response_data || !target ) {
         status = CURLE_OUT_OF_MEMORY;
         goto cleanup;
-    }
+    } response_data->mem = 0;
 
     CURLFORMcode fc;
     if ( s->cmd == SNC ) {
@@ -129,12 +129,11 @@ pb_shorten (const char * provider, const char * url, const uint16_t verb) {
     size_t tlen = strlen(provider) + 6;
 
     struct CurlResponse * response_data = malloc(sizeof(struct CurlResponse));
-    response_data->mem = 0;
     char * target = malloc(tlen);
     if ( !response_data || !target ) {
         status = CURLE_OUT_OF_MEMORY;
         goto cleanup;
-    }
+    } response_data->mem = 0;
 
     CURLFORMcode fc;
     fc = curl_formadd(&post,                &last,
@@ -195,10 +194,12 @@ pb_remove (const char * provider, const char * uuid, const uint16_t verb) {
     #pragma clang diagnostic pop
 
     struct CurlResponse * response_data = malloc(sizeof(struct CurlResponse));
-    response_data->mem = 0;
     size_t target_len = strlen(provider) + strlen(uuid) + 1;
     char * target = malloc(target_len);
-    if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
+    if ( !response_data || !target ) {
+        status = CURLE_OUT_OF_MEMORY;
+        goto cleanup;
+    } response_data->mem = 0;
 
     snprintf(target, target_len, "%s%s", provider, uuid);
 
@@ -250,10 +251,12 @@ pb_list (const struct pbpst_state * s) {
     const char * provider = s->provider ? s->provider : def_provider;
 
     struct CurlResponse * response_data = malloc(sizeof(struct CurlResponse));
-    response_data->mem = 0;
     size_t target_len = strlen(provider) + 3;
     char * target = malloc(target_len);
-    if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
+    if ( !response_data || !target ) {
+        status = CURLE_OUT_OF_MEMORY;
+        goto cleanup;
+    } response_data->mem = 0;
 
     const char * const route = s->llex ? "l"  :
                                s->lthm ? "ls" : "lf";
