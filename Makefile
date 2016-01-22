@@ -4,14 +4,22 @@ BINDIR ?= $(DESTDIR)$(PREFIX)/bin
 ZSHDIR ?= $(DESTDIR)$(PREFIX)/share/zsh
 BSHDIR ?= $(DESTDIR)$(PREFIX)/share/bash-completions
 
-.PHONY: all clean install uninstall
+.PHONY: all clean cov-build install uninstall
 
 all:
 	@mkdir -p ./dist
 	@tup upd
 
 clean:
-	@rm -rf ./dist
+	@rm -rf -- ./dist
+	@rm -rf -- cov-int
+	@rm -f -- pbpst.tgz make.sh
+	@mkdir -p ./dist
+
+cov-build: clean
+	@tup generate make.sh
+	@cov-build --dir cov-int ./make.sh
+	@tar czvf pbpst.tgz cov-int
 
 install:
 	@install -Dm755 dist/pbpst      $(BINDIR)/pbpst
