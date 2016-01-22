@@ -162,8 +162,10 @@ pb_shorten (const char * provider, const char * url, const uint16_t verb) {
     cleanup:
         curl_easy_cleanup(handle);
         curl_formfree(post);
-        if ( response_data->mem ) { free(response_data->mem); }
-        if ( response_data ) { free(response_data); }
+        if ( response_data ) {
+            if ( response_data->mem ) { free(response_data->mem); }
+            free(response_data);
+        }
         free(target);
         return status;
 }
