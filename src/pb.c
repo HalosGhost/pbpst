@@ -360,7 +360,7 @@ print_url (const struct pbpst_state * s, const char * userdata) {
             case 'o': mod_var = &form; state_mod = s->format; break;
         }
 
-        if ( state_mod ) {
+        if ( state_mod && *state_mod ) {
             size_t tlen = strlen(state_mod) + strlen(mod_fmts[i]);
             *mod_var = malloc(tlen + 2);
             if ( !*mod_var ) {
@@ -371,7 +371,12 @@ print_url (const struct pbpst_state * s, const char * userdata) {
                 #pragma clang diagnostic pop
                 goto cleanup;
             } snprintf(*mod_var, tlen + 1, "%s%s", mod_fmts[i], state_mod);
-        } else { *mod_var = ""; }
+        } else if ( mod_var ) {
+            *mod_var = "";
+        } else {
+            fputs("pbpst: Could not setup URL for printing\n", stderr);
+            status = EXIT_FAILURE; goto cleanup;
+        }
     } printf("%s%s%s%s%s%s%s%s\n", provider, rndr, idnt, extn, lexr, form,
              them, hdln);
 
