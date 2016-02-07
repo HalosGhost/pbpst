@@ -1,5 +1,7 @@
+PROGNM =  pbpst
 PREFIX ?= /usr/local
 DOCDIR ?= $(DESTDIR)$(PREFIX)/share/man
+LIBDIR ?= $(DESTDIR)$(PREFIX)/lib
 BINDIR ?= $(DESTDIR)$(PREFIX)/bin
 ZSHDIR ?= $(DESTDIR)$(PREFIX)/share/zsh
 BSHDIR ?= $(DESTDIR)$(PREFIX)/share/bash-completions
@@ -11,13 +13,13 @@ all:
 	@tup upd
 
 clean:
-	@rm -rf -- dist cov-int pbpst.tgz make.sh
+	@rm -rf -- dist cov-int $(PROGNM).tgz make.sh
 
 cov-build: clean
 	@tup generate make.sh
 	@mkdir -p ./dist
 	@cov-build --dir cov-int ./make.sh
-	@tar czvf pbpst.tgz cov-int
+	@tar czvf $(PROGNM).tgz cov-int
 
 install:
 	@install -Dm755 dist/pbpst      $(BINDIR)/pbpst
