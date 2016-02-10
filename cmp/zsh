@@ -28,16 +28,33 @@ _pbpst_opts_common=(
     '--version[List the version and exit]'
 )
 
-_themes=("$(pbpst --list-themes)")
-_formats=("$(pbpst --list-formats)")
-_lexers=("$(pbpst --list-lexers)")
+_lexers() {
+    local -a lexer
+    lexer=( $(pbpst --list-lexers) )
+    typeset -U lexer
+    compadd "$@" -a lexer
+}
+
+_themes() {
+    local -a theme
+    theme=( $(pbpst --list-themes) )
+    typeset -U theme
+    compadd "$@" -a theme
+}
+
+_formats() {
+    local -a format
+    format=( $(pbpst --list-formats) )
+    typeset -U format
+    compadd "$@" -a format
+}
 
 # options for passing to _arguments: options for -S
 _pbpst_opts_sync=(
     {-f,--file}'[Create a paste from FILE]:Path to file:_files -./'
-    {-l,--lexer}"[Lex paste with LANG]:LANG:($_lexers)"
-    {-T,--theme}"[Style paste with pygments theme THEME]:THEME:($_themes)"
-    {-F,--format}"[Format paste for FORM]:FORM:($_formats)"
+    {-l,--lexer}"[Lex paste with LANG]:LANG:_lexers"
+    {-T,--theme}"[Style paste with pygments theme THEME]:THEME:_themes"
+    {-F,--format}"[Format paste for FORM]:FORM:_formats"
     {-e,--extension}'[Specify MIME-type as EXT]'
     {-L,--line}'[Highlight LINE in paste]'
     {-p,--private}'[Return a less-guessable Id for paste]'
@@ -65,9 +82,9 @@ _pbpst_opts_remove=(
 # options for passing to _arguments: options for -U
 _pbpst_opts_update=(
     {-f,--file}'[Create a paste from FILE]:Path to file:_files -./'
-    {-l,--lexer}"[Lex paste with LANG]:LANG:($_lexers)"
-    {-T,--theme}"[Style paste with pygments theme THEME]:THEME:($_themes)"
-    {-F,--format}"[Format paste for FORM]:FORM:($_formats)"
+    {-l,--lexer}"[Lex paste with LANG]:LANG:_lexers"
+    {-T,--theme}"[Style paste with pygments theme THEME]:THEME:_themes"
+    {-F,--format}"[Format paste for FORM]:FORM:_formats"
     {-e,--extension}'[Specify MIME-type as EXT]'
     {-L,--line}'[Highlight LINE in paste]'
     {-p,--private}'[Return a less-guessable Id for paste]'
