@@ -89,7 +89,13 @@ pb_paste (const struct pbpst_state * s) {
     #pragma clang diagnostic pop
 
     status = curl_easy_perform(handle);
-    if ( status == EXIT_FAILURE ) { goto cleanup; }
+    if ( status != CURLE_OK ) {
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+        fprintf(stderr, "pbpst: Pasting failed: %s\n",
+                curl_easy_strerror(status)); goto cleanup;
+        #pragma clang diagnostic pop
+    }
 
     status = db_add_entry(s, response_data->mem) == EXIT_SUCCESS
            ? EXIT_SUCCESS : EXIT_FAILURE;
@@ -154,9 +160,13 @@ pb_shorten (const char * provider, const char * url, const uint16_t verb) {
     #pragma clang diagnostic pop
 
     status = curl_easy_perform(handle);
-    if ( status == EXIT_FAILURE ) { goto cleanup; }
-
-    printf("%s", response_data->mem);
+    if ( status != CURLE_OK ) {
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+        fprintf(stderr, "pbpst: Shortening failed: %s\n",
+                curl_easy_strerror(status)); goto cleanup;
+        #pragma clang diagnostic pop
+    } printf("%s", response_data->mem);
 
     cleanup:
         curl_easy_cleanup(handle);
@@ -270,6 +280,13 @@ pb_list (const struct pbpst_state * s) {
     #pragma clang diagnostic pop
 
     status = curl_easy_perform(handle);
+    if ( status != CURLE_OK ) {
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+        fprintf(stderr, "pbpst: Listing failed: %s\n",
+                curl_easy_strerror(status)); goto cleanup;
+        #pragma clang diagnostic pop
+    }
 
     size_t idx;
     json_error_t err;
