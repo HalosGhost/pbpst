@@ -81,6 +81,9 @@ Note: if the :option:`f` option is not passed, :program:`pbpst` will paste the c
 -L, --line=LINE
     Highlight LINE in paste.
 
+-F, --format=FORM
+    Format paste using the pygments format FORM.
+
 -p, --private
     Return a less-guessable Id for paste.
 
@@ -131,6 +134,9 @@ Note: if the :option:`f` option is not passed, :program:`pbpst` will paste the c
 
 -L, --line=LINE
     Highlight LINE.
+
+-F, --format=FORM
+    Format paste using the pygments format FORM.
 
 -r, --render
     Render a ReStructuredText or Markdown paste to HTML.
