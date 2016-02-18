@@ -127,7 +127,6 @@ static const char upd_help [] =
     "  -r, --render         Render paste from rst to HTML\n"
     "  -t, --term           Handle Asciinema videos\n"
     "  -u, --uuid=UUID      Use UUID as authentication credential\n"
-    "  -v, --vanity=NAME    Use NAME as a custom Id\n"
     "  -#, --progress       Show a progress bar for the upload\n"
     "  -m, --message=MSG    Use MSG as the note in the database\n";
 
@@ -146,7 +145,7 @@ static const char * opts_for [] = {
     [SNC] = "SRUDhP:Vb:f:l:T:F:e:L:px:rtv:#m:",
     [SHR] = "s:P:Vb:",
     [RMV] = "SRUDhP:Vb:u:y",
-    [UPD] = "SRUDhP:Vb:f:l:L:T:F:e:x:rtu:v:#m:",
+    [UPD] = "SRUDhP:Vb:f:l:L:T:F:e:x:rtu:#m:",
     [DBS] = "SRUDhP:Vb:id:yq:"
 };
 

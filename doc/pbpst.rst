@@ -150,9 +150,6 @@ Note: if the :option:`f` option is not passed, :program:`pbpst` will paste the c
 -u, --uuid=UUID
     Use UUID as authentication credential.
 
--v, --vanity=NAME
-    Use NAME as a custom Id.
-
 -#, --progress
     Show a progress bar for the status of the upload.
 
