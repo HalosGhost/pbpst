@@ -134,6 +134,13 @@ pb_shorten (const char * provider, const char * url, const uint16_t verb) {
     struct curl_httppost * post = NULL, * last = NULL;
     size_t tlen = strlen(provider) + 6;
 
+    struct curl_slist * list = NULL;
+    list = curl_slist_append(list, "Accept: application/json");
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+    curl_easy_setopt(handle, CURLOPT_HTTPHEADER, list);
+    #pragma clang diagnostic pop
+
     struct CurlResponse * response_data = malloc(sizeof(struct CurlResponse));
     char * target = malloc(tlen);
 
@@ -166,9 +173,34 @@ pb_shorten (const char * provider, const char * url, const uint16_t verb) {
         fprintf(stderr, "pbpst: Shortening failed: %s\n",
                 curl_easy_strerror(status)); goto cleanup;
         #pragma clang diagnostic pop
-    } printf("%s", response_data->mem);
+    }
+
+    json_error_t err;
+    json_t * json = json_loads(response_data->mem, 0, &err);
+    if ( !json ) {
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+        fprintf(stderr, "pbpst: %s at %d:%d\n", err.text, err.line, err.column);
+        #pragma clang diagnostic pop
+        return EXIT_FAILURE;
+    }
+
+    json_t * value;
+    const char * key;
+    if ( verb ) {
+        json_object_foreach(json, key, value) {
+            printf("%s: %s\n", key, json_string_value(value));
+        }
+    } else {
+        json_object_foreach(json, key, value) {
+            if ( !strcmp(key, "url") ) {
+                printf("%s\n", json_string_value(value));
+            }
+        }
+    }
 
     cleanup:
+        if ( list ) { curl_slist_free_all(list); }
         curl_easy_cleanup(handle);
         curl_formfree(post);
         if ( response_data ) {
