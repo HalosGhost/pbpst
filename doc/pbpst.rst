@@ -178,7 +178,7 @@ Examples
 pbpst -Sf <filepath>
     paste the file at <filepath>
 
-pbpst -Ss <url>
+pbpst -s <url>
     create a shortcut URL to <url>
 
 pbpst -Ru <UUID>
