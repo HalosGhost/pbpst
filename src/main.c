@@ -161,7 +161,7 @@ main (signed argc, char * argv []) {
     }
 
     exit_status = pbpst_dispatch(&state);
-    if ( exit_status == 22 ) { goto cleanup; } // handle HTTP status errors
+    if ( exit_status == CURLE_HTTP_RETURNED_ERROR ) { goto cleanup; }
 
     if ( db_swp_flush(mem_db, swp_db_loc) == -1 ) {
         exit_status = EXIT_FAILURE; goto cleanup;
