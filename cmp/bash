@@ -48,10 +48,10 @@ _pbpst() {
   _get_comp_words_by_ref cur prev
   database=('init query delete prune' 'i q d y')
   remove=('uuid prune' 'u y')
-  sync=('file lexer theme extension line private sunset render term vanity progress message'
-        'f l T e L p x r t v # m')
-  upgrade=('file lexer theme extension line private sunset render term uuid vanity progress message'
-           'f l T e L p x r t u v # m')
+  sync=('file lexer theme format extension line private sunset render term vanity progress message'
+        'f l T F e L p x r t v # m')
+  upgrade=('file lexer format theme extension line private sunset render term uuid progress message'
+           'f l T F e L p x r t u # m')
   common=('help dbpath provider verbose list-lexers list-themes list-formats version' 'h b P V')
   core=('sync shorten remove update database' 'S s R U D')
 

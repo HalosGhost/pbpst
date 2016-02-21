@@ -92,7 +92,6 @@ _pbpst_opts_update=(
     {-r,--render}'[Render paste from rst to HTML]'
     {-t,--term}'[Handle asciinema videos]'
     {-u,--uuid}'[Use UUID as authentication credential]:UUID:_uuids'
-    {-v,--vanity}'[Use NAME as a custom Id]'
     {-\#,--progress}'[Show a progress bar for the upload]'
     {-m,--message}'[Use MSG as the note in the database]'
 )
