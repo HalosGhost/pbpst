@@ -193,11 +193,8 @@ pb_shorten (const char * provider, const char * url, const uint16_t verb) {
             printf("%s: %s\n", key, json_string_value(value));
         }
     } else {
-        json_object_foreach(json, key, value) {
-            if ( !strcmp(key, "url") ) {
-                printf("%s\n", json_string_value(value));
-            }
-        }
+        json_t * str = json_object_get(json, "url");
+        if ( str ) { printf("%s\n", json_string_value(str)); }
     }
 
     cleanup:
