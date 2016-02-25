@@ -16,8 +16,11 @@
 #include <time.h>      // localtime(), time(), time_t
 #include <jansson.h>
 
-#define BUFFER_SIZE 256
+/* Configuration */
+#define FALLBACK_PROVIDER "https://ptpb.pw/"
+
 #define PB_FILE_MAX 67108864 // 64 MiB
+#define BUFFER_SIZE 256
 
 static const char version_str [] = "pbpst 1.1.1\n";
 

@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+usage () {
+    printf "Usage: ./configure [options]\n\n"
+    printf "Options:\n"
+    printf "  --provider='URL'  Set fallback provider (default: 'https://ptpb.pw/')\n"
+    printf "  --reset-config    Reset configuration to the defaults\n"
+}
+
+update () {
+    sed -i ./src/main.h -re "s/(define $1) \"(.*)\"$/\\1 \"$2\"/"
+}
+
+default_config () {
+    update FALLBACK_PROVIDER "https://ptpb.pw/"
+}
+
+show_value () {
+    printf "$1: %s\n" "$('grep' "#define $2" ./src/main.h | sed -re "s/#define $2 (.*)$/\\1/")"
+}
+
+show_config () {
+    show_value 'Fallback Provider' FALLBACK_PROVIDER
+}
+
+if [[ $# == 0 ]]; then
+    show_config
+    exit 0
+fi
+
+for i in "$@"; do
+    case "$i" in
+        --help)         usage; exit 0;;
+        --provider=*)   update FALLBACK_PROVIDER "${i#*=}"; shift;;
+        --reset-config) default_config; exit 0;;
+    esac
+done
+
+show_config

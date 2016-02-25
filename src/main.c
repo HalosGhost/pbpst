@@ -145,12 +145,12 @@ main (signed argc, char * argv []) {
     if ( (def_prov = json_object_get(mem_db, "default_provider")) ) {
         def_provider = json_string_value(def_prov);
     } else if ( !state.provider ) {
-        size_t len = strlen("https://ptpb.pw/") + 1;
+        size_t len = strlen(FALLBACK_PROVIDER) + 1;
         state.provider = malloc(len);
         if ( !state.provider ) {
             exit_status = CURLE_OUT_OF_MEMORY;
             goto cleanup;
-        } snprintf(state.provider, len, "https://ptpb.pw/");
+        } snprintf(state.provider, len, FALLBACK_PROVIDER);
     } else {
         size_t len = strlen(state.provider);
         if ( state.provider[len - 1] != '/' ) {
