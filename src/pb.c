@@ -470,12 +470,7 @@ pb_prune (const struct pbpst_state * s) {
         size_t stclen = json_string_length(res);
 
         if ( stclen && sscanf(stc, "%" SCNd64, &stime) == EOF ) {
-            signed errsv = errno;
-            #pragma clang diagnostic push
-            #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-            fprintf(stderr, "pbpst: Failed to scan offset: %s\n",
-                    strerror(errsv));
-            #pragma clang diagnostic pop
+            perror("pbpst: Failed to scan offset");
             return EXIT_FAILURE;
         }
 

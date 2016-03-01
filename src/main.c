@@ -115,11 +115,7 @@ main (signed argc, char * argv []) {
         errno = 0;
         if ( stat(state.path, &st) ) {
             exit_status = errno;
-            #pragma clang diagnostic push
-            #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-            fprintf(stderr, "pbpst: Error checking file: %s\n",
-                    strerror(exit_status));
-            #pragma clang diagnostic pop
+            perror("pbpst: Error checking file");
             goto cleanup;
         }
 
