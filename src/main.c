@@ -26,7 +26,7 @@ main (signed argc, char * argv []) {
         return EXIT_FAILURE;
     }
 
-    signal(2, signal_handler);
+    signal(SIGINT, signal_handler);
 
     signed exit_status = EXIT_SUCCESS;
 
@@ -219,14 +219,16 @@ pbpst_dispatch (const struct pbpst_state * s) {
     }
 }
 
-void
+noreturn void
 signal_handler (signed signum) {
 
-    if ( signum < 1 || signum > 31 ) { return; }
+    const char * const siglist [] = {
+        [SIGINT] = "Interrupt"
+    };
 
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-    fprintf(stderr, signal_err, sys_siglist[signum]);
+    fprintf(stderr, signal_err, siglist[signum]);
     #pragma clang diagnostic pop
     if ( point_of_no_return ) {
         fputs("pbpst: You need to manually check your swap db\n", stderr);

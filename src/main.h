@@ -14,6 +14,7 @@
 #include <unistd.h>    // close()
 #include <errno.h>     // errno
 #include <time.h>      // localtime(), time(), time_t
+#include <stdnoreturn.h>
 #include <jansson.h>
 
 /* Configuration */
@@ -166,7 +167,7 @@ pbpst_test_options (const struct pbpst_state *);
 signed
 pbpst_dispatch (const struct pbpst_state *);
 
-void
+noreturn void
 signal_handler (signed);
 
 void
@@ -174,10 +175,9 @@ pbpst_cleanup (void);
 
 static char * db_loc = 0, * swp_db_loc = 0;
 extern json_t * mem_db, * pastes, * prov_pastes;
-extern const char * const sys_siglist [];
 extern const char * def_provider;
 extern bool point_of_no_return;
 
-static const char signal_err [] = "pbpst: Received %s\x1b[?25h\n";
+static const char signal_err [] = "\rpbpst: Received %s\x1b[?25h\n";
 
 // vim: set ts=4 sw=4 et:
