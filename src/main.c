@@ -222,17 +222,14 @@ pbpst_dispatch (const struct pbpst_state * s) {
 noreturn void
 signal_handler (signed signum) {
 
+    #define SIGMSG "\rpbpst: Caught \x1b[?25h"
     const char * const siglist [] = {
-        [SIGINT] = "Interrupt"
+        [SIGINT] = SIGMSG "Interrupt\n"
     };
 
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-    fprintf(stderr, signal_err, siglist[signum]);
-    #pragma clang diagnostic pop
-    if ( point_of_no_return ) {
-        fputs("pbpst: You need to manually check your swap db\n", stderr);
-    } pbpst_cleanup(); exit(EXIT_FAILURE);
+    fputs(siglist[signum], stderr);
+    pbpst_cleanup();
+    exit(EXIT_FAILURE);
 }
 
 void
@@ -260,7 +257,7 @@ pbpst_cleanup (void) {
     if ( swp_db_loc ) {
         struct stat st;
         if ( stat(swp_db_loc, &st) == 0 && st.st_size == 0 ) {
-            fputs( !remove(swp_db_loc) && point_of_no_return
+            fputs( !point_of_no_return && !remove(swp_db_loc)
                  ? "pbpst: removed empty swap (contingency)\n"
                  : "pbpst: You need to manually check your swap db\n", stderr);
         } free(swp_db_loc);

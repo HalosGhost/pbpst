@@ -178,6 +178,4 @@ extern json_t * mem_db, * pastes, * prov_pastes;
 extern const char * def_provider;
 extern bool point_of_no_return;
 
-static const char signal_err [] = "\rpbpst: Received %s\x1b[?25h\n";
-
 // vim: set ts=4 sw=4 et:
