@@ -206,9 +206,18 @@ Bugs
 
 Report bugs for pbpst to https://github.com/HalosGhost/pbpst/issues
 
+Files
+-----
+
+$XDG_CONFIG_HOME/pbpst/db.json
+    Contains the single config option for :program:`pbpst` along with the entire database of pastes
+
+$HOME/.config/pbpst/db.json
+    The fallback database location should $XDG_CONFIG_HOME not be defined
+
 See Also
 --------
 
-:manpage:`libcurl(3)`
+:manpage:`libcurl(3)`, :manpage:`pbpst_db(5)`
 
 See the documentation on pb, a lightweight pastebin at https://github.com/ptpb/pb/blob/master/pb/templates/index.rst
