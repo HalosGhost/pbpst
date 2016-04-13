@@ -210,10 +210,14 @@ Files
 -----
 
 $XDG_CONFIG_HOME/pbpst/db.json
-    Contains the single config option for :program:`pbpst` along with the entire database of pastes
-
 $HOME/.config/pbpst/db.json
-    The fallback database location should $XDG_CONFIG_HOME not be defined
+    One of the two files above contains the lone config option for :program:`pbpst` along with the database of pastes.
+    If $XDG_CONFIG_HOME is not defined, the second path will be used as a fallback.
+
+$XDG_CONFIG_HOME/pbpst/.db.json.swp
+$HOME/.config/pbpst/.db.json.swp
+    One of the two files above contains a copy of the paste database which is used while :program:`pbpst` is running (it is used to try to minimize the possibility of data-loss.
+    It will be located in the same directory as the live database.
 
 See Also
 --------
