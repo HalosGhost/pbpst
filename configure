@@ -3,13 +3,14 @@
 usage () {
     printf "Usage: ./configure [options]\n\n"
     printf "Options:\n"
+    printf "  --cc='COMP'       Use COMP for compiler (default: clang)\n"
     printf "  --cflags='FLAGS'  Use FLAGS for CFLAGS (cf. Tuprules.tup for defaults)\n"
     printf "  --provider='URL'  Set fallback provider (default: 'https://ptpb.pw/')\n"
     printf "  --reset-config    Reset configuration to the defaults\n"
 }
 
-update_cflags () {
-    sed -i ./Tuprules.tup -e "s/CFLAGS.*/CFLAGS = $1/"
+update_tuprule () {
+    sed -i ./Tuprules.tup -re "s/$1.*/$1 = $2/"
 }
 
 update () {
@@ -18,7 +19,13 @@ update () {
 
 default_config () {
     update FALLBACK_PROVIDER "https://ptpb.pw/"
-    update_cflags '-g -O3 -fPIE -pie -D_FORTIFY_SOURCE=2 -fstack-protector-strong --param=ssp-buffer-size=1 -Weverything -Werror -std=c11 -fsanitize=undefined -fsanitize-trap=undefined -Wl,-z,relro,-z,now -march=native'
+    update_tuprule CFLAGS '-g -O3 -fPIE -pie -D_FORTIFY_SOURCE=2 -fstack-protector-strong --param=ssp-buffer-size=1 -Weverything -Werror -std=c11 -fsanitize=undefined -fsanitize-trap=undefined -Wl,-z,relro,-z,now -march=native'
+    update_tuprule CC 'clang'
+    show_config
+}
+
+show_tuprule () {
+    grep --color=never "$1" ./Tuprules.tup
 }
 
 show_value () {
@@ -26,7 +33,8 @@ show_value () {
 }
 
 show_config () {
-    grep --color=never CFLAGS ./Tuprules.tup
+    show_tuprule CFLAGS
+    show_tuprule CC
     show_value 'Fallback Provider' FALLBACK_PROVIDER
 }
 
@@ -37,7 +45,8 @@ fi
 
 for i in "$@"; do
     case "$i" in
-        --cflags=*)     update_cflags "${i#*=}"; shift;;
+        --cc=*)         update_tuprule CC "${i#*=}"; shift;;
+        --cflags=*)     update_tuprule CFLAGS "${i#*=}"; shift;;
         --help)         usage; exit 0;;
         --provider=*)   update FALLBACK_PROVIDER "${i#*=}"; shift;;
         --reset-config) default_config; exit 0;;
