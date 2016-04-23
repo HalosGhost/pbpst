@@ -77,18 +77,18 @@ main (signed argc, char * argv []) {
                           stderr); goto cleanup;
                 } snprintf(*state_var, l, "%s", optarg); break;
 
-            case '#': state.prog = true; break;
-            case 'r': state.rend = true; break;
-            case 't': state.term = true; break;
-            case 'i': state.init = true; break;
-            case 'y': state.prun = true; break;
-            case 'p': state.priv = true; break;
-            case 'h': state.help = true; break;
-            case 'V': state.verb += 1;   break;
-            case 256: printf(version_str); goto cleanup;
-            case 257: state.llex = true; break;
-            case 258: state.lthm = true; break;
-            case 259: state.lfrm = true; break;
+            case '#': state.prog  = true;         break;
+            case 'r': state.rend  = true;         break;
+            case 't': state.term  = true;         break;
+            case 'i': state.init  = true;         break;
+            case 'y': state.prun  = true;         break;
+            case 'p': state.priv  = true;         break;
+            case 'h': state.help  = true;         break;
+            case 'V': state.verb += 1;            break;
+            case 256: printf(version_str);        goto cleanup;
+            case 257: state.llex  = true;         break;
+            case 258: state.lthm  = true;         break;
+            case 259: state.lfrm  = true;         break;
             default:  exit_status = EXIT_FAILURE; goto cleanup;
         }
     }
@@ -125,16 +125,9 @@ main (signed argc, char * argv []) {
         }
     }
 
-    db_loc = db_locate(&state);
-    if ( !db_loc ) {
-        exit_status = EXIT_FAILURE; goto cleanup;
-    }
+    if ( !(db_loc = db_locate(&state)) || !(swp_db_loc = db_swp_init(db_loc)) ||
+         !(mem_db = db_read(db_loc)) ) {
 
-    if ( !(swp_db_loc = db_swp_init(db_loc)) ) {
-        exit_status = EXIT_FAILURE; goto cleanup;
-    }
-
-    if ( !(mem_db = db_read(db_loc)) ) {
         exit_status = EXIT_FAILURE; goto cleanup;
     }
 
