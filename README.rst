@@ -25,9 +25,13 @@ However, I test only against the latest stable version of both; it is recommende
 
 In addition to the two external runtime dependencies listed above, ``pbpst`` uses the following three tools to perform a complete build:
 
-- `clang 3.7 <http://clang.llvm.org/>`_
+- `clang 3.7 <http://clang.llvm.org/>`_ *
 - `python-sphinx 1.3.3 <https://pypi.python.org/pypi/Sphinx>`_
 - `tup 0.7.3 <http://gittup.org/tup/>`_
+
+``clang`` is a special case.
+I have recently allowed ``./configure`` to modify both the ``CFLAGS`` and the ``CC`` used in the build (to make packagers' lives simpler), and so you can use ``gcc`` if you would like.
+Note that, while I stay pretty strictly in the realm of ISO C, I only test against ``clang``.
 
 The same caveats about versions apply to these make dependencies as apply to the runtime dependencies; tl;dr: keep up-to-date and everything should be okay.
 
