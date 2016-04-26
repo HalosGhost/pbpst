@@ -458,7 +458,7 @@ db_query (const struct pbpst_state * s) {
 
     if ( !prov_pastes ) {
         print_err2("No pastes found for", provider);
-        status = EXIT_FAILURE; goto cleanup;
+        status = EXIT_SUCCESS; goto cleanup;
     }
 
     const char * key;
