@@ -17,17 +17,17 @@ Build Requirements and Instructions
 
 ``pbpst`` only has two external dependencies:
 
-- `libjansson 2.7 <http://www.digip.org/jansson/>`_
-- `libcurl 7.46.0 <http://curl.haxx.se/>`_
+- `libjansson <http://www.digip.org/jansson/>`_
+- `libcurl <http://curl.haxx.se/>`_
 
 Note that the versions of these dependencies are not firmly tested, so ``pbpst`` may compile and function just fine on older versions of both libraries.
 However, I test only against the latest stable version of both; it is recommended that ``pbpst`` users keep both dependencies up-to-date as well.
 
 In addition to the two external runtime dependencies listed above, ``pbpst`` uses the following three tools to perform a complete build:
 
-- `clang 3.7 <http://clang.llvm.org/>`_ *
-- `python-sphinx 1.3.3 <https://pypi.python.org/pypi/Sphinx>`_
-- `tup 0.7.3 <http://gittup.org/tup/>`_
+- `clang <http://clang.llvm.org/>`_ *
+- `python-sphinx <https://pypi.python.org/pypi/Sphinx>`_
+- `tup <http://gittup.org/tup/>`_
 
 ``clang`` is a special case.
 I have recently allowed ``./configure`` to modify both the ``CFLAGS`` and the ``CC`` used in the build (to make packagers' lives simpler), and so you can use ``gcc`` if you would like.
