@@ -40,4 +40,9 @@ Once you have all the dependencies installed (and you have run ``modprobe fuse``
 
 Now, you can simply use ``make DESTDIR=<dest> PREFIX=<pre> install`` to install (or ``make DESTDIR=<dest> PREFIX=<pre> uninstall`` to uninstall).
 
-If you are an Arch Linux user, all the heavy lifting has been done for you, and you can install ``pbpst`` from `[community] <https://www.archlinux.org/packages/community/x86_64/pbpst/>`_.
+Pre-built Packages
+------------------
+
+If you are a packager and package ``pbpst`` for your distribution, contact me and I will gladly put links to the package here:
+
+* Arch Linux's `[community] repository <https://www.archlinux.org/packages/community/x86_64/pbpst/>`_.
