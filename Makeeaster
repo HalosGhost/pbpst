@@ -1,3 +1,5 @@
+.PHONY: war love peace sandwich
+
 war:
 	@printf 'Fire the missles!\n'
 
