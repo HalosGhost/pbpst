@@ -1,0 +1,12 @@
+war:
+	@printf 'Fire the missles!\n'
+
+love:
+	@printf 'Not war?\n'
+
+peace:
+	@printf '☮\n'
+
+sandwich:
+	@[[ "$(USER)" == "root" ]] && printf 'Okay\n' || printf '[sudo] password for %s: █\n' "$(USER)"
+

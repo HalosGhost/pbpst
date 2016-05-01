@@ -34,3 +34,5 @@ uninstall:
 	@rm -f $(DOCDIR)/man5/pbpst_db.5
 	@rm -f $(ZSHDIR)/site-functions/_pbpst
 	@rm -f $(BSHDIR)/completions/pbpst
+
+include Makeeaster
