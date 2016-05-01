@@ -22,17 +22,17 @@ cov-build: clean
 	@tar czvf $(PROGNM).tgz cov-int
 
 install:
-	@install -Dm755 dist/pbpst      $(BINDIR)/pbpst
-	@install -Dm644 dist/pbpst.1    $(DOCDIR)/man1/pbpst.1
-	@install -Dm644 dist/pbpst_db.5 $(DOCDIR)/man5/pbpst_db.5
-	@install -Dm644 dist/zsh        $(ZSHDIR)/site-functions/_pbpst
-	@install -Dm644 dist/bash       $(BSHDIR)/completions/pbpst
+	@install -Dm755 dist/$(PROGNM)   $(BINDIR)/$(PROGNM)
+	@install -Dm644 dist/$(PROGNM).1 $(DOCDIR)/man1/$(PROGNM).1
+	@install -Dm644 dist/pbpst_db.5  $(DOCDIR)/man5/pbpst_db.5
+	@install -Dm644 dist/zsh         $(ZSHDIR)/site-functions/_$(PROGNM)
+	@install -Dm644 dist/bash        $(BSHDIR)/completions/$(PROGNM)
 
 uninstall:
-	@rm -f $(BINDIR)/pbpst
-	@rm -f $(DOCDIR)/man1/pbpst.1
+	@rm -f $(BINDIR)/$(PROGNM)
+	@rm -f $(DOCDIR)/man1/$(PROGNM).1
 	@rm -f $(DOCDIR)/man5/pbpst_db.5
-	@rm -f $(ZSHDIR)/site-functions/_pbpst
-	@rm -f $(BSHDIR)/completions/pbpst
+	@rm -f $(ZSHDIR)/site-functions/_$(PROGNM)
+	@rm -f $(BSHDIR)/completions/$(PROGNM)
 
 include Makeeaster
