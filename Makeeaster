@@ -1,4 +1,4 @@
-.PHONY: war love peace sandwich
+.PHONY: war love peace sandwich tea coffee
 
 war:
 	@printf 'Fire the missles!\n'
@@ -12,3 +12,8 @@ peace:
 sandwich:
 	@[[ "$(USER)" == "root" ]] && printf 'Okay\n' || printf '[sudo] password for %s: █\n' "$(USER)"
 
+tea:
+	@printf 'Lemon or Milk?\n'
+
+coffee:
+	@printf 'COFFEE COFFEE COFFEE COFFEE COFFEE COFFEE COFFEE COFFEE!\n'
