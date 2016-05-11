@@ -13,13 +13,16 @@ all:
 	@tup upd
 
 clean:
-	@rm -rf -- dist cov-int $(PROGNM).tgz make.sh
+	@rm -rf -- dist cov-int $(PROGNM).tgz make.sh ./src/*.plist
 
 cov-build: clean
 	@tup generate make.sh
 	@mkdir -p ./dist
 	@cov-build --dir cov-int ./make.sh
 	@tar czvf $(PROGNM).tgz cov-int
+
+clang-analyze:
+	@(pushd ./src; clang-check -analyze ./*.c)
 
 install:
 	@install -Dm755 dist/$(PROGNM)   $(BINDIR)/$(PROGNM)
