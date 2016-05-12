@@ -366,8 +366,7 @@ print_url (const struct pbpst_state * s, const char * userdata) {
     }
 
     CURLcode status = EXIT_SUCCESS;
-    json_t * uuid_j = 0, * lid_j = 0, * label_j = 0,
-           * status_j = 0, * sunset_j = 0;
+    json_t * uuid_j = 0, * lid_j = 0, * label_j = 0;
 
     char * hdln = 0, * lexr = 0, * form = 0, * them = 0, * extn = 0,
          * sunset = 0;
@@ -375,8 +374,6 @@ print_url (const struct pbpst_state * s, const char * userdata) {
     uuid_j   = json_object_get(json, "uuid");
     lid_j    = json_object_get(json, "long");
     label_j  = json_object_get(json, "label");
-    status_j = json_object_get(json, "status");
-    sunset_j = json_object_get(json, "sunset");
 
     const char * lid      = json_string_value(lid_j),
                * label    = json_string_value(label_j),
@@ -438,7 +435,6 @@ print_url (const struct pbpst_state * s, const char * userdata) {
         json_decref(uuid_j);
         json_decref(lid_j);
         json_decref(label_j);
-        json_decref(status_j);
         return status;
 }
 
