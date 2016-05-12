@@ -111,6 +111,7 @@ db_locate (const struct pbpst_state * s) {
             return fdb;
         } else {
             print_err3("Failed to open", fdb, strerror(errsv));
+            free(fdb);
             return 0;
         }
     }
@@ -119,6 +120,7 @@ db_locate (const struct pbpst_state * s) {
     if ( close(fd) == -1 ) {
         errsv = errno;
         print_err3("Failed to close", fdb, strerror(errsv));
+        free(fdb);
         return 0;
     } return fdb;
 }
