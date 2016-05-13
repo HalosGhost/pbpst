@@ -6,7 +6,7 @@ BINDIR ?= $(DESTDIR)$(PREFIX)/bin
 ZSHDIR ?= $(DESTDIR)$(PREFIX)/share/zsh
 BSHDIR ?= $(DESTDIR)$(PREFIX)/share/bash-completions
 
-.PHONY: all clean cov-build install uninstall
+.PHONY: all clean clang-analyzer cov-build install uninstall
 
 all:
 	@mkdir -p ./dist
