@@ -9,6 +9,18 @@ usage () {
     printf "  --reset-config    Reset configuration to the defaults\n"
 }
 
+check_header () {
+    hdr="/usr/include/$1"
+    printf 'Found %s:\t [ %s ]\n' "$hdr" $([[ -f "$hdr" ]] && "yes" || "no")
+    [[ -f "$hdr" ]] || exit 1
+}
+
+check_sofile () {
+    sofl="/usr/lib/$1"
+    printf 'Found %s:\t [ %s ]\n' "$sofl" $([[ -f "$sfl" ]] && "yes" || "no")
+    [[ -f "$sofl" ]] || exit 1
+}
+
 update_tuprule () {
     sed -i ./Tuprules.tup -re "s/$1.*/$1 = $2/"
 }
