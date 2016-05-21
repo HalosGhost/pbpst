@@ -11,14 +11,27 @@ usage () {
 
 check_header () {
     hdr="/usr/include/$1"
-    printf 'Found %s:\t [ %s ]\n' "$hdr" $([[ -f "$hdr" ]] && "yes" || "no")
+    [[ -f "$hdr" ]] && fnd="yes" || fnd="no";
+    printf 'Found %s:\t [ %s ]\n' "$hdr" "$fnd"
     [[ -f "$hdr" ]] || exit 1
 }
 
 check_sofile () {
     sofl="/usr/lib/$1"
-    printf 'Found %s:\t [ %s ]\n' "$sofl" $([[ -f "$sfl" ]] && "yes" || "no")
+    [[ -f "$sofl" ]] && fnd="yes" || fnd="no";
+    printf 'Found %s:\t [ %s ]\n' "$sofl" "$fnd"
     [[ -f "$sofl" ]] || exit 1
+}
+
+check_deps () {
+    # stdbool stdnoreturn
+    for i in getopt stdio signal stdint inttypes stdlib 'curl/curl' 'sys/stat' string fcntl unistd errno time jansson 'linux/limits' libgen; do
+        check_header "$i.h";
+    done
+
+    for i in curl jansson; do
+        check_sofile "lib$i.so"
+    done
 }
 
 update_tuprule () {
@@ -50,6 +63,7 @@ show_config () {
 }
 
 if [[ $# == 0 ]]; then
+    check_deps
     show_config
     exit 0
 fi
@@ -64,4 +78,5 @@ for i in "$@"; do
     esac
 done
 
+check_deps
 show_config
