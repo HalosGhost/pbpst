@@ -9,28 +9,20 @@ usage () {
     printf "  --reset-config    Reset configuration to the defaults\n"
 }
 
-check_header () {
-    hdr="/usr/include/$1"
-    [[ -f "$hdr" ]] && fnd="yes" || fnd="no";
-    printf 'Found %s:\t [ %s ]\n' "$hdr" "$fnd"
-    [[ -f "$hdr" ]] || exit 1
-}
-
-check_sofile () {
-    sofl="/usr/lib/$1"
-    [[ -f "$sofl" ]] && fnd="yes" || fnd="no";
-    printf 'Found %s:\t [ %s ]\n' "$sofl" "$fnd"
-    [[ -f "$sofl" ]] || exit 1
+check_file () {
+    [[ -f "$1" ]] && fnd='yes' || fnd='no ';
+    printf 'Found %-26s\t[ %s ]\n' "$1:" "$fnd"
+    [[ -f "$1" ]] || exit 1
 }
 
 check_deps () {
     # stdbool stdnoreturn
     for i in getopt stdio signal stdint inttypes stdlib 'curl/curl' 'sys/stat' string fcntl unistd errno time jansson 'linux/limits' libgen; do
-        check_header "$i.h";
+        check_file "/usr/include/$i.h";
     done
 
     for i in curl jansson; do
-        check_sofile "lib$i.so"
+        check_file "/usr/lib/lib$i.so"
     done
 }
 
