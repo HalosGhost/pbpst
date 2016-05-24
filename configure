@@ -4,7 +4,7 @@ usage () {
     printf "Usage: ./configure [options]\n\n"
     printf "Options:\n"
     printf "  --cc='COMP'       Use COMP for compiler (default: clang)\n"
-    printf "  --cflags='FLAGS'  Use FLAGS for CFLAGS (cf. Tuprules.tup for defaults)\n"
+    printf "  --cflags='FLAGS'  Set CFLAGS (cf. Tuprules.tup for defaults)\n"
     printf "  --provider='URL'  Set fallback provider (default: 'https://ptpb.pw/')\n"
     printf "  --reset-config    Reset configuration to the defaults\n"
 }
@@ -17,7 +17,10 @@ check_file () {
 
 check_deps () {
     # stdbool stdnoreturn
-    for i in getopt stdio signal stdint inttypes stdlib 'curl/curl' 'sys/stat' string fcntl unistd errno time jansson 'linux/limits' libgen; do
+    stdhdrs=(getopt stdio signal stdint inttypes stdlib 'curl/curl' 'sys/stat'
+             string fcntl unistd errno time jansson 'linux/limits' libgen)
+
+    for i in "${stdhdrs[@]}"; do
         check_file "/usr/include/$i.h";
     done
 
@@ -35,8 +38,13 @@ update () {
 }
 
 default_config () {
+    def_cflags=(-g -O3 -fPIE -pie -Weverything -Werror -std=c11 -march=native
+                -D_FORTIFY_SOURCE=2 -fstack-protector-strong
+                --param=ssp-buffer-size=1 -Wl,-z,relro,-z,now
+                -fsanitize=undefined -fsanitize-trap=undefined)
+
     update FALLBACK_PROVIDER "https://ptpb.pw/"
-    update_tuprule CFLAGS '-g -O3 -fPIE -pie -D_FORTIFY_SOURCE=2 -fstack-protector-strong --param=ssp-buffer-size=1 -Weverything -Werror -std=c11 -fsanitize=undefined -fsanitize-trap=undefined -Wl,-z,relro,-z,now -march=native'
+    update_tuprule CFLAGS "${def_cflags[*]}"
     update_tuprule CC 'clang'
 }
 
@@ -45,7 +53,8 @@ show_tuprule () {
 }
 
 show_value () {
-    printf "$1: %s\n" "$('grep' "#define $2" ./src/main.h | sed -re "s/#define $2 (.*)$/\\1/")"
+    printf "$1: %s\n" \
+       "$('grep' "#define $2" ./src/main.h | sed -re "s/#define $2 (.*)$/\\1/")"
 }
 
 show_config () {
