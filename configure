@@ -10,8 +10,8 @@ usage () {
 }
 
 check_file () {
-    [[ -f "$1" ]] && fnd='yes' || fnd='no ';
-    printf 'Found %-26s\t[ %s ]\n' "$1:" "$fnd"
+    [[ -f "$1" ]] && fnd='\x1b[32myes' || fnd='\x1b[31mno ';
+    printf 'Found %-26s\t[ %b\x1b[0m ]\n' "$1:" "$fnd"
     [[ -f "$1" ]] || exit 1
 }
 
