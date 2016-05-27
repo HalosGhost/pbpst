@@ -63,13 +63,7 @@ show_config () {
     show_value 'Fallback Provider' FALLBACK_PROVIDER
 }
 
-if [[ $# == 0 ]]; then
-    check_deps
-    show_config
-    exit 0
-fi
-
-for i in "$@"; do
+[[ $# == 0 ]] && for i in "$@"; do
     case "$i" in
         --cc=*)         update_tuprule CC "${i#*=}"; shift;;
         --cflags=*)     update_tuprule CFLAGS "${i#*=}"; shift;;
@@ -79,5 +73,5 @@ for i in "$@"; do
     esac
 done
 
-check_deps
 show_config
+check_deps
