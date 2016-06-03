@@ -99,6 +99,7 @@ _pbpst_opts_update=(
 # options for passing to _arguments: options for -D
 _pbpst_opts_database=(
     {-i,--init}'[Initalize a default database (no clobbering)]'
+    {-H,--providers}'[List all providers in the database]'
     {-q,--query}'[Search the database for a paste matching STR]'
     {-d,--delete}'[Manually delete the paste with UUID]:UUID:_uuids'
     {-y,--prune}'[Remotely delete all expired pastes]'

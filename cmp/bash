@@ -46,7 +46,7 @@ _pbpst() {
   local common core cur database prev remove sync upgrade o wantfiles
   COMPREPLY=()
   _get_comp_words_by_ref cur prev
-  database=('init query delete prune' 'i q d y')
+  database=('init providers query delete prune' 'i H q d y')
   remove=('uuid prune' 'u y')
   sync=('file lexer theme format extension line private sunset render term vanity progress message'
         'f l T F e L p x r t v # m')
