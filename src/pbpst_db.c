@@ -313,6 +313,7 @@ pbpst_db (const struct pbpst_state * s) {
     const char * provider = s->provider ? s->provider : def_provider;
 
     return s->init  ? EXIT_SUCCESS                      :
+           s->lspv  ? db_list_providers()               :
            s->query ? db_query(s)                       :
            s->del   ? db_remove_entry(provider, s->del) :
            s->prun  ? pb_prune(s)                       :
@@ -496,6 +497,19 @@ db_query (const struct pbpst_state * s) {
 
     cleanup:
         return status;
+}
+
+signed
+db_list_providers (void) {
+
+    pastes = json_object_get(mem_db, "pastes");
+    if ( !pastes ) { return EXIT_FAILURE; }
+
+    const char * key;
+    json_t * val;
+    json_object_foreach (pastes, key, val) {
+        puts(key);
+    } return EXIT_SUCCESS;
 }
 
 // vim: set ts=4 sw=4 et:

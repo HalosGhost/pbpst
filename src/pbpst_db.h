@@ -45,4 +45,7 @@ db_remove_entry (const char *, const char *);
 signed
 db_query (const struct pbpst_state *);
 
+signed
+db_list_providers (void);
+
 // vim: set ts=4 sw=4 et:

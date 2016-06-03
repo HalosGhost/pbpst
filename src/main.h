@@ -54,6 +54,7 @@ static struct option os [] = {
 
     /* db options */
     { "init",         0, 0, 'i' },
+    { "providers",    0, 0, 'H' },
     { "query",        1, 0, 'q' },
     { "delete",       1, 0, 'd' },
     { "prune",        0, 0, 'y' }, // rem/db
@@ -138,6 +139,7 @@ static const char dbs_help [] =
     "Usage: pbpst {-D --database} [option ...]\n\n"
     "Options:\n"
     "  -i, --init           Initalize a default database (no clobbering)\n"
+    "  -H, --providers      List all providers in the database\n"
     "  -q, --query=STR      Search the database for a paste matching STR\n"
     "  -d, --delete=UUID    Locally delete paste with UUID\n"
     "  -y, --prune          Locally delete all expired pastes\n";
@@ -150,15 +152,15 @@ static const char * opts_for [] = {
     [SHR] = "s:P:Vb:",
     [RMV] = "SRUDhP:Vb:u:y",
     [UPD] = "SRUDhP:Vb:f:l:L:T:F:e:x:rtu:#m:",
-    [DBS] = "SRUDhP:Vb:id:yq:"
+    [DBS] = "SRUDhP:Vb:id:yq:H"
 };
 
 extern struct pbpst_state {
     char * path, * url, * lexer, * vanity, * uuid, * provider, * format,
          * query, * del, * dbfile, * msg, * theme, * ext, * ln, * secs;
     enum pb_cmd cmd;
-    uint16_t help: 16, priv: 8, rend: 8, term: 8, init: 8, prun: 8, verb: 8,
-             prog: 8, llex: 8, lthm: 8, lfrm: 8;
+    uint16_t help: 8, priv: 8, rend: 8, term: 8, init: 8, prun: 8, verb: 8,
+             prog: 8, llex: 8, lthm: 8, lfrm: 8, lspv: 8;
 } state;
 
 bool

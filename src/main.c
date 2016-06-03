@@ -84,6 +84,7 @@ main (signed argc, char * argv []) {
             case 'y': state.prun  = true;         break;
             case 'p': state.priv  = true;         break;
             case 'h': state.help  = true;         break;
+            case 'H': state.lspv  = true;         break;
             case 'V': state.verb += 1;            break;
             case 256: printf(version_str);        goto cleanup;
             case 257: state.llex  = true;         break;
@@ -175,7 +176,7 @@ pbpst_test_options (const struct pbpst_state * s) {
         case SNC: case SHR: break;
         case RMV: cl = !s->uuid && !s->prun ? 'R' : cl; break;
         case UPD: cl = !s->uuid ? 'U' : cl; break;
-        case DBS: cl = !s->init && !s->query && !s->del && !s->prun
+        case DBS: cl = !s->init && !s->lspv && !s->query && !s->del && !s->prun
                      ? 'D' : cl; break;
         case NON: cl = 'N'; break;
     }
