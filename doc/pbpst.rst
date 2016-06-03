@@ -162,6 +162,9 @@ Database Options
 -i, --init
     Initialize the database with a default provider and a pastes object, and exit.
 
+-H, --providers
+    List all providers currently in the database (one per line).
+
 -q, --query=STR
     Search each paste in the pastes object for text matching STR. Matches will be printed to :file:`stdout` with the form ``<uuid>\t<provider>/<id>\t<msg>\t<sunset>`` where ``<id>`` is either the long id or a vanity label if one exists.
 
@@ -186,6 +189,9 @@ pbpst -Ru <UUID>
 
 pbpst -Uu <UUID> -f <filepath>
     update a paste to the file at <filepath> using <UUID> for authentication
+
+for i in "$(pbpst -DH)"; do pbpst -Dq '<search>' -P "$i"; done
+    search for a paste matching <search> regardless of provider
 
 gpg -o - -c <filepath> | pbpst -S
     encrypt file at <filepath> with GPG symmetric cipher and paste it which can be retrieved and decrypted using ``curl <pasteurl> | gpg -d``
