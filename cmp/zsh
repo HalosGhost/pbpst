@@ -5,12 +5,12 @@
 typeset -A opt_args
 setopt extendedglob
 
-_schm="http\:// https\://"
+_schm=("http\://" "https\://" "$(pbpst -DH | sed 's/:/\\:/')")
 
 # options for passing to _arguments: main pbpst operations
 _pbpst_opts_operations=(
     {-S,--sync}'[Create a paste]'
-    {-s,--shorten}"[Create a redirect to URL]:URL:($_schm)"
+    {-s,--shorten}"[Create a redirect to URL]:URL:(${_schm[1,2]})"
     {-R,--remove}'[Remove a paste]'
     {-U,--update}'[Update a paste]'
     {-D,--database}'[Operate on the database]'
