@@ -17,3 +17,7 @@ tea:
 
 coffee:
 	@printf 'COFFEE COFFEE COFFEE COFFEE COFFEE COFFEE COFFEE COFFEE!\n'
+
+pkg:
+	@printf "correct 'make pkg' to 'makepkg' [nyae]?\n"
+
