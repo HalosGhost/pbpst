@@ -335,6 +335,7 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
 
     signed status = EXIT_SUCCESS;
     pastes = json_object_get(mem_db, "pastes");
+    json_incref(pastes);
     json_t * prov_obj = 0, * uuid_j = 0, * lid_j = 0,
            * label_j = 0, * status_j = 0, * sunset_j = 0, * new_paste = 0;
 
@@ -343,6 +344,7 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
 
     if ( !pastes ) { status = EXIT_FAILURE; goto cleanup; }
     prov_pastes = json_object_get(pastes, provider);
+    json_incref(prov_pastes);
     if ( !prov_pastes ) {
         prov_obj = json_pack("{s:{}}", provider);
         json_object_update(pastes, prov_obj);
@@ -355,6 +357,11 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
     label_j  = json_object_get(json, "label");
     status_j = json_object_get(json, "status");
     sunset_j = json_object_get(json, "sunset");
+    json_incref(uuid_j);
+    json_incref(lid_j);
+    json_incref(label_j);
+    json_incref(status_j);
+    json_incref(sunset_j);
 
     if ( !status_j ) { status = EXIT_FAILURE; goto cleanup; }
     const char stat = json_string_value(status_j)[0];
@@ -431,9 +438,11 @@ db_remove_entry (const char * provider, const char * uuid) {
 
     signed status = EXIT_SUCCESS;
     pastes = json_object_get(mem_db, "pastes");
+    json_incref(pastes);
 
     if ( !pastes ) { status = EXIT_FAILURE; goto cleanup; }
     prov_pastes = json_object_get(pastes, provider);
+    json_incref(prov_pastes);
 
     if ( !prov_pastes ) {
         print_err2("No pastes in-database found for", provider);
@@ -454,10 +463,12 @@ db_query (const struct pbpst_state * s) {
 
     signed status = EXIT_SUCCESS;
     pastes = json_object_get(mem_db, "pastes");
+    json_incref(pastes);
 
     const char * provider = s->provider ? s->provider : def_provider;
     if ( !pastes ) { status = EXIT_FAILURE; goto cleanup; }
     prov_pastes = json_object_get(pastes, provider);
+    json_incref(prov_pastes);
 
     if ( !prov_pastes ) {
         print_err2("No pastes found for", provider);

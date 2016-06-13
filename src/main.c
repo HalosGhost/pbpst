@@ -133,6 +133,7 @@ main (signed argc, char * argv []) {
     }
 
     if ( (def_prov = json_object_get(mem_db, "default_provider")) ) {
+        json_incref(def_prov);
         def_provider = json_string_value(def_prov);
     } else if ( !state.provider ) {
         size_t len = strlen(FALLBACK_PROVIDER) + 1;

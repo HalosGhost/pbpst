@@ -374,6 +374,9 @@ print_url (const struct pbpst_state * s, const char * userdata) {
     uuid_j   = json_object_get(json, "uuid");
     lid_j    = json_object_get(json, "long");
     label_j  = json_object_get(json, "label");
+    json_incref(uuid_j);
+    json_incref(lid_j);
+    json_incref(label_j);
 
     const char * lid      = json_string_value(lid_j),
                * label    = json_string_value(label_j),
@@ -442,10 +445,12 @@ signed
 pb_prune (const struct pbpst_state * s) {
 
     pastes = json_object_get(mem_db, "pastes");
+    json_incref(pastes);
 
     const char * provider = s->provider ? s->provider : def_provider;
     if ( !pastes ) { return EXIT_FAILURE; }
     prov_pastes = json_object_get(pastes, provider);
+    json_incref(prov_pastes);
 
     if ( !prov_pastes ) {
         #pragma clang diagnostic push
