@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+usage () {
+    printf "Usage: ./configure [options]\n\n"
+    printf "Options:\n"
+    printf "  --cc='COMP'       Use COMP for compiler (default: clang)\n"
+    printf "  --cflags='FLAGS'  Set CFLAGS (cf. Tuprules.tup for defaults)\n"
+    printf "  --provider='URL'  Set fallback provider (default: 'https://ptpb.pw/')\n"
+    printf "  --reset-config    Reset configuration to the defaults\n"
+}
+
+check_file () {
+    [[ -f "$1" ]] && fnd='\x1b[32myes' || fnd='\x1b[31mno ';
+    printf 'Found %-26s\t[ %b\x1b[0m ]\n' "$1:" "$fnd"
+    [[ -f "$1" ]] || exit 1
+}
+
+check_deps () {
+    # stdbool stdnoreturn
+    stdhdrs=(getopt stdio signal stdint inttypes stdlib 'curl/curl' 'sys/stat'
+             string fcntl unistd errno time jansson 'linux/limits' libgen)
+
+    for i in "${stdhdrs[@]}"; do
+        check_file "/usr/include/$i.h";
+    done
+
+    for i in curl jansson; do
+        check_file "/usr/lib/lib$i.so"
+    done
+}
+
+update_tuprule () {
+    sed -i ./Tuprules.tup -re "s/$1.*/$1 = $2/"
+}
+
+update () {
+    sed -i ./src/main.h -re "s|(define $1) \"(.*)\"$|\\1 \"$2\"|"
+}
+
+default_config () {
+    def_cflags=(-g -O3 -fPIE -pie -Weverything -Werror -std=c11 -ggdb
+                -D_FORTIFY_SOURCE=2 -fstack-protector-strong -march=native
+                --param=ssp-buffer-size=1 -Wl,-z,relro,-z,now
+                -fsanitize=undefined -fsanitize-trap=undefined)
+
+    update FALLBACK_PROVIDER "https://ptpb.pw/"
+    update_tuprule CFLAGS "${def_cflags[*]}"
+    update_tuprule CC 'clang'
+}
+
+show_tuprule () {
+    grep --color=never "$1" ./Tuprules.tup
+}
+
+show_value () {
+    printf "$1: %s\n" \
+       "$('grep' "#define $2" ./src/main.h | sed -re "s/#define $2 (.*)$/\\1/")"
+}
+
+show_config () {
+    show_tuprule CFLAGS
+    show_tuprule CC
+    show_value 'Fallback Provider' FALLBACK_PROVIDER
+}
+
+for i in "$@"; do
+    case "$i" in
+        --cc=*)         update_tuprule CC "${i#*=}"; shift;;
+        --cflags=*)     update_tuprule CFLAGS "${i#*=}"; shift;;
+        --help)         usage; exit 0;;
+        --provider=*)   update FALLBACK_PROVIDER "${i#*=}"; shift;;
+        --reset-config) default_config; break;
+    esac
+done
+
+show_config
+check_deps

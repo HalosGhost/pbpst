@@ -111,6 +111,7 @@ db_locate (const struct pbpst_state * s) {
             return fdb;
         } else {
             print_err3("Failed to open", fdb, strerror(errsv));
+            free(fdb);
             return 0;
         }
     }
@@ -119,6 +120,7 @@ db_locate (const struct pbpst_state * s) {
     if ( close(fd) == -1 ) {
         errsv = errno;
         print_err3("Failed to close", fdb, strerror(errsv));
+        free(fdb);
         return 0;
     } return fdb;
 }
@@ -196,13 +198,6 @@ db_swp_init (const char * dbl) {
     if ( chdir(cwd) == -1 ) {
         errsv = errno;
         print_err3("Could not return to", cwd, strerror(errsv));
-
-        errno = 0;
-        if ( close(fd) == -1 ) {
-            errsv = errno;
-            print_err3("Failed to close", swp_db_name, strerror(errsv));
-            fd = -1; goto cleanup;
-        }
     }
 
     cleanup:
@@ -318,6 +313,7 @@ pbpst_db (const struct pbpst_state * s) {
     const char * provider = s->provider ? s->provider : def_provider;
 
     return s->init  ? EXIT_SUCCESS                      :
+           s->lspv  ? db_list_providers()               :
            s->query ? db_query(s)                       :
            s->del   ? db_remove_entry(provider, s->del) :
            s->prun  ? pb_prune(s)                       :
@@ -339,6 +335,7 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
 
     signed status = EXIT_SUCCESS;
     pastes = json_object_get(mem_db, "pastes");
+    json_incref(pastes);
     json_t * prov_obj = 0, * uuid_j = 0, * lid_j = 0,
            * label_j = 0, * status_j = 0, * sunset_j = 0, * new_paste = 0;
 
@@ -347,6 +344,7 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
 
     if ( !pastes ) { status = EXIT_FAILURE; goto cleanup; }
     prov_pastes = json_object_get(pastes, provider);
+    json_incref(prov_pastes);
     if ( !prov_pastes ) {
         prov_obj = json_pack("{s:{}}", provider);
         json_object_update(pastes, prov_obj);
@@ -359,6 +357,11 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
     label_j  = json_object_get(json, "label");
     status_j = json_object_get(json, "status");
     sunset_j = json_object_get(json, "sunset");
+    json_incref(uuid_j);
+    json_incref(lid_j);
+    json_incref(label_j);
+    json_incref(status_j);
+    json_incref(sunset_j);
 
     if ( !status_j ) { status = EXIT_FAILURE; goto cleanup; }
     const char stat = json_string_value(status_j)[0];
@@ -367,7 +370,7 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
         goto cleanup;
     }
 
-    if ( sunset_j ) {
+    if ( sunset_j && s->secs ) {
         time_t curtime = time(NULL), offset = 0;
         if ( sscanf(s->secs, "%ld", &offset) == EOF ) {
             signed errsv = errno;
@@ -420,7 +423,7 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
     }
 
     cleanup:
-        if ( s->secs ) { free(sunset); }
+        if ( sunset ) { free(sunset); }
         json_decref(json);
         json_decref(uuid_j);
         json_decref(lid_j);
@@ -435,9 +438,11 @@ db_remove_entry (const char * provider, const char * uuid) {
 
     signed status = EXIT_SUCCESS;
     pastes = json_object_get(mem_db, "pastes");
+    json_incref(pastes);
 
     if ( !pastes ) { status = EXIT_FAILURE; goto cleanup; }
     prov_pastes = json_object_get(pastes, provider);
+    json_incref(prov_pastes);
 
     if ( !prov_pastes ) {
         print_err2("No pastes in-database found for", provider);
@@ -458,14 +463,16 @@ db_query (const struct pbpst_state * s) {
 
     signed status = EXIT_SUCCESS;
     pastes = json_object_get(mem_db, "pastes");
+    json_incref(pastes);
 
     const char * provider = s->provider ? s->provider : def_provider;
     if ( !pastes ) { status = EXIT_FAILURE; goto cleanup; }
     prov_pastes = json_object_get(pastes, provider);
+    json_incref(prov_pastes);
 
     if ( !prov_pastes ) {
         print_err2("No pastes found for", provider);
-        status = EXIT_FAILURE; goto cleanup;
+        status = EXIT_SUCCESS; goto cleanup;
     }
 
     const char * key;
@@ -501,6 +508,19 @@ db_query (const struct pbpst_state * s) {
 
     cleanup:
         return status;
+}
+
+signed
+db_list_providers (void) {
+
+    pastes = json_object_get(mem_db, "pastes");
+    if ( !pastes ) { return EXIT_FAILURE; }
+
+    const char * key;
+    json_t * val;
+    json_object_foreach (pastes, key, val) {
+        puts(key);
+    } return EXIT_SUCCESS;
 }
 
 // vim: set ts=4 sw=4 et:

@@ -10,7 +10,7 @@ static const char swp_db_err [] =
     " have been saved\npbpst: Then manually remove: %s\n";
 
 #define DEF_DB() json_pack("{s:s,s:{}}", "default_provider",\
-                           "https://ptpb.pw/", "pastes")
+                           FALLBACK_PROVIDER, "pastes")
 
 signed
 print_err2 (const char *, const char *);
@@ -44,5 +44,8 @@ db_remove_entry (const char *, const char *);
 
 signed
 db_query (const struct pbpst_state *);
+
+signed
+db_list_providers (void);
 
 // vim: set ts=4 sw=4 et:

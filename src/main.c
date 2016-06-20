@@ -26,7 +26,7 @@ main (signed argc, char * argv []) {
         return EXIT_FAILURE;
     }
 
-    signal(2, signal_handler);
+    signal(SIGINT, signal_handler);
 
     signed exit_status = EXIT_SUCCESS;
 
@@ -77,18 +77,19 @@ main (signed argc, char * argv []) {
                           stderr); goto cleanup;
                 } snprintf(*state_var, l, "%s", optarg); break;
 
-            case '#': state.prog = true; break;
-            case 'r': state.rend = true; break;
-            case 't': state.term = true; break;
-            case 'i': state.init = true; break;
-            case 'y': state.prun = true; break;
-            case 'p': state.priv = true; break;
-            case 'h': state.help = true; break;
-            case 'V': state.verb += 1;   break;
-            case 256: printf(version_str); goto cleanup;
-            case 257: state.llex = true; break;
-            case 258: state.lthm = true; break;
-            case 259: state.lfrm = true; break;
+            case '#': state.prog  = true;         break;
+            case 'r': state.rend  = true;         break;
+            case 't': state.term  = true;         break;
+            case 'i': state.init  = true;         break;
+            case 'y': state.prun  = true;         break;
+            case 'p': state.priv  = true;         break;
+            case 'h': state.help  = true;         break;
+            case 'H': state.lspv  = true;         break;
+            case 'V': state.verb += 1;            break;
+            case 256: printf(version_str);        goto cleanup;
+            case 257: state.llex  = true;         break;
+            case 258: state.lthm  = true;         break;
+            case 259: state.lfrm  = true;         break;
             default:  exit_status = EXIT_FAILURE; goto cleanup;
         }
     }
@@ -115,11 +116,7 @@ main (signed argc, char * argv []) {
         errno = 0;
         if ( stat(state.path, &st) ) {
             exit_status = errno;
-            #pragma clang diagnostic push
-            #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-            fprintf(stderr, "pbpst: Error checking file: %s\n",
-                    strerror(exit_status));
-            #pragma clang diagnostic pop
+            perror("pbpst: Error checking file");
             goto cleanup;
         }
 
@@ -129,28 +126,22 @@ main (signed argc, char * argv []) {
         }
     }
 
-    db_loc = db_locate(&state);
-    if ( !db_loc ) {
-        exit_status = EXIT_FAILURE; goto cleanup;
-    }
+    if ( !(db_loc = db_locate(&state)) || !(swp_db_loc = db_swp_init(db_loc)) ||
+         !(mem_db = db_read(db_loc)) ) {
 
-    if ( !(swp_db_loc = db_swp_init(db_loc)) ) {
-        exit_status = EXIT_FAILURE; goto cleanup;
-    }
-
-    if ( !(mem_db = db_read(db_loc)) ) {
         exit_status = EXIT_FAILURE; goto cleanup;
     }
 
     if ( (def_prov = json_object_get(mem_db, "default_provider")) ) {
+        json_incref(def_prov);
         def_provider = json_string_value(def_prov);
     } else if ( !state.provider ) {
-        size_t len = strlen("https://ptpb.pw/") + 1;
+        size_t len = strlen(FALLBACK_PROVIDER) + 1;
         state.provider = malloc(len);
         if ( !state.provider ) {
             exit_status = CURLE_OUT_OF_MEMORY;
             goto cleanup;
-        } snprintf(state.provider, len, "https://ptpb.pw/");
+        } snprintf(state.provider, len, FALLBACK_PROVIDER);
     } else {
         size_t len = strlen(state.provider);
         if ( state.provider[len - 1] != '/' ) {
@@ -161,6 +152,7 @@ main (signed argc, char * argv []) {
     }
 
     exit_status = pbpst_dispatch(&state);
+    if ( exit_status == CURLE_HTTP_RETURNED_ERROR ) { goto cleanup; }
 
     if ( db_swp_flush(mem_db, swp_db_loc) == -1 ) {
         exit_status = EXIT_FAILURE; goto cleanup;
@@ -185,7 +177,7 @@ pbpst_test_options (const struct pbpst_state * s) {
         case SNC: case SHR: break;
         case RMV: cl = !s->uuid && !s->prun ? 'R' : cl; break;
         case UPD: cl = !s->uuid ? 'U' : cl; break;
-        case DBS: cl = !s->init && !s->query && !s->del && !s->prun
+        case DBS: cl = !s->init && !s->lspv && !s->query && !s->del && !s->prun
                      ? 'D' : cl; break;
         case NON: cl = 'N'; break;
     }
@@ -222,18 +214,17 @@ pbpst_dispatch (const struct pbpst_state * s) {
     }
 }
 
-void
+noreturn void
 signal_handler (signed signum) {
 
-    if ( signum < 1 || signum > 31 ) { return; }
+    #define SIGMSG "\rpbpst: Caught \x1b[?25h"
+    const char * const siglist [] = {
+        [SIGINT] = SIGMSG "Interrupt\n"
+    };
 
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-    fprintf(stderr, signal_err, sys_siglist[signum]);
-    #pragma clang diagnostic pop
-    if ( point_of_no_return ) {
-        fputs("pbpst: You need to manually check your swap db\n", stderr);
-    } pbpst_cleanup(); exit(EXIT_FAILURE);
+    fputs(siglist[signum], stderr);
+    pbpst_cleanup();
+    exit(EXIT_FAILURE);
 }
 
 void
@@ -261,10 +252,9 @@ pbpst_cleanup (void) {
     if ( swp_db_loc ) {
         struct stat st;
         if ( stat(swp_db_loc, &st) == 0 && st.st_size == 0 ) {
-            remove(swp_db_loc);
-            if ( point_of_no_return ) {
-                fputs("pbpst: removed empty swap (contingency)\n", stderr);
-            }
+            fputs( !point_of_no_return && !remove(swp_db_loc)
+                 ? "pbpst: removed empty swap (contingency)\n"
+                 : "pbpst: You need to manually check your swap db\n", stderr);
         } free(swp_db_loc);
     }
 

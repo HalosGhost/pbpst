@@ -5,12 +5,12 @@
 typeset -A opt_args
 setopt extendedglob
 
-_schm="http\:// https\://"
+_schm=("http\://" "https\://" "$(pbpst -DH | sed 's/:/\\:/')")
 
 # options for passing to _arguments: main pbpst operations
 _pbpst_opts_operations=(
     {-S,--sync}'[Create a paste]'
-    {-s,--shorten}"[Create a redirect to URL]:URL:($_schm)"
+    {-s,--shorten}"[Create a redirect to URL]:URL:(${_schm[1,2]})"
     {-R,--remove}'[Remove a paste]'
     {-U,--update}'[Update a paste]'
     {-D,--database}'[Operate on the database]'
@@ -28,11 +28,33 @@ _pbpst_opts_common=(
     '--version[List the version and exit]'
 )
 
+_lexers() {
+    local -a lexer
+    lexer=( $(pbpst --list-lexers) )
+    typeset -U lexer
+    compadd "$@" -a lexer
+}
+
+_themes() {
+    local -a theme
+    theme=( $(pbpst --list-themes) )
+    typeset -U theme
+    compadd "$@" -a theme
+}
+
+_formats() {
+    local -a format
+    format=( $(pbpst --list-formats) )
+    typeset -U format
+    compadd "$@" -a format
+}
+
 # options for passing to _arguments: options for -S
 _pbpst_opts_sync=(
     {-f,--file}'[Create a paste from FILE]:Path to file:_files -./'
-    {-l,--lexer}'[Lex paste with LANG]'
-    {-T,--theme}'[Style paste with pygments theme THEME]'
+    {-l,--lexer}"[Lex paste with LANG]:LANG:_lexers"
+    {-T,--theme}"[Style paste with pygments theme THEME]:THEME:_themes"
+    {-F,--format}"[Format paste for FORM]:FORM:_formats"
     {-e,--extension}'[Specify MIME-type as EXT]'
     {-L,--line}'[Highlight LINE in paste]'
     {-p,--private}'[Return a less-guessable Id for paste]'
@@ -60,8 +82,9 @@ _pbpst_opts_remove=(
 # options for passing to _arguments: options for -U
 _pbpst_opts_update=(
     {-f,--file}'[Create a paste from FILE]:Path to file:_files -./'
-    {-l,--lexer}'[Lex paste with LANG]'
-    {-T,--theme}'[Style paste with pygments theme THEME]'
+    {-l,--lexer}"[Lex paste with LANG]:LANG:_lexers"
+    {-T,--theme}"[Style paste with pygments theme THEME]:THEME:_themes"
+    {-F,--format}"[Format paste for FORM]:FORM:_formats"
     {-e,--extension}'[Specify MIME-type as EXT]'
     {-L,--line}'[Highlight LINE in paste]'
     {-p,--private}'[Return a less-guessable Id for paste]'
@@ -69,7 +92,6 @@ _pbpst_opts_update=(
     {-r,--render}'[Render paste from rst to HTML]'
     {-t,--term}'[Handle asciinema videos]'
     {-u,--uuid}'[Use UUID as authentication credential]:UUID:_uuids'
-    {-v,--vanity}'[Use NAME as a custom Id]'
     {-\#,--progress}'[Show a progress bar for the upload]'
     {-m,--message}'[Use MSG as the note in the database]'
 )
@@ -77,6 +99,7 @@ _pbpst_opts_update=(
 # options for passing to _arguments: options for -D
 _pbpst_opts_database=(
     {-i,--init}'[Initalize a default database (no clobbering)]'
+    {-H,--providers}'[List all providers in the database]'
     {-q,--query}'[Search the database for a paste matching STR]'
     {-d,--delete}'[Manually delete the paste with UUID]:UUID:_uuids'
     {-y,--prune}'[Remotely delete all expired pastes]'

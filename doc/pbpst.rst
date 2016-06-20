@@ -81,6 +81,9 @@ Note: if the :option:`f` option is not passed, :program:`pbpst` will paste the c
 -L, --line=LINE
     Highlight LINE in paste.
 
+-F, --format=FORM
+    Format paste using the pygments format FORM.
+
 -p, --private
     Return a less-guessable Id for paste.
 
@@ -132,6 +135,9 @@ Note: if the :option:`f` option is not passed, :program:`pbpst` will paste the c
 -L, --line=LINE
     Highlight LINE.
 
+-F, --format=FORM
+    Format paste using the pygments format FORM.
+
 -r, --render
     Render a ReStructuredText or Markdown paste to HTML.
 
@@ -144,9 +150,6 @@ Note: if the :option:`f` option is not passed, :program:`pbpst` will paste the c
 -u, --uuid=UUID
     Use UUID as authentication credential.
 
--v, --vanity=NAME
-    Use NAME as a custom Id.
-
 -#, --progress
     Show a progress bar for the status of the upload.
 
@@ -158,6 +161,9 @@ Database Options
 
 -i, --init
     Initialize the database with a default provider and a pastes object, and exit.
+
+-H, --providers
+    List all providers currently in the database (one per line).
 
 -q, --query=STR
     Search each paste in the pastes object for text matching STR. Matches will be printed to :file:`stdout` with the form ``<uuid>\t<provider>/<id>\t<msg>\t<sunset>`` where ``<id>`` is either the long id or a vanity label if one exists.
@@ -175,7 +181,7 @@ Examples
 pbpst -Sf <filepath>
     paste the file at <filepath>
 
-pbpst -Ss <url>
+pbpst -s <url>
     create a shortcut URL to <url>
 
 pbpst -Ru <UUID>
@@ -183,6 +189,9 @@ pbpst -Ru <UUID>
 
 pbpst -Uu <UUID> -f <filepath>
     update a paste to the file at <filepath> using <UUID> for authentication
+
+for i in "$(pbpst -DH)"; do pbpst -Dq '<search>' -P "$i"; done
+    search for a paste matching <search> regardless of provider
 
 gpg -o - -c <filepath> | pbpst -S
     encrypt file at <filepath> with GPG symmetric cipher and paste it which can be retrieved and decrypted using ``curl <pasteurl> | gpg -d``
@@ -203,9 +212,22 @@ Bugs
 
 Report bugs for pbpst to https://github.com/HalosGhost/pbpst/issues
 
+Files
+-----
+
+$XDG_CONFIG_HOME/pbpst/db.json
+$HOME/.config/pbpst/db.json
+    One of the two files above contains the lone config option for :program:`pbpst` along with the database of pastes.
+    If $XDG_CONFIG_HOME is not defined, the second path will be used as a fallback.
+
+$XDG_CONFIG_HOME/pbpst/.db.json.swp
+$HOME/.config/pbpst/.db.json.swp
+    One of the two files above contains a copy of the paste database which is used while :program:`pbpst` is running (it is used to try to minimize the possibility of data-loss.
+    It will be located in the same directory as the live database.
+
 See Also
 --------
 
-:manpage:`libcurl(3)`
+:manpage:`libcurl(3)`, :manpage:`pbpst_db(5)`
 
 See the documentation on pb, a lightweight pastebin at https://github.com/ptpb/pb/blob/master/pb/templates/index.rst

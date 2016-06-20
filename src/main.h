@@ -14,12 +14,16 @@
 #include <unistd.h>    // close()
 #include <errno.h>     // errno
 #include <time.h>      // localtime(), time(), time_t
+#include <stdnoreturn.h>
 #include <jansson.h>
 
-#define BUFFER_SIZE 256
-#define PB_FILE_MAX 67108864 // 64 MiB
+/* Configuration */
+#define FALLBACK_PROVIDER "https://ptpb.pw/"
 
-static const char version_str [] = "pbpst 0.9.0\n";
+#define PB_FILE_MAX 67108864 // 64 MiB
+#define BUFFER_SIZE 256
+
+static const char version_str [] = "pbpst 1.1.2\n";
 
 static struct option os [] = {
     /* commands */
@@ -50,6 +54,7 @@ static struct option os [] = {
 
     /* db options */
     { "init",         0, 0, 'i' },
+    { "providers",    0, 0, 'H' },
     { "query",        1, 0, 'q' },
     { "delete",       1, 0, 'd' },
     { "prune",        0, 0, 'y' }, // rem/db
@@ -127,7 +132,6 @@ static const char upd_help [] =
     "  -r, --render         Render paste from rst to HTML\n"
     "  -t, --term           Handle Asciinema videos\n"
     "  -u, --uuid=UUID      Use UUID as authentication credential\n"
-    "  -v, --vanity=NAME    Use NAME as a custom Id\n"
     "  -#, --progress       Show a progress bar for the upload\n"
     "  -m, --message=MSG    Use MSG as the note in the database\n";
 
@@ -135,6 +139,7 @@ static const char dbs_help [] =
     "Usage: pbpst {-D --database} [option ...]\n\n"
     "Options:\n"
     "  -i, --init           Initalize a default database (no clobbering)\n"
+    "  -H, --providers      List all providers in the database\n"
     "  -q, --query=STR      Search the database for a paste matching STR\n"
     "  -d, --delete=UUID    Locally delete paste with UUID\n"
     "  -y, --prune          Locally delete all expired pastes\n";
@@ -146,16 +151,16 @@ static const char * opts_for [] = {
     [SNC] = "SRUDhP:Vb:f:l:T:F:e:L:px:rtv:#m:",
     [SHR] = "s:P:Vb:",
     [RMV] = "SRUDhP:Vb:u:y",
-    [UPD] = "SRUDhP:Vb:f:l:L:T:F:e:x:rtu:v:#m:",
-    [DBS] = "SRUDhP:Vb:id:yq:"
+    [UPD] = "SRUDhP:Vb:f:l:L:T:F:e:x:rtu:#m:",
+    [DBS] = "SRUDhP:Vb:id:yq:H"
 };
 
 extern struct pbpst_state {
     char * path, * url, * lexer, * vanity, * uuid, * provider, * format,
          * query, * del, * dbfile, * msg, * theme, * ext, * ln, * secs;
     enum pb_cmd cmd;
-    uint16_t help: 16, priv: 8, rend: 8, term: 8, init: 8, prun: 8, verb: 8,
-             prog: 8, llex: 8, lthm: 8, lfrm: 8;
+    uint16_t help: 8, priv: 8, rend: 8, term: 8, init: 8, prun: 8, verb: 8,
+             prog: 8, llex: 8, lthm: 8, lfrm: 8, lspv: 8;
 } state;
 
 bool
@@ -164,7 +169,7 @@ pbpst_test_options (const struct pbpst_state *);
 signed
 pbpst_dispatch (const struct pbpst_state *);
 
-void
+noreturn void
 signal_handler (signed);
 
 void
@@ -172,10 +177,7 @@ pbpst_cleanup (void);
 
 static char * db_loc = 0, * swp_db_loc = 0;
 extern json_t * mem_db, * pastes, * prov_pastes;
-extern const char * const sys_siglist [];
 extern const char * def_provider;
 extern bool point_of_no_return;
-
-static const char signal_err [] = "pbpst: Received %s\x1b[?25h\n";
 
 // vim: set ts=4 sw=4 et:
