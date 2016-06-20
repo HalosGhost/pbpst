@@ -34,7 +34,7 @@ _uuid() {
 }
 
 _schm() {
-    local options="http\:// https\://"
+    local options="http\:// https\:// $(pbpst -DH | sed 's/:/\\:/')"
     COMPREPLY=( $(compgen -W "${options}" -- "${cur}") )
 }
 
@@ -69,10 +69,10 @@ _pbpst() {
   elif [[ ! $prev =~ ^-*[Vbh] && ! $prev = --@(version|help|dbpath) ]]; then
     [[ $cur = -* ]] && _make_list "${o#* }" common ||
       case ${o% *} in
-        D) { _incomp 'd delete'  && _uuid; } || _make_list database ;;
-        R) { _incomp 'u uuid'    && _uuid; } || _make_list remove   ;;
+        D) { _incomp 'd delete'    && _uuid; } || { _incomp 'H providers' && _schm; } || _make_list database ;;
+        R) { _incomp 'u uuid'      && _uuid; } || _make_list remove   ;;
         S)                                      _make_list sync     ;;
-        U) { _incomp 'u uuid'    && _uuid; } || _make_list upgrade  ;;
+        U) { _incomp 'u uuid'      && _uuid; } || _make_list upgrade  ;;
       esac
   fi
   true
