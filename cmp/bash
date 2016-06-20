@@ -35,12 +35,12 @@ _uuid() {
 
 _schm() {
     local options="http\:// https\:// $(pbpst -DH | sed 's/:/\\:/')"
-    COMPREPLY=( $(compgen -W "${options}" -- "${cur}") )
+    COMPREPLY=( $(compgen -W "${options}" -- "${cur}") ) && compopt -o nospace
 }
 
 _shrt() {
     local options="http\:// https\://"
-    COMPREPLY=( $(compgen -W "${options}" -- "${cur}") )
+    COMPREPLY=( $(compgen -W "${options}" -- "${cur}") ) && compopt -o nospace
 }
 
 _pbpst_file() {
@@ -50,7 +50,7 @@ _pbpst_file() {
 _pbpst() {
   local common core cur database prev remove sync upgrade o wantfiles
   COMPREPLY=()
-  _get_comp_words_by_ref cur prev
+  _get_comp_words_by_ref -n : cur prev
   database=('init providers query delete prune' 'i H q d y')
   remove=('uuid prune' 'u y')
   sync=('file lexer theme format extension line private sunset render term vanity progress message'
@@ -83,6 +83,7 @@ _pbpst() {
       esac
   fi
   true
+  __ltrim_colon_completions "$cur"
 }
 
 complete -F _pbpst -o default pbpst
