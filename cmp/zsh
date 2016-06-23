@@ -5,12 +5,19 @@
 typeset -A opt_args
 setopt extendedglob
 
-_schm=("http\://" "https\://" "$(pbpst -DH | sed 's/:/\\:/')")
+_schm=("http\://" "https\://")
+
+_provs() {
+    local -a provider
+    provider=( "http://" "https://" $(pbpst -DH) )
+    typeset -U provider
+    compadd "$@" -a provider
+}
 
 # options for passing to _arguments: main pbpst operations
 _pbpst_opts_operations=(
     {-S,--sync}'[Create a paste]'
-    {-s,--shorten}"[Create a redirect to URL]:URL:(${_schm[1,2]})"
+    {-s,--shorten}"[Create a redirect to URL]:URL:($_schm)"
     {-R,--remove}'[Remove a paste]'
     {-U,--update}'[Update a paste]'
     {-D,--database}'[Operate on the database]'
@@ -20,7 +27,7 @@ _pbpst_opts_operations=(
 _pbpst_opts_common=(
     {-h,--help}'[Display syntax for the given operation]'
     {-b,--dbpath}'[Use the database at PATH]:Database location:_files -./'
-    {-P,--provider}"[Specify an alternative pb host]:URL:($_schm)"
+    {-P,--provider}"[Specify an alternative pb host]:URL:_provs"
     {-V,--verbose}'[Output verbosely]'
     '--list-lexers[List available lexers and exit]'
     '--list-themes[List available themes and exit]'
