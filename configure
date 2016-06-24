@@ -16,19 +16,23 @@ check_file () {
 }
 
 check_deps () {
-
     int_cc=$(show_tuprule CC | cut -d' ' -f3)
     for i in make tup pkg-config "$(which "$int_cc")" mkdir install rm; do
         [[ "$(which "$i" &> /dev/null; echo $?)" == 0 ]] && {
             check_file "$(which "$i")"
         } || check_file "$i"
     done
-    # stdbool stdnoreturn
-    stdhdrs=(getopt stdio signal stdint inttypes stdlib 'curl/curl' 'sys/stat'
-             string fcntl unistd errno time jansson 'linux/limits' libgen)
 
-    for i in "${stdhdrs[@]}"; do
-        check_file "/usr/include/$i.h";
+    hdrs=(getopt stdio signal stdint inttypes stdlib 'curl/curl' 'sys/stat'
+          string fcntl unistd errno time jansson 'linux/limits' libgen stdbool
+          stdnoreturn)
+
+    for i in "${hdrs[@]}"; do
+        f_hdr=$($int_cc -c -x c - <<< "#include <$i.h>" &> /dev/null; echo $?)
+        [[ "$f_hdr" == 0 ]] && {
+            printf 'Found %-34s\t[ \x1b[32myes\x1b[0m ]\n' "$i.h:"
+            rm -- -.o
+        } || printf 'Found %-34s\t[ \x1b[31mno \x1b[0m ]\n' "$i.h:"
     done
 
     for i in curl jansson; do
