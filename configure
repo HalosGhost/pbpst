@@ -10,10 +10,15 @@ usage () {
 }
 
 check_file () {
-    [[ -f "$1" ]] && fnd='\x1b[32myes' || fnd='\x1b[31mno ';
+    [[ -f "$1" ]] && fnd='\x1b[32mY' || fnd='\x1b[31m\x1b[1mN';
     printf 'Found %-34s\t[ %b\x1b[0m ]\n' "$1:" "$fnd"
     [[ -f "$1" ]] || exit 1
 }
+
+def_cflags=(-g -O3 -fPIE -pie -Weverything -Werror -std=c11 -ggdb
+            -D_FORTIFY_SOURCE=2 -fstack-protector-strong -march=native
+            --param=ssp-buffer-size=1 -Wl,-z,relro,-z,now
+            -fsanitize=undefined -fsanitize-trap=undefined)
 
 check_deps () {
     i_cc=$(show_tuprule CC | cut -d' ' -f3)
@@ -30,9 +35,21 @@ check_deps () {
     for i in "${hdrs[@]}"; do
         fh=$($i_cc -c -o tm -x c - <<< "#include <$i.h>" &> /dev/null; echo $?)
         [[ "$fh" == 0 ]] && {
-            printf 'Found %-34s\t[ \x1b[32myes\x1b[0m ]\n' "$i.h:"
-            [[ -f "tm" ]] && rm -- tm
-        } || printf 'Found %-34s\t[ \x1b[31mno \x1b[0m ]\n' "$i.h:"
+            fnd='\x1b[32mY'; [[ -f "tm" ]] && rm -- tm
+        } || fnd='\x1b[31m\x1b[1mN'
+
+        printf 'Found %-34s\t[ %b\x1b[0m ]\n' "$i.h:" "$fnd"
+        [[ "$fh" != 0 ]] && exit 1
+    done
+
+    for i in "${def_cflags[@]}"; do
+        fc=$($i_cc -c -o tm -x c - "$i" <<< "#include <time.h>" &> /dev/null; echo $?)
+        [[ "$fc" == 0 ]] && {
+            fnd='\x1b[32mY'; [[ -f "tm" ]] && rm -- tm
+        } || fnd='\x1b[31m\x1b[1mN'
+
+        printf 'Found %-34s\t[ %b\x1b[0m ]\n' "support for $i" "$fnd"
+        [[ "$fc" != 0 ]] && exit 1
     done
 
     for i in curl jansson; do
@@ -49,11 +66,6 @@ update () {
 }
 
 default_config () {
-    def_cflags=(-g -O3 -fPIE -pie -Weverything -Werror -std=c11 -ggdb
-                -D_FORTIFY_SOURCE=2 -fstack-protector-strong -march=native
-                --param=ssp-buffer-size=1 -Wl,-z,relro,-z,now
-                -fsanitize=undefined -fsanitize-trap=undefined)
-
     update FALLBACK_PROVIDER "https://ptpb.pw/"
     update_tuprule CFLAGS "${def_cflags[*]}"
     update_tuprule CC 'clang'
@@ -86,3 +98,4 @@ done
 
 show_config
 check_deps
+exit 0
