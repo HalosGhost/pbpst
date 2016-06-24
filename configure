@@ -16,8 +16,8 @@ check_file () {
 }
 
 check_deps () {
-    int_cc=$(show_tuprule CC | cut -d' ' -f3)
-    for i in make tup pkg-config "$(which "$int_cc")" mkdir install rm; do
+    i_cc=$(show_tuprule CC | cut -d' ' -f3)
+    for i in make tup pkg-config "$(which "$i_cc")" mkdir install rm; do
         [[ "$(which "$i" &> /dev/null; echo $?)" == 0 ]] && {
             check_file "$(which "$i")"
         } || check_file "$i"
@@ -28,10 +28,10 @@ check_deps () {
           stdnoreturn)
 
     for i in "${hdrs[@]}"; do
-        f_hdr=$($int_cc -c -x c - <<< "#include <$i.h>" &> /dev/null; echo $?)
-        [[ "$f_hdr" == 0 ]] && {
+        fh=$($i_cc -c -o tm -x c - <<< "#include <$i.h>" &> /dev/null; echo $?)
+        [[ "$fh" == 0 ]] && {
             printf 'Found %-34s\t[ \x1b[32myes\x1b[0m ]\n' "$i.h:"
-            rm -- -.o
+            [[ -f "tm" ]] && rm -- tm
         } || printf 'Found %-34s\t[ \x1b[31mno \x1b[0m ]\n' "$i.h:"
     done
 
