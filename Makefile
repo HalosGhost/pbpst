@@ -4,7 +4,7 @@ DOCDIR ?= $(DESTDIR)$(PREFIX)/share/man
 LIBDIR ?= $(DESTDIR)$(PREFIX)/lib
 BINDIR ?= $(DESTDIR)$(PREFIX)/bin
 ZSHDIR ?= $(DESTDIR)$(PREFIX)/share/zsh
-BSHDIR ?= $(DESTDIR)$(PREFIX)/share/bash-completions
+BSHDIR ?= $(DESTDIR)$(PREFIX)/share/bash-completion
 
 .PHONY: all clean clang-analyzer cov-build install uninstall
 
