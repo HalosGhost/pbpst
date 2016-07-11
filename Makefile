@@ -4,7 +4,7 @@ DOCDIR ?= $(DESTDIR)$(PREFIX)/share/man
 LIBDIR ?= $(DESTDIR)$(PREFIX)/lib
 BINDIR ?= $(DESTDIR)$(PREFIX)/bin
 ZSHDIR ?= $(DESTDIR)$(PREFIX)/share/zsh
-BSHDIR ?= $(DESTDIR)$(PREFIX)/share/bash-completions
+BASHDIR ?= $(DESTDIR)$(PREFIX)/share/bash-completion
 
 .PHONY: all clean clang-analyzer cov-build install uninstall
 
@@ -29,13 +29,13 @@ install:
 	@install -Dm644 dist/$(PROGNM).1 $(DOCDIR)/man1/$(PROGNM).1
 	@install -Dm644 dist/pbpst_db.5  $(DOCDIR)/man5/pbpst_db.5
 	@install -Dm644 dist/zsh         $(ZSHDIR)/site-functions/_$(PROGNM)
-	@install -Dm644 dist/bash        $(BSHDIR)/completions/$(PROGNM)
+	@install -Dm644 dist/bash        $(BASHDIR)/completions/$(PROGNM)
 
 uninstall:
 	@rm -f $(BINDIR)/$(PROGNM)
 	@rm -f $(DOCDIR)/man1/$(PROGNM).1
 	@rm -f $(DOCDIR)/man5/pbpst_db.5
 	@rm -f $(ZSHDIR)/site-functions/_$(PROGNM)
-	@rm -f $(BSHDIR)/completions/$(PROGNM)
+	@rm -f $(BASHDIR)/completions/$(PROGNM)
 
 include Makeeaster
