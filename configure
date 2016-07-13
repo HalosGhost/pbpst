@@ -48,7 +48,7 @@ check_deps () {
             fnd='\x1b[32mY'; [[ -f "tm" ]] && rm -- tm
         } || fnd='\x1b[31m\x1b[1mN'
 
-        printf 'Found %-34s\t[ %b\x1b[0m ]\n' "support for $i" "$fnd"
+        printf 'Found %-34s\t[ %b\x1b[0m ]\n' "$i:" "$fnd"
         [[ "$fc" != 0 ]] && exit 1
     done
 
