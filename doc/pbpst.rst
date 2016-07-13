@@ -222,7 +222,7 @@ $HOME/.config/pbpst/db.json
 
 $XDG_CONFIG_HOME/pbpst/.db.json.swp
 $HOME/.config/pbpst/.db.json.swp
-    One of the two files above contains a copy of the paste database which is used while :program:`pbpst` is running (it is used to try to minimize the possibility of data-loss.
+    One of the two files above contains a copy of the paste database which is used while :program:`pbpst` is running (it is used to try to minimize the possibility of data-loss).
     It will be located in the same directory as the live database.
 
 See Also
