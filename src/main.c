@@ -120,6 +120,13 @@ main (signed argc, char * argv []) {
             goto cleanup;
         }
 
+        if ( !S_ISREG(st.st_mode) ) {
+            #pragma clang diagnostic push
+            #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+            fprintf(stderr, "pbpst: %s is not a regular file\n", state.path);
+            #pragma clang diagnostic pop
+        }
+
         if ( st.st_size > PB_FILE_MAX ) {
             fputs("pbpst: File too large\n", stderr);
             exit_status = EXIT_FAILURE; goto cleanup;
