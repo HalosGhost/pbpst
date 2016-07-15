@@ -125,6 +125,7 @@ main (signed argc, char * argv []) {
             #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
             fprintf(stderr, "pbpst: %s is not a regular file\n", state.path);
             #pragma clang diagnostic pop
+            exit_status = EXIT_FAILURE; goto cleanup;
         }
 
         if ( st.st_size > PB_FILE_MAX ) {
