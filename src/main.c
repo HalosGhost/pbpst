@@ -159,6 +159,12 @@ main (signed argc, char * argv []) {
         }
     }
 
+    const char * the_provider = state.provider ? state.provider : def_provider;
+    if ( !strstr(the_provider, "https://") ) {
+        fputs("pbpst: only https providers are supported\n", stderr);
+        exit_status = EXIT_FAILURE; goto cleanup;
+    }
+
     exit_status = pbpst_dispatch(&state);
     if ( exit_status == CURLE_HTTP_RETURNED_ERROR ) { goto cleanup; }
 
