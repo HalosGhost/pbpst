@@ -253,8 +253,22 @@ pb_remove (const char * provider, const char * uuid, const uint16_t verb) {
 
     status = curl_easy_perform(handle);
     if ( status == CURLE_OK ) {
-        puts("Paste deleted");
-        db_remove_entry(provider, uuid);
+        long resp_code = 0;
+
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+        curl_easy_getinfo(handle, CURLINFO_RESPONSE_CODE, &resp_code);
+        #pragma clang diagnostic pop
+
+        if ( resp_code == 200 ) {
+            puts("pbpst: Paste deleted");
+            db_remove_entry(provider, uuid);
+        } else {
+            #pragma clang diagnostic push
+            #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+            fprintf(stderr, "pbpst: Failed to delete paste: %d\n", resp_code);
+            #pragma clang diagnostic pop
+        }
     }
 
     cleanup:
