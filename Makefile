@@ -6,7 +6,7 @@ BINDIR ?= $(DESTDIR)$(PREFIX)/bin
 ZSHDIR ?= $(DESTDIR)$(PREFIX)/share/zsh
 BASHDIR ?= $(DESTDIR)$(PREFIX)/share/bash-completion
 
-.PHONY: all clean clang-analyzer cov-build install uninstall
+.PHONY: all clean clang-analyzer cov-build simple install uninstall
 
 all:
 	@mkdir -p ./dist
@@ -23,6 +23,13 @@ cov-build: clean
 
 clang-analyze:
 	@(pushd ./src; clang-check -analyze ./*.c)
+
+simple: clean
+	@tup generate make1.sh
+	@awk 'NR == 1 { print $$0, "\nmkdir -p dist\ncd doc"; next }; NR > 2 { print $$0; }' make1.sh > make.sh
+	@chmod +x make.sh
+	@rm make1.sh
+	@./make.sh
 
 install:
 	@install -Dm755 dist/$(PROGNM)   $(BINDIR)/$(PROGNM)
