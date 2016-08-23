@@ -26,7 +26,7 @@ clang-analyze:
 
 simple: clean
 	@tup generate make1.sh
-	@awk 'NR == 1 { print $$0, "\nmkdir -p dist\ncd doc"; next }; NR > 2 { print $$0; }' make1.sh > make.sh
+	@awk 'NR == 1 { print $$0, "\nmkdir -p dist"; next }; NR > 1 { print $$0; }' make1.sh > make.sh
 	@chmod +x make.sh
 	@rm make1.sh
 	@./make.sh
