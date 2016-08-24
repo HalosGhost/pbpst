@@ -1,34 +1,33 @@
-PROGNM =  pbpst
-PREFIX ?= /usr/local
-DOCDIR ?= $(DESTDIR)$(PREFIX)/share/man
-LIBDIR ?= $(DESTDIR)$(PREFIX)/lib
-BINDIR ?= $(DESTDIR)$(PREFIX)/bin
-ZSHDIR ?= $(DESTDIR)$(PREFIX)/share/zsh
+PROGNM  =  pbpst
+PREFIX  ?= /usr/local
+DOCDIR  ?= $(DESTDIR)$(PREFIX)/share/man
+LIBDIR  ?= $(DESTDIR)$(PREFIX)/lib
+BINDIR  ?= $(DESTDIR)$(PREFIX)/bin
+ZSHDIR  ?= $(DESTDIR)$(PREFIX)/share/zsh
 BASHDIR ?= $(DESTDIR)$(PREFIX)/share/bash-completion
 
-.PHONY: all clean clang-analyzer cov-build simple install uninstall
+.PHONY: all clean gen clang-analyzer cov-build simple install uninstall
 
-all:
-	@mkdir -p ./dist
+all: dist
 	@tup upd
 
 clean:
 	@rm -rf -- dist cov-int $(PROGNM).tgz make.sh ./src/*.plist
 
-cov-build: clean
-	@tup generate make.sh
+dist:
 	@mkdir -p ./dist
+
+gen: clean
+	@tup generate make.sh
+
+cov-build: gen dist
 	@cov-build --dir cov-int ./make.sh
 	@tar czvf $(PROGNM).tgz cov-int
 
 clang-analyze:
 	@(pushd ./src; clang-check -analyze ./*.c)
 
-simple: clean
-	@tup generate make1.sh
-	@awk 'NR == 1 { print $$0, "\nmkdir -p dist"; next }; NR > 1 { print $$0; }' make1.sh > make.sh
-	@chmod +x make.sh
-	@rm make1.sh
+simple: gen dist
 	@./make.sh
 
 install:
