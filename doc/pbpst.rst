@@ -64,7 +64,7 @@ The following options are available for any operation.
 Sync Options
 ------------
 
-Note: if the :option:`f` option is not passed, :program:`pbpst` will paste the contents of :file:`stdin`.
+Note: if the ``-f`` option is not passed, :program:`pbpst` will paste the contents of :file:`stdin`.
 
 -f, --file=FILE
     Create a paste from FILE.
@@ -118,7 +118,7 @@ Remove Options
 Update Options
 --------------
 
-Note: if the :option:`f` option is not passed, :program:`pbpst` will paste the contents of :file:`stdin`.
+Note: if the ``-f`` option is not passed, :program:`pbpst` will paste the contents of :file:`stdin`.
 
 -f, --file=FILE
     Use FILE for content of paste.
@@ -169,7 +169,7 @@ Database Options
     Search each paste in the pastes object for text matching STR. Matches will be printed to :file:`stdout` with the form ``<uuid>\t<provider>/<id>\t<msg>\t<sunset>`` where ``<id>`` is either the long id or a vanity label if one exists.
 
 -d, --delete=UUID
-    Remove (locally) the paste from the pastes object specified by UUID. Note: This option will respect the default provider and :option:`-P`.
+    Remove (locally) the paste from the pastes object specified by UUID. Note: This option will respect the default provider and the ``-P`` option.
 
 -y, --prune
     Remove all expired paste entries from the local database.
