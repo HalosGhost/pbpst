@@ -159,8 +159,16 @@ main (signed argc, char * argv []) {
         }
     }
 
-    const char * the_provider = state.provider ? state.provider : def_provider;
-    if ( !strstr(the_provider, "https://") ) {
+    if ( !state.provider ) {
+        state.provider = malloc(strlen(def_provider) + 1);
+        if ( !state.provider ) {
+            fputs("pbpst: Could not store default provider\n", stderr);
+            exit_status = EXIT_FAILURE;
+            goto cleanup;
+        } memcpy(state.provider, def_provider, strlen(def_provider) + 1);
+    }
+
+    if ( !strstr(state.provider, "https://") ) {
         fputs("pbpst: only https providers are supported\n", stderr);
         exit_status = EXIT_FAILURE; goto cleanup;
     }
@@ -214,15 +222,14 @@ pbpst_dispatch (const struct pbpst_state * s) {
 
     if ( s->llex || s->lthm || s->lfrm ) { return pb_list(s); }
 
-    const char * provider = s->provider ? s->provider : def_provider,
-               * uuid     = s->uuid     ? s->uuid     : s->del;
+    const char * uuid = s->uuid ? s->uuid : s->del;
 
     switch ( s->cmd ) {
         case SNC:
         case UPD: return pb_paste(s);
-        case SHR: return pb_shorten(provider, s->url, s->verb);
+        case SHR: return pb_shorten(s->provider, s->url, s->verb);
         case RMV: return (s->prun ? pb_prune(s)
-                                  : pb_remove(provider, uuid, s->verb));
+                                  : pb_remove(s->provider, uuid, s->verb));
         case DBS: return pbpst_db(s);
         case NON: return EXIT_FAILURE; // should never get here
     }

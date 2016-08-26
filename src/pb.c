@@ -19,10 +19,8 @@ pb_paste (const struct pbpst_state * s) {
     curl_easy_setopt(handle, CURLOPT_VERBOSE, s->verb >= 2);
     #pragma clang diagnostic pop
 
-    const char * provider = s->provider ? s->provider : def_provider;
-
     struct curl_httppost * post = NULL, * last = NULL;
-    size_t tlen = strlen(provider) + (
+    size_t tlen = strlen(s->provider) + (
                   s->vanity                ? strlen(s->vanity) + 2 :
                   s->cmd == UPD && s->uuid ? strlen(s->uuid)   + 1 : 2);
 
@@ -43,9 +41,9 @@ pb_paste (const struct pbpst_state * s) {
     CURLFORMcode fc;
     if ( s->cmd == SNC ) {
         if ( s->vanity ) {
-            snprintf(target, tlen, "%s~%s", provider, s->vanity);
+            snprintf(target, tlen, "%s~%s", s->provider, s->vanity);
         } else {
-            snprintf(target, tlen, "%s", provider);
+            snprintf(target, tlen, "%s", s->provider);
         }
 
         if ( s->priv ) {
@@ -56,7 +54,7 @@ pb_paste (const struct pbpst_state * s) {
             if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
         }
     } else if ( s->cmd == UPD && s->uuid ) {
-        snprintf(target, tlen, "%s%s", provider, s->uuid);
+        snprintf(target, tlen, "%s%s", s->provider, s->uuid);
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "PUT");
@@ -302,10 +300,8 @@ pb_list (const struct pbpst_state * s) {
     curl_easy_setopt(handle, CURLOPT_VERBOSE, s->verb >= 2);
     #pragma clang diagnostic pop
 
-    const char * provider = s->provider ? s->provider : def_provider;
-
     struct CurlResponse * response_data = malloc(sizeof(struct CurlResponse));
-    size_t target_len = strlen(provider) + 3;
+    size_t target_len = strlen(s->provider) + 3;
     char * target = malloc(target_len);
 
     if ( !response_data ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
@@ -314,7 +310,7 @@ pb_list (const struct pbpst_state * s) {
 
     const char * const route = s->llex ? "l"  :
                                s->lthm ? "ls" : "lf";
-    snprintf(target, target_len, "%s%s", provider, route);
+    snprintf(target, target_len, "%s%s", s->provider, route);
 
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
@@ -385,16 +381,15 @@ print_url (const struct pbpst_state * s, const char * userdata) {
     char * hdln = 0, * lexr = 0, * form = 0, * them = 0, * extn = 0,
          * sunset = 0;
 
-    uuid_j   = json_object_get(json, "uuid");
-    lid_j    = json_object_get(json, "long");
-    label_j  = json_object_get(json, "label");
+    uuid_j  = json_object_get(json, "uuid");
+    lid_j   = json_object_get(json, "long");
+    label_j = json_object_get(json, "label");
     json_incref(uuid_j);
     json_incref(lid_j);
     json_incref(label_j);
 
-    const char * lid      = json_string_value(lid_j),
-               * label    = json_string_value(label_j),
-               * provider = s->provider ? s->provider : def_provider;
+    const char * lid   = json_string_value(lid_j),
+               * label = json_string_value(label_j);
 
     if ( s->verb ) {
         json_t * value;
@@ -438,7 +433,7 @@ print_url (const struct pbpst_state * s, const char * userdata) {
             fputs("pbpst: Could not setup URL for printing\n", stderr);
             status = EXIT_FAILURE; goto cleanup;
         }
-    } printf("%s%s%s%s%s%s%s%s\n", provider, rndr, idnt, extn, lexr, form,
+    } printf("%s%s%s%s%s%s%s%s\n", s->provider, rndr, idnt, extn, lexr, form,
              them, hdln);
 
     cleanup:
@@ -461,15 +456,14 @@ pb_prune (const struct pbpst_state * s) {
     pastes = json_object_get(mem_db, "pastes");
     json_incref(pastes);
 
-    const char * provider = s->provider ? s->provider : def_provider;
     if ( !pastes ) { return EXIT_FAILURE; }
-    prov_pastes = json_object_get(pastes, provider);
+    prov_pastes = json_object_get(pastes, s->provider);
     json_incref(prov_pastes);
 
     if ( !prov_pastes ) {
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, "pbpst: No pastes found for: %s\n", provider);
+        fprintf(stderr, "pbpst: No pastes found for: %s\n", s->provider);
         #pragma clang diagnostic pop
         return EXIT_FAILURE;
     }
@@ -491,9 +485,9 @@ pb_prune (const struct pbpst_state * s) {
 
         if ( stime > 0 && curtime > stime ) {
             if ( s->cmd == RMV ) {
-                pb_remove(provider, key, s->verb);
+                pb_remove(s->provider, key, s->verb);
             } else {
-                db_remove_entry(provider, key);
+                db_remove_entry(s->provider, key);
             }
         }
     } return EXIT_SUCCESS;

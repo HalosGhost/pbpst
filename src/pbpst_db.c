@@ -310,14 +310,12 @@ db_swp_flush (const json_t * mdb, const char * s_dbl) {
 signed
 pbpst_db (const struct pbpst_state * s) {
 
-    const char * provider = s->provider ? s->provider : def_provider;
-
-    return s->init  ? EXIT_SUCCESS                      :
-           s->lspv  ? db_list_providers()               :
-           s->query ? db_query(s)                       :
-           s->del   ? db_remove_entry(provider, s->del) :
-           s->prun  ? pb_prune(s)                       :
-                      EXIT_FAILURE                      ;
+    return s->init  ? EXIT_SUCCESS                         :
+           s->lspv  ? db_list_providers()                  :
+           s->query ? db_query(s)                          :
+           s->del   ? db_remove_entry(s->provider, s->del) :
+           s->prun  ? pb_prune(s)                          :
+                      EXIT_FAILURE                         ;
 }
 
 signed
@@ -340,16 +338,15 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
            * label_j = 0, * status_j = 0, * sunset_j = 0, * new_paste = 0;
 
     char * sunset = 0;
-    const char * provider = s->provider ? s->provider : def_provider;
 
     if ( !pastes ) { status = EXIT_FAILURE; goto cleanup; }
-    prov_pastes = json_object_get(pastes, provider);
+    prov_pastes = json_object_get(pastes, s->provider);
     json_incref(prov_pastes);
     if ( !prov_pastes ) {
-        prov_obj = json_pack("{s:{}}", provider);
+        prov_obj = json_pack("{s:{}}", s->provider);
         json_object_update(pastes, prov_obj);
         json_decref(prov_obj);
-        prov_pastes = json_object_get(pastes, provider);
+        prov_pastes = json_object_get(pastes, s->provider);
     }
 
     uuid_j   = json_object_get(json, "uuid");
@@ -465,13 +462,12 @@ db_query (const struct pbpst_state * s) {
     pastes = json_object_get(mem_db, "pastes");
     json_incref(pastes);
 
-    const char * provider = s->provider ? s->provider : def_provider;
     if ( !pastes ) { status = EXIT_FAILURE; goto cleanup; }
-    prov_pastes = json_object_get(pastes, provider);
+    prov_pastes = json_object_get(pastes, s->provider);
     json_incref(prov_pastes);
 
     if ( !prov_pastes ) {
-        print_err2("No pastes found for", provider);
+        print_err2("No pastes found for", s->provider);
         status = EXIT_SUCCESS; goto cleanup;
     }
 
@@ -490,7 +486,7 @@ db_query (const struct pbpst_state * s) {
                    * m = json_string_value(jm) ;
 
         size_t len = strlen(key)            +
-                     strlen(provider)       +
+                     strlen(s->provider)    +
                      strlen(l)              +
                      json_string_length(js) +
                      json_string_length(jm) + 9;
@@ -501,7 +497,7 @@ db_query (const struct pbpst_state * s) {
             status = EXIT_FAILURE; goto cleanup;
         }
 
-        snprintf(outstr, len, "%s\t%s%s\t%s\t%s\n", key, provider, l, m, u);
+        snprintf(outstr, len, "%s\t%s%s\t%s\t%s\n", key, s->provider, l, m, u);
         if ( strstr(outstr, s->query) ) { printf("%s", outstr); }
         free(outstr);
     }
