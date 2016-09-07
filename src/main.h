@@ -17,6 +17,16 @@
 #include <stdnoreturn.h>
 #include <jansson.h>
 
+#if !defined(__has_attribute)
+#   define __has_attribute(x) 0
+#endif
+
+#if __has_attribute(pure)
+#   define ATTR_PURE __attribute__((pure))
+#else
+#   define ATTR_PURE
+#endif
+
 /* Configuration */
 #define FALLBACK_PROVIDER "https://ptpb.pw/"
 
@@ -163,7 +173,7 @@ extern struct pbpst_state {
              prog: 8, llex: 8, lthm: 8, lfrm: 8, lspv: 8;
 } state;
 
-bool
+bool ATTR_PURE
 pbpst_test_options (const struct pbpst_state *);
 
 signed
