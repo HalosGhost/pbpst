@@ -143,29 +143,23 @@ main (signed argc, char * argv []) {
     if ( (def_prov = json_object_get(mem_db, "default_provider")) ) {
         json_incref(def_prov);
         def_provider = json_string_value(def_prov);
-    } else if ( !state.provider ) {
-        size_t len = strlen(FALLBACK_PROVIDER) + 1;
-        state.provider = malloc(len);
-        if ( !state.provider ) {
-            exit_status = CURLE_OUT_OF_MEMORY;
-            goto cleanup;
-        } snprintf(state.provider, len, FALLBACK_PROVIDER);
-    } else {
-        size_t len = strlen(state.provider);
-        if ( state.provider[len - 1] != '/' ) {
-            state.provider = realloc(state.provider, len + 2);
-            char * suffix = state.provider + len;
-            *suffix = '/'; *(suffix + 1) = '\0';
-        }
     }
 
     if ( !state.provider ) {
-        state.provider = malloc(strlen(def_provider) + 1);
+        bool def = (bool )def_provider;
+        size_t len = strlen(def ? def_provider : FALLBACK_PROVIDER) + 1;
+        state.provider = malloc(len);
         if ( !state.provider ) {
-            fputs("pbpst: Could not store default provider\n", stderr);
+            fputs("pbpst: Could not store provider\n", stderr);
             exit_status = EXIT_FAILURE;
             goto cleanup;
-        } memcpy(state.provider, def_provider, strlen(def_provider) + 1);
+        } memcpy(state.provider, (def ? def_provider : FALLBACK_PROVIDER), len);
+    }
+
+    size_t len = strlen(state.provider);
+    if ( state.provider[len - 1] != '/' ) {
+        state.provider = realloc(state.provider, len + 2);
+        state.provider[len] = '/'; state.provider[len + 1] = '\0';
     }
 
     if ( !strstr(state.provider, "https://") ) {
