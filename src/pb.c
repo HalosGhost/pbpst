@@ -308,8 +308,7 @@ pb_list (const struct pbpst_state * s) {
     response_data->mem = 0;
     if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
 
-    const char * const route = s->llex ? "l"  :
-                               s->lthm ? "ls" : "lf";
+    const char route [] = { 'l', s->lthm ? 's' : s->lfrm ? 'f' : 0, 0 };
     snprintf(target, target_len, "%s%s", s->provider, route);
 
     #pragma clang diagnostic push
@@ -345,7 +344,7 @@ pb_list (const struct pbpst_state * s) {
             json_t * inner_value;
             json_array_foreach(value, inner_idx, inner_value) {
                 printf("%s ", json_string_value(inner_value));
-            } puts("");
+            } putchar('\n');
         } else if ( json_is_string(value) ) {
             puts(json_string_value(value));
         }
