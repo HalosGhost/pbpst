@@ -29,8 +29,8 @@
 
 /* Configuration */
 #define FALLBACK_PROVIDER "https://ptpb.pw/"
+#define PB_FILE_MAX 67108864
 
-#define PB_FILE_MAX 67108864 // 64 MiB
 #define BUFFER_SIZE 256
 
 static const char version_str [] = "pbpst 1.2.0\n";
