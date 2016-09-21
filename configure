@@ -19,7 +19,7 @@ check_file () {
 def_cflags=(-g -O3 -fPIE -pie -Weverything -Werror -std=c11 -ggdb
             -D_FORTIFY_SOURCE=2 -fstack-protector-strong -march=native
             --param=ssp-buffer-size=1 -Wl,-z,relro,-z,now -flto
-            -fsanitize=undefined,cfi -fsanitize-trap=undefined)
+            -fsanitize=undefined -fsanitize-trap=undefined)
 
 check_deps () {
     i_cc=$(show_tuprule CC | cut -d' ' -f3)
