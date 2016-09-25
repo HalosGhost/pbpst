@@ -157,7 +157,7 @@ static const char dbs_help [] =
 enum pb_cmd { NON = 0, SNC = 'S', SHR = 's', RMV = 'R', UPD = 'U', DBS = 'D' };
 
 static const char * opts_for [] = {
-    [NON] = "SRUDhs:",
+    [NON] = "SRUDhs:P:b:",
     [SNC] = "SRUDhP:Vb:f:l:T:F:e:L:px:rtv:#m:",
     [SHR] = "s:P:Vb:",
     [RMV] = "SRUDhP:Vb:u:y",
