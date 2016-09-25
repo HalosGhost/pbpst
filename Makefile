@@ -6,7 +6,7 @@ BINDIR  ?= $(DESTDIR)$(PREFIX)/bin
 ZSHDIR  ?= $(DESTDIR)$(PREFIX)/share/zsh
 BASHDIR ?= $(DESTDIR)$(PREFIX)/share/bash-completion
 
-.PHONY: all clean gen clang-analyzer cov-build simple install uninstall
+.PHONY: all clean gen clang-analyze cov-build simple install uninstall
 
 all: dist
 	@tup upd
