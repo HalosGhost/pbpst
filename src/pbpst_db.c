@@ -314,8 +314,23 @@ pbpst_db (const struct pbpst_state * s) {
            s->lspv  ? db_list_providers()                  :
            s->query ? db_query(s)                          :
            s->del   ? db_remove_entry(s->provider, s->del) :
+           s->dfpv  ? db_set_default(s->provider)          :
            s->prun  ? pb_prune(s)                          :
                       EXIT_FAILURE                         ;
+}
+
+signed
+db_set_default (const char * provider) {
+
+    json_t * str = json_string(provider);
+    signed stat = json_object_set_new(mem_db, "default_provider", str);
+    if ( !stat ) {
+        print_err2("new provider set", provider);
+        return EXIT_SUCCESS;
+    } else {
+        print_err2("setting new provider failed", "unknown");
+        return EXIT_FAILURE;
+    }
 }
 
 signed

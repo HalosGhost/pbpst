@@ -67,6 +67,7 @@ static struct option os [] = {
     { "providers",    0, 0, 'H' },
     { "query",        1, 0, 'q' },
     { "delete",       1, 0, 'd' },
+    { "set-default",  0, 0, 260 },
     { "prune",        0, 0, 'y' }, // rem/db
 
     /* generic options */
@@ -152,6 +153,7 @@ static const char dbs_help [] =
     "  -H, --providers      List all providers in the database\n"
     "  -q, --query=STR      Search the database for a paste matching STR\n"
     "  -d, --delete=UUID    Locally delete paste with UUID\n"
+    "      --set-default    Set provider (from -P) as default\n"
     "  -y, --prune          Locally delete all expired pastes\n";
 
 enum pb_cmd { NON = 0, SNC = 'S', SHR = 's', RMV = 'R', UPD = 'U', DBS = 'D' };
@@ -169,8 +171,8 @@ extern struct pbpst_state {
     char * path, * url, * lexer, * vanity, * uuid, * provider, * format,
          * query, * del, * dbfile, * msg, * theme, * ext, * ln, * secs;
     enum pb_cmd cmd;
-    uint16_t help: 8, priv: 8, rend: 8, term: 8, init: 8, prun: 8, verb: 8,
-             prog: 8, llex: 8, lthm: 8, lfrm: 8, lspv: 8;
+    uint16_t help: 5, priv: 5, rend: 2, term: 2, init: 2, prun: 2, verb: 2,
+             prog: 2, llex: 2, lthm: 2, lfrm: 2, lspv: 2, dfpv: 2;
 } state;
 
 bool ATTR_PURE

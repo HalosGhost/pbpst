@@ -34,6 +34,9 @@ signed
 db_swp_flush (const json_t *, const char *);
 
 signed
+db_set_default (const char *);
+
+signed
 pbpst_db (const struct pbpst_state *);
 
 signed

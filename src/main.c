@@ -90,6 +90,7 @@ main (signed argc, char * argv []) {
             case 257: state.llex  = true;         break;
             case 258: state.lthm  = true;         break;
             case 259: state.lfrm  = true;         break;
+            case 260: state.dfpv  = true;         break;
             default:  exit_status = EXIT_FAILURE; goto cleanup;
         }
     }
@@ -194,7 +195,7 @@ pbpst_test_options (const struct pbpst_state * s) {
         case RMV: cl = !s->uuid && !s->prun ? 'R' : cl; break;
         case UPD: cl = !s->uuid ? 'U' : cl; break;
         case DBS: cl = !s->init && !s->lspv && !s->query && !s->del && !s->prun
-                     ? 'D' : cl; break;
+                    && !(s->dfpv && s->provider) ? 'D' : cl; break;
         case NON: cl = 'N'; break;
     }
 
