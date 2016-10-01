@@ -169,7 +169,12 @@ Database Options
     Search each paste in the pastes object for text matching STR. Matches will be printed to :file:`stdout` with the form ``<uuid>\t<provider>/<id>\t<msg>\t<sunset>`` where ``<id>`` is either the long id or a vanity label if one exists.
 
 -d, --delete=UUID
-    Remove (locally) the paste from the pastes object specified by UUID. Note: This option will respect the default provider and the ``-P`` option.
+    Remove (locally) the paste from the pastes object specified by UUID.
+    Note: This option will respect the default provider and the ``-P`` option.
+
+--set-default
+    When using this option, you must also specify the ``-P`` option.
+    Sets the specified provider to be :program:`pbpst`'s new default provider.
 
 -y, --prune
     Remove all expired paste entries from the local database.
