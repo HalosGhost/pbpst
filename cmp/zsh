@@ -109,6 +109,7 @@ _pbpst_opts_database=(
     {-H,--providers}'[List all providers in the database]'
     {-q,--query}'[Search the database for a paste matching STR]'
     {-d,--delete}'[Manually delete the paste with UUID]:UUID:_uuids'
+    '--set-default[Set default provider]:URL:_provs'
     {-y,--prune}'[Remotely delete all expired pastes]'
 )
 
