@@ -28,7 +28,7 @@
 #endif
 
 /* Configuration */
-#define FALLBACK_PROVIDER "https://ptpb.pw/"
+#define FALLBACK_PROVIDER "https://pb.gehidore.net/"
 #define PB_FILE_MAX 67108864
 
 #define BUFFER_SIZE 256
