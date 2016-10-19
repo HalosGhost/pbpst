@@ -116,7 +116,7 @@ main (signed argc, char * argv []) {
         errno = 0;
         if ( stat(state.path, &st) ) {
             exit_status = errno;
-            perror("pbpst: Error checking file");
+            pbpst_err(_("Error checking file"));
             goto cleanup;
         }
 
@@ -129,7 +129,7 @@ main (signed argc, char * argv []) {
         }
 
         if ( st.st_size > PB_FILE_MAX ) {
-            fputs("pbpst: File too large\n", stderr);
+            pbpst_err(_("File too Large"));
             exit_status = EXIT_FAILURE; goto cleanup;
         }
     }
