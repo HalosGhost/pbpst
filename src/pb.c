@@ -10,7 +10,7 @@ pb_paste (const struct pbpst_state * s) {
     CURL * handle = curl_easy_init();
 
     if ( !handle ) {
-        fputs("pbpst: Failed to get CURL handle\n", stderr);
+        pbpst_err(_("Failed to get CURL handle"));
         return CURLE_FAILED_INIT;
     }
 
@@ -121,7 +121,7 @@ pb_shorten (const char * provider, const char * url, const uint16_t verb) {
     CURL * handle = curl_easy_init();
 
     if ( !handle ) {
-        fputs("pbpst: Failed to get CURL handle\n", stderr);
+        pbpst_err(_("Failed to get CURL handle"));
         return CURLE_FAILED_INIT;
     }
 
@@ -214,7 +214,7 @@ pb_remove (const char * provider, const char * uuid, const uint16_t verb) {
     CURL * handle = curl_easy_init();
 
     if ( !handle ) {
-        fputs("pbpst: Failed to get CURL handle\n", stderr);
+        pbpst_err(_("Failed to get CURL handle"));
         return CURLE_FAILED_INIT;
     }
 
@@ -259,7 +259,7 @@ pb_remove (const char * provider, const char * uuid, const uint16_t verb) {
         #pragma clang diagnostic pop
 
         if ( resp_code == 200 ) {
-            puts("pbpst: Paste deleted");
+            pbpst_err(_("Paste deleted"));
             db_remove_entry(provider, uuid);
         } else {
             #pragma clang diagnostic push
@@ -287,7 +287,7 @@ pb_list (const struct pbpst_state * s) {
     CURL * handle = curl_easy_init();
 
     if ( !handle ) {
-        fputs("pbpst: Failed to get CURL handle\n", stderr);
+        pbpst_err(_("Failed to get CURL handle"));
         return CURLE_FAILED_INIT;
     }
 
@@ -429,7 +429,7 @@ print_url (const struct pbpst_state * s, const char * userdata) {
         } else if ( mod_var ) {
             *mod_var = "";
         } else {
-            fputs("pbpst: Could not setup URL for printing\n", stderr);
+            pbpst_err(_("Could not setup URL for printing"));
             status = EXIT_FAILURE; goto cleanup;
         }
     } printf("%s%s%s%s%s%s%s%s\n", s->provider, rndr, idnt, extn, lexr, form,
