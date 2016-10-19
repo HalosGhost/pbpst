@@ -32,7 +32,7 @@ db_locate (const struct pbpst_state * s) {
                   : (dbl = getenv("HOME"))            ? HME : FLE;
 
     if ( which_brnch == FLE ) {
-        fputs("pbpst: No valid location for database\n", stderr);
+        pbpst_err(_("No valid location available for database"));
         return 0;
     }
 
@@ -43,7 +43,7 @@ db_locate (const struct pbpst_state * s) {
         errno = 0;
         if ( !getcwd(cwd, PATH_MAX - 1) ) {
             errsv = errno;
-            print_err2("Could not save cwd", strerror(errsv));
+            print_err2(_("Could not save working directory"), strerror(errsv));
             return 0;
         }
 
@@ -93,7 +93,7 @@ db_locate (const struct pbpst_state * s) {
         db_len = strlen(dbl) + 23;
         db = (char * )malloc(db_len);
         if ( !db ) {
-            print_err2("Could not save db path", "Out of Memory");
+            print_err2(_("Could not save db path"), _("Out of Memory"));
             return 0;
         }
 
@@ -135,13 +135,13 @@ db_swp_init (const char * dbl) {
     signed fd = 0;
 
     if ( !pc ) {
-        print_err2("Could not store db dirname", "Out of Memory");
+        print_err2(_("Could not store db dirname"), _("Out of Memory"));
         fd = -1; goto cleanup;
     }
 
     fc = (char * )malloc(len);
     if ( !fc ) {
-        print_err2("Could not store db basename", "Out of Memory");
+        print_err2(_("Could not store db basename"), _("Out of Memory"));
         fd = -1; goto cleanup;
     }
 
@@ -157,21 +157,21 @@ db_swp_init (const char * dbl) {
     errno = 0;
     if ( !getcwd(cwd, PATH_MAX - 1) ) {
         errsv = errno;
-        print_err2("Could not save cwd", strerror(errsv));
+        print_err2(_("Could not save working directory"), strerror(errsv));
         fd = -1; goto cleanup;
     }
 
     errno = 0;
     if ( chdir(parent) == -1 ) {
         errsv = errno;
-        print_err2("Could not cd to db path", strerror(errsv));
+        print_err2(_("Could not cd to database path"), strerror(errsv));
         fd = -1; goto cleanup;
     }
 
     len = strlen(dbl) + 7;
     swp_db_name = (char * )malloc(len);
     if ( !swp_db_name ) {
-        print_err2("Could not save swap db name", "Out of Memory");
+        print_err2(_("Could not save swap db name"), _("Out of Memory"));
         fd = -1; goto cleanup;
     }
 
@@ -283,7 +283,7 @@ db_swp_flush (const json_t * mdb, const char * s_dbl) {
     errno = 0;
     if ( !(swp_db = fopen(s_dbl, "w")) ) {
         errsv = errno;
-        print_err2("Could not open swap db", strerror(errsv));
+        print_err2(_("Could not open swap db"), strerror(errsv));
         return -1;
     }
 
@@ -295,14 +295,14 @@ db_swp_flush (const json_t * mdb, const char * s_dbl) {
     errno = 0;
     if ( fflush(swp_db) == EOF ) {
         errsv = errno;
-        print_err2("Could not flush memory to swap db", strerror(errsv));
+        print_err2(_("Could not flush memory to swap db"), strerror(errsv));
         ret = -1;
     }
 
     errno = 0;
     if ( fclose(swp_db) == -1 ) {
         errsv = errno;
-        print_err2("Could not flush memory to swap db", strerror(errsv));
+        print_err2(_("Could not flush memory to swap db"), strerror(errsv));
         ret = -1;
     } return ret;
 }
@@ -325,10 +325,10 @@ db_set_default (const char * provider) {
     json_t * str = json_string(provider);
     signed stat = json_object_set_new(mem_db, "default_provider", str);
     if ( !stat ) {
-        print_err2("new provider set", provider);
+        print_err2(_("New provider set"), provider);
         return EXIT_SUCCESS;
     } else {
-        print_err2("setting new provider failed", "unknown");
+        print_err2(_("Setting new provider failed"), "unknown");
         return EXIT_FAILURE;
     }
 }
@@ -378,7 +378,7 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
     if ( !status_j ) { status = EXIT_FAILURE; goto cleanup; }
     const char stat = json_string_value(status_j)[0];
     if ( stat == 'a' ) {
-        fputs("pbpst: Paste already existed\n", stderr);
+        pbpst_err(_("Paste already existed"));
         goto cleanup;
     }
 
@@ -386,12 +386,12 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
         time_t curtime = time(NULL), offset = 0;
         if ( sscanf(s->secs, "%ld", &offset) == EOF ) {
             signed errsv = errno;
-            print_err2("Failed to scan offset", strerror(errsv));
+            print_err2(_("Failed to scan offset"), strerror(errsv));
             status = EXIT_FAILURE; goto cleanup;
         }
 
         if ( !(sunset = malloc(12)) ) {
-            print_err2("Failed to store sunset epoch", "Out of Memory");
+            print_err2(_("Failed to store sunset epoch"), _("Out of Memory"));
             status = EXIT_FAILURE; goto cleanup;
         } snprintf(sunset, 11, "%ld", curtime + offset);
     }
@@ -411,7 +411,7 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
                           "label", label, "sunset", sunset);
 
     if ( json_object_set(prov_pastes, uuid, new_paste) == -1 ) {
-        fputs("pbpst: Failed to save new paste object\n", stderr);
+        pbpst_err(_("Failed to save new paste object"));
         status = EXIT_FAILURE; goto cleanup;
     }
 
@@ -438,12 +438,12 @@ db_remove_entry (const char * provider, const char * uuid) {
     json_incref(prov_pastes);
 
     if ( !prov_pastes ) {
-        print_err2("No pastes in-database found for", provider);
+        print_err2(_("No pastes in-database found for provider"), provider);
         status = EXIT_FAILURE; goto cleanup;
     }
 
     if ( json_object_del(prov_pastes, uuid) ) {
-        print_err2("No paste in-database found with uuid", uuid);
+        print_err2(_("No paste in-database found with uuid"), uuid);
         status = EXIT_FAILURE;
     }
 
@@ -489,7 +489,7 @@ db_query (const struct pbpst_state * s) {
 
         char * outstr = malloc(len + 1);
         if ( !outstr ) {
-            fputs("pbpst: Could not format output: Out of Memory\n", stderr);
+            print_err2(_("Could not format output"), _("Out of Memory"));
             status = EXIT_FAILURE; goto cleanup;
         }
 

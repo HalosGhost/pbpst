@@ -43,8 +43,7 @@ main (signed argc, char * argv []) {
                     vos = opts_for[(state.cmd = (enum pb_cmd )c)];
                     optind = 1;
                 } else if ( state.cmd != c ) {
-                    fputs("pbpst: You can only run one operation at a time\n",
-                          stderr);
+                    pbpst_err(_("You can only run one operation at a time"));
                     exit_status = EXIT_FAILURE; goto cleanup;
                 } break;
 
@@ -73,8 +72,8 @@ main (signed argc, char * argv []) {
             svcase:
                 *state_var = (char * )malloc(l);
                 if ( !*state_var ) {
-                    fputs("pbpst: Could not store arguments: Out of Memory\n",
-                          stderr); goto cleanup;
+                    pbpst_err(_("Could not store argument: Out of Memory"));
+                    goto cleanup;
                 } snprintf(*state_var, l, "%s", optarg); break;
 
             case '#': state.prog  = true;         break;
@@ -151,9 +150,8 @@ main (signed argc, char * argv []) {
         size_t len = strlen(def ? def_provider : FALLBACK_PROVIDER) + 1;
         state.provider = malloc(len);
         if ( !state.provider ) {
-            fputs("pbpst: Could not store provider\n", stderr);
-            exit_status = EXIT_FAILURE;
-            goto cleanup;
+            pbpst_err(_("Could not store provider"));
+            exit_status = EXIT_FAILURE; goto cleanup;
         } memcpy(state.provider, (def ? def_provider : FALLBACK_PROVIDER), len);
     }
 
@@ -164,7 +162,7 @@ main (signed argc, char * argv []) {
     }
 
     if ( !strstr(state.provider, "https://") ) {
-        fputs("pbpst: only https providers are supported\n", stderr);
+        pbpst_err(_("Only HTTPS providers are supported"));
         exit_status = EXIT_FAILURE; goto cleanup;
     }
 
@@ -268,14 +266,24 @@ pbpst_cleanup (void) {
     if ( swp_db_loc ) {
         struct stat st;
         if ( stat(swp_db_loc, &st) == 0 && st.st_size == 0 ) {
-            fputs( !point_of_no_return && !remove(swp_db_loc)
-                 ? "pbpst: removed empty swap (contingency)\n"
-                 : "pbpst: You need to manually check your swap db\n", stderr);
+            pbpst_err( !point_of_no_return && !remove(swp_db_loc)
+                     ? _("Removed empty swap flie (contingency)")
+                     : _("You need to manually check your swap db"));
         } free(swp_db_loc);
     }
 
     if ( db_loc != state.dbfile ) { free(db_loc); }
     free(state.dbfile);
+}
+
+signed
+pbpst_err (const char * explanation) {
+
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+    signed ret = fprintf(stderr, "pbpst: %s\n", explanation);
+    #pragma clang diagnostic pop
+    return ret;
 }
 
 // vim: set ts=4 sw=4 et:

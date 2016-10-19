@@ -16,6 +16,10 @@
 #include <time.h>      // localtime(), time(), time_t
 #include <stdnoreturn.h>
 #include <jansson.h>
+#include <libintl.h>
+#include <locale.h>
+
+#define _(str) gettext(str)
 
 #if !defined(__has_attribute)
 #   define __has_attribute(x) 0
@@ -186,6 +190,9 @@ signal_handler (signed);
 
 void
 pbpst_cleanup (void);
+
+signed
+pbpst_err (const char *);
 
 static char * db_loc = 0, * swp_db_loc = 0;
 extern json_t * mem_db, * pastes, * prov_pastes;
