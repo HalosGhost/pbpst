@@ -73,7 +73,7 @@ pb_paste (const struct pbpst_state * s) {
         char unit = 0;
         sscanf(s->secs, "%lf%c", &count, &unit);
 
-        unsigned long mult = 0;
+        unsigned mult = 0;
         switch ( unit ) {
             case 'd': mult = 86400; break;
             case 'h': mult = 3600;  break;
@@ -82,7 +82,7 @@ pb_paste (const struct pbpst_state * s) {
         }
 
         char calc_secs [22];
-        snprintf(calc_secs, 22, "%lu", (unsigned long )count * mult);
+        snprintf(calc_secs, 22, "%u", (unsigned )count * mult);
 
         fc = curl_formadd(&post,                 &last,
                           CURLFORM_COPYNAME,     "s",

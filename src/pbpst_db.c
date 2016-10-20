@@ -384,11 +384,20 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
 
     if ( sunset_j && s->secs ) {
         time_t curtime = time(NULL), offset = 0;
-        if ( sscanf(s->secs, "%ld", &offset) == EOF ) {
-            signed errsv = errno;
-            print_err2(_("Failed to scan offset"), strerror(errsv));
-            status = EXIT_FAILURE; goto cleanup;
+
+        double count = 0;
+        char unit = 0;
+        sscanf(s->secs, "%lf%c", &count, &unit);
+
+        unsigned mult = 0;
+        switch ( unit ) {
+            case 'd': mult = 86400; break;
+            case 'h': mult = 3600;  break;
+            case 'm': mult = 60;    break;
+            default:  mult = 1;     break;
         }
+
+        offset = (time_t )((unsigned )count * mult);
 
         if ( !(sunset = malloc(12)) ) {
             print_err2(_("Failed to store sunset epoch"), _("Out of Memory"));
