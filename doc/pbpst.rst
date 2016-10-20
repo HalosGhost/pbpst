@@ -87,8 +87,11 @@ Note: if the ``-f`` option is not passed, :program:`pbpst` will paste the conten
 -p, --private
     Return a less-guessable Id for paste.
 
--x, --sunset=SECS
-    Set the paste to expire automatically in SECS seconds.
+-x, --sunset=TIME
+    Set the paste to expire automatically in TIME.
+    You can specify a unit for TIME: ``d(ays)``, ``h(ours)``, ``m(inutes)`` or ``s(econds)``.
+    Note that ``d``, ``h`` and ``m`` are just shortcut multipliers (``1d`` is equivalent to ``86400s``); :program:`pbpst` makes no attempt to handle leap seconds or timezones.
+    If you specify no unit, "seconds" is assumed.
 
 -r, --render
     Render a ReStructuredText or Markdown paste to HTML.
@@ -144,8 +147,11 @@ Note: if the ``-f`` option is not passed, :program:`pbpst` will paste the conten
 -t, --term
     Handle Asciinema videos.
 
--x, --sunset=SECS
-    Set the paste to expire automatically in SECS seconds.
+-x, --sunset=TIME
+    Set the paste to expire automatically in TIME.
+    You can specify a unit for TIME: ``d(ays)``, ``h(ours)``, ``m(inutes)`` or ``s(econds)``.
+    Note that ``d``, ``h`` and ``m`` are just shortcut multipliers (``1d`` is equivalent to ``86400s``); :program:`pbpst` makes no attempt to handle leap seconds or timezones.
+    If you specify no unit, "seconds" is assumed.
 
 -u, --uuid=UUID
     Use UUID as authentication credential.
@@ -183,8 +189,8 @@ Database Options
 Examples
 --------
 
-pbpst -Sf <filepath>
-    paste the file at <filepath>
+pbpst -Sf <filepath> -x 5m
+    paste the file at <filepath> which will expire in 300 seconds.
 
 pbpst -s <url>
     create a shortcut URL to <url>
