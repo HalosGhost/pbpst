@@ -18,6 +18,7 @@
 #include <jansson.h>
 #include <libintl.h>
 #include <locale.h>
+#include <math.h>
 
 #define _(str) gettext(str)
 

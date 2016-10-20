@@ -69,24 +69,9 @@ pb_paste (const struct pbpst_state * s) {
     if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
 
     if ( s->secs ) {
-        double count = 0;
-        char unit = 0;
-        sscanf(s->secs, "%lf%c", &count, &unit);
-
-        unsigned mult = 0;
-        switch ( unit ) {
-            case 'd': mult = 86400; break;
-            case 'h': mult = 3600;  break;
-            case 'm': mult = 60;    break;
-            default:  mult = 1;     break;
-        }
-
-        char calc_secs [22];
-        snprintf(calc_secs, 22, "%u", (unsigned )count * mult);
-
         fc = curl_formadd(&post,                 &last,
                           CURLFORM_COPYNAME,     "s",
-                          CURLFORM_COPYCONTENTS, calc_secs,
+                          CURLFORM_COPYCONTENTS, s->secs,
                           CURLFORM_END);
         if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
     }

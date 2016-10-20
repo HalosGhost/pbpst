@@ -134,6 +134,34 @@ main (signed argc, char * argv []) {
         }
     }
 
+    if ( state.secs ) {
+        double count = 0;
+        char unit = 0;
+        sscanf(state.secs, "%lf%c", &count, &unit);
+
+        if ( !isfinite(count) && count > 0 ) {
+            pbpst_err(_("Sunset must be a finite, positive value"));
+            exit_status = EXIT_FAILURE; goto cleanup;
+        }
+
+        unsigned mult = 0;
+        switch ( unit ) {
+            case 'd': mult = 86400; break;
+            case 'h': mult = 3600;  break;
+            case 'm': mult = 60;    break;
+            default:  mult = 1;     break;
+        }
+
+        char * tmp = realloc(state.secs, 22);
+        if ( !tmp ) {
+            exit_status = EXIT_FAILURE; goto cleanup;
+        } else {
+            state.secs = tmp;
+        }
+
+        snprintf(state.secs, 22, "%u", (unsigned )(count * mult));
+    }
+
     if ( !(db_loc = db_locate(&state)) || !(swp_db_loc = db_swp_init(db_loc)) ||
          !(mem_db = db_read(db_loc)) ) {
 
