@@ -6,13 +6,13 @@ BINDIR  ?= $(DESTDIR)$(PREFIX)/bin
 ZSHDIR  ?= $(DESTDIR)$(PREFIX)/share/zsh
 BASHDIR ?= $(DESTDIR)$(PREFIX)/share/bash-completion
 
-.PHONY: all clean gen clang-analyze cov-build simple install uninstall
+.PHONY: all clean gen clang-analyze cov-build pot simple install uninstall
 
 all: dist
 	@tup upd
 
 clean:
-	@rm -rf -- dist cov-int $(PROGNM).tgz make.sh ./src/*.plist
+	@rm -rf -- dist cov-int $(PROGNM).tgz make.sh ./src/*.plist ./po/$(PROGNM).pot
 
 dist:
 	@mkdir -p ./dist
@@ -26,6 +26,9 @@ cov-build: gen dist
 
 clang-analyze:
 	@(pushd ./src; clang-check -analyze ./*.c)
+
+pot: clean
+	@xgettext -k_ -d $(PROGNM) -o po/$(PROGNM).pot ./src/*.c
 
 simple: gen dist
 	@./make.sh
