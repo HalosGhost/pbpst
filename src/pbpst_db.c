@@ -2,7 +2,7 @@
 #include "pb.h"
 
 signed
-print_err2 (const char * action, const char * explanation) {
+print_err2 (const char * restrict action, const char * restrict explanation) {
 
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
@@ -12,7 +12,8 @@ print_err2 (const char * action, const char * explanation) {
 }
 
 signed
-print_err3 (const char * str1, const char * str2, const char * str3) {
+print_err3 (const char * restrict str1, const char * restrict str2,
+            const char * restrict str3) {
 
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
@@ -212,7 +213,7 @@ db_swp_init (const char * dbl) {
 }
 
 signed
-db_swp_cleanup (const char * dbl, const char * s_dbl) {
+db_swp_cleanup (const char * restrict dbl, const char * restrict s_dbl) {
 
     errno = 0;
     if ( rename(s_dbl, dbl) == -1 ) {
@@ -276,7 +277,7 @@ db_read (const char * dbl) {
 }
 
 signed
-db_swp_flush (const json_t * mdb, const char * s_dbl) {
+db_swp_flush (const json_t * mdb, const char * restrict s_dbl) {
 
     FILE * swp_db;
     signed errsv;
