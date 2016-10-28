@@ -19,10 +19,7 @@ signed
 main (signed argc, char * argv []) {
 
     if ( argc <= 1 ) {
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, "%s%s%s", cmds_help, gen_help, more_info);
-        #pragma clang diagnostic pop
+        print_usage(NON, EXIT_FAILURE);
         return EXIT_FAILURE;
     }
 
@@ -95,14 +92,8 @@ main (signed argc, char * argv []) {
     }
 
     if ( state.help ) {
-        switch ( state.cmd ) {
-            case SNC: printf("%s%s",   sync_help, gen_help);            break;
-            case RMV: printf("%s%s",   rem_help,  gen_help);            break;
-            case UPD: printf("%s%s",   upd_help,  gen_help);            break;
-            case DBS: printf("%s%s",   dbs_help,  gen_help);            break;
-            case SHR:
-            case NON: printf("%s%s%s", cmds_help, gen_help, more_info); break;
-        } goto cleanup;
+        print_usage(state.cmd, exit_status);
+        goto cleanup;
     }
 
     if ( !(state.llex || state.lthm || state.lfrm) &&
@@ -226,10 +217,7 @@ pbpst_test_options (const struct pbpst_state * s) {
     }
 
     if ( cl == 'N' ) {
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, "%s%s%s", cmds_help, gen_help, more_info);
-        #pragma clang diagnostic pop
+        print_usage(NON, EXIT_FAILURE);
     } else if ( cl != 0 ) {
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
