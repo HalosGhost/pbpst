@@ -3,7 +3,6 @@
 signed
 print_usage (enum pb_cmd command, signed status) {
 
-
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
     FILE * f = status ? stderr : stdout;
