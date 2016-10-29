@@ -9,15 +9,18 @@ print_usage (enum pb_cmd command, signed status) {
     #pragma clang diagnostic pop
 
     const char * help;
+    const char * op;
 
     switch ( command ) {
-        case SNC: help = sync_help; break;
-        case RMV: help = rem_help;  break;
-        case UPD: help = upd_help;  break;
-        case DBS: help = dbs_help;  break;
+        case SNC: op = "{-S --sync}";     help = sync_help; break;
+        case RMV: op = "{-R --remove}";   help = rem_help;  break;
+        case UPD: op = "{-U --update}";   help = upd_help;  break;
+        case DBS: op = "{-D --database}"; help = dbs_help;  break;
         case SHR:
-        case NON: help = cmds_help; break;
+        case NON: op = "<operation>";     help = cmds_help; break;
     }
+
+    fprintf(f, "%s: pbpst %s [option ...]\n", _("Usage"), op);
 
     status = fprintf(f, "%s%s", help, gen_help);
 

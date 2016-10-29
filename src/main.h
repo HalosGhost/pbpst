@@ -16,12 +16,8 @@
 #include <time.h>      // localtime(), time(), time_t
 #include <stdnoreturn.h>
 #include <jansson.h>
-#include <libintl.h>
-#include <locale.h>
 #include <math.h>
 #include "usage.h"
-
-#define _(str) gettext(str)
 
 #if !defined(__has_attribute)
 #   define __has_attribute(x) 0
