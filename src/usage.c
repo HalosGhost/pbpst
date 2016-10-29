@@ -12,21 +12,30 @@ print_usage (enum pb_cmd command, signed status) {
     const char * op;
 
     switch ( command ) {
-        case SNC: op = "{-S --sync}";     help = sync_help; break;
-        case RMV: op = "{-R --remove}";   help = rem_help;  break;
-        case UPD: op = "{-U --update}";   help = upd_help;  break;
-        case DBS: op = "{-D --database}"; help = dbs_help;  break;
+        case SNC: op = "-S --sync";     help = sync_help; break;
+        case RMV: op = "-R --remove";   help = rem_help;  break;
+        case UPD: op = "-U --update";   help = upd_help;  break;
+        case DBS: op = "-D --database"; help = dbs_help;  break;
         case SHR:
-        case NON: op = "<operation>";     help = cmds_help; break;
+        case NON: op = _("operation");  help = cmds_help; break;
     }
 
-    fprintf(f, "%s: pbpst %s [option ...]\n", _("Usage"), op);
+    status =
+        fprintf(f, "%s: pbpst {%s} [%s ...]\n", _("Usage"), op, _("option"));
 
-    status = fprintf(f, "%s%s", help, gen_help);
-
-    if ( command == NON ) {
-        status += fprintf(f, "%s", more_info);
+    if ( !command ) {
+        status += fprintf(f, "pbpst -- %s\n",
+                          _("a simple tool to pastebin from the command-line"));
     }
 
-    return status;
+    status = fprintf(f, "\n%s:\n%s\n",
+                     command ? _("Options") : _("Operations"), help);
+
+    if ( !command ) { status += fprintf(f, "%s:", _("Options")); }
+
+    status += fputs(gen_help, f);
+
+    if ( !command ) {
+        status += fputs(_("\nUse `-h` with an operation for more help\n"), f);
+    } return status;
 }

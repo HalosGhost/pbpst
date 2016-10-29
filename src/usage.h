@@ -9,7 +9,6 @@
 enum pb_cmd { NON = 0, SNC = 'S', SHR = 's', RMV = 'R', UPD = 'U', DBS = 'D' };
 
 static const char gen_help [] =
-    "\n"
     "  -h, --help           List this help and exit\n"
     "  -b, --dbpath=PATH    Use the database at PATH\n"
     "  -P, --provider=HOST  Use HOST as the pb provider\n"
@@ -20,20 +19,13 @@ static const char gen_help [] =
     "      --version        List the version and exit\n";
 
 static const char cmds_help [] =
-    "pbpst -- a simple tool to pastebin from the command-line\n\n"
-    "Operations:\n"
     "  -S, --sync           Create a paste\n"
     "  -s, --shorten=URL    Create a redirect to URL\n"
     "  -R, --remove         Delete a paste\n"
     "  -U, --update         Update a paste\n"
-    "  -D, --database       Operate on the database\n\n"
-    "Options:";
-
-static const char more_info [] =
-    "\nRun `pbpst -h` with an operation for help with that operation\n";
+    "  -D, --database       Operate on the database\n";
 
 static const char sync_help [] =
-    "\nOptions:\n"
     "  -f, --file=FILE      Create a paste from FILE\n"
     "  -l, --lexer=LANG     Lex paste with LANG\n"
     "  -T, --theme=THEME    Style paste with pygments theme THEME\n"
@@ -49,12 +41,10 @@ static const char sync_help [] =
     "  -m, --message=MSG    Use MSG as the note in the database\n";
 
 static const char rem_help [] =
-    "\nOptions:\n"
     "  -u, --uuid=UUID      Remotely delete paste with UUID\n"
     "  -y, --prune          Remotely delete all expired pastes\n";
 
 static const char upd_help [] =
-    "\nOptions:\n"
     "  -f, --file=FILE      Use FILE for content of paste\n"
     "  -l, --lexer=LANG     Lex paste with LANG\n"
     "  -F, --format=FORM    Format paste for FORM\n"
@@ -69,7 +59,6 @@ static const char upd_help [] =
     "  -m, --message=MSG    Use MSG as the note in the database\n";
 
 static const char dbs_help [] =
-    "\nOptions:\n"
     "  -i, --init           Initalize a default database (no clobbering)\n"
     "  -H, --providers      List all providers in the database\n"
     "  -q, --query=STR      Search the database for a paste matching STR\n"
