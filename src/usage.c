@@ -33,9 +33,10 @@ print_usage (enum pb_cmd command, signed status) {
 
     if ( !command ) { status += fprintf(f, "%s:\n", _("Options")); }
 
-    status += fprintf(f, "%s\n", gen_help);
+    status += fprintf(f, "%s", gen_help);
 
     if ( !command ) {
-        status += fputs(_("Use `-h` with an operation for more help\n"), f);
+        status += fprintf(f, "\n%s\n",
+                          _("Use `-h` with an operation for more help"));
     } return status;
 }
