@@ -31,7 +31,7 @@ print_usage (enum pb_cmd command, signed status) {
     status = fprintf(f, "\n%s:\n%s\n",
                      command ? _("Options") : _("Operations"), help);
 
-    if ( !command ) { status += fprintf(f, "%s:", _("Options")); }
+    if ( !command ) { status += fprintf(f, "%s:\n", _("Options")); }
 
     status += fprintf(f, "%s\n", gen_help);
 
