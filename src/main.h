@@ -38,50 +38,15 @@
 static const char version_str [] = "pbpst 1.3.0\n";
 
 static struct option os [] = {
-    /* commands */
-    { "sync",         0, 0, 'S' },
-    { "remove",       0, 0, 'R' },
-    { "update",       0, 0, 'U' },
-    { "database",     0, 0, 'D' },
-
-    /* shorten */
-    { "shorten",      1, 0, 's' },
-
-    /* sync/upd options */
-    { "file",         1, 0, 'f' },
-    { "lexer",        1, 0, 'l' },
-    { "theme",        1, 0, 'T' },
-    { "format",       1, 0, 'F' },
-    { "extension",    1, 0, 'e' },
-    { "line",         1, 0, 'L' },
-    { "private",      0, 0, 'p' }, // sync-only
-    { "render",       0, 0, 'r' },
-    { "term",         0, 0, 't' },
-    { "vanity",       1, 0, 'v' },
-    { "help",         0, 0, 'h' },
-    { "progress",     0, 0, '#' },
-    { "message",      1, 0, 'm' },
-    { "sunset",       1, 0, 'x' },
-    { "uuid",         1, 0, 'u' }, // rem/upd
-
-    /* db options */
-    { "init",         0, 0, 'i' },
-    { "providers",    0, 0, 'H' },
-    { "query",        1, 0, 'q' },
-    { "delete",       1, 0, 'd' },
-    { "set-default",  0, 0, 260 },
-    { "prune",        0, 0, 'y' }, // rem/db
-
-    /* generic options */
-    { "provider",     1, 0, 'P' },
-    { "dbpath",       1, 0, 'b' },
-    { "verbose",      0, 0, 'V' },
-    { "help",         0, 0, 'h' },
-    { "version",      0, 0, 256 },
-    { "list-lexers",  0, 0, 257 },
-    { "list-themes",  0, 0, 258 },
-    { "list-formats", 0, 0, 259 },
-    { 0,              0, 0, 0   }
+    #define X(sh, ln, arg, desc) { ln, (bool )arg, 0, sh },
+    OPERATIONS
+    SNC_OPTIONS
+    UPD_OPTIONS
+    RMV_OPTIONS
+    DBS_OPTIONS
+    GEN_OPTIONS
+    #undef X
+    { 0, 0, 0, 0 }
 };
 
 static const char * opts_for [] = {

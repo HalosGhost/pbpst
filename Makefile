@@ -27,8 +27,8 @@ cov-build: gen dist
 clang-analyze:
 	@(pushd ./src; clang-check -analyze ./*.c)
 
-pot: clean
-	@xgettext -k_ -d $(PROGNM) -o po/$(PROGNM).pot ./src/*.c
+pot:
+	@xgettext -k_ -d $(PROGNM) -o po/$(PROGNM).pot ./src/*.{c,h}
 
 simple: gen dist
 	@./make.sh
