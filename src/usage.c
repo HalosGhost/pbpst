@@ -41,12 +41,12 @@ signed
 enum_args (enum pb_cmd cmd, FILE * f) {
 
     #define X(sh, ln, arg, desc) { ln, arg, desc, sh },
-    struct optdesc SNC_opts [] = { SNC_OPTIONS },
-                   RMV_opts [] = { RMV_OPTIONS },
-                   UPD_opts [] = { UPD_OPTIONS },
-                   DBS_opts [] = { DBS_OPTIONS },
-                   GEN_opts [] = { GEN_OPTIONS },
-                   NON_opts [] = { OPERATIONS  };
+    const struct optdesc SNC_opts [] = { SNC_OPTIONS },
+                         RMV_opts [] = { RMV_OPTIONS },
+                         UPD_opts [] = { UPD_OPTIONS },
+                         DBS_opts [] = { DBS_OPTIONS },
+                         GEN_opts [] = { GEN_OPTIONS },
+                         NON_opts [] = { OPERATIONS  };
     #undef X
 
     #define optarr(x) (x ## _opts)
