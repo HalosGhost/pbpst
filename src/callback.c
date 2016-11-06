@@ -42,12 +42,12 @@ pb_write_cb (char * restrict ptr, size_t size, size_t nmemb, void * userdata) {
 
     char * mem = realloc(udata->mem, rsize + 2);
     if ( !mem ) {
-        pbpst_err(_("Failed to allocate memory for response"));
+        pbpst_err(_("Could not allocate memory for response"));
         return 0;
     } udata->mem = mem;
 
     if ( snprintf(udata->mem, rsize + 1, "%s", ptr) == -1 ) {
-        pbpst_err(_("Failed writing response to memory"));
+        pbpst_err(_("Could not write response to memory"));
         return 0;
     } return rsize;
 }

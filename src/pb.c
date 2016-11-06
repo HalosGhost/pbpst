@@ -10,7 +10,7 @@ pb_paste (const struct pbpst_state * s) {
     CURL * handle = curl_easy_init();
 
     if ( !handle ) {
-        pbpst_err(_("Failed to get CURL handle"));
+        pbpst_err(_("Could not get CURL handle"));
         return CURLE_FAILED_INIT;
     }
 
@@ -91,7 +91,7 @@ pb_paste (const struct pbpst_state * s) {
     if ( status != CURLE_OK ) {
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, "pbpst: Pasting failed: %s\n",
+        fprintf(stderr, "pbpst: Could not create paste: %s\n",
                 curl_easy_strerror(status)); goto cleanup;
         #pragma clang diagnostic pop
     }
@@ -121,7 +121,7 @@ pb_shorten (const char * provider, const char * url, const uint16_t verb) {
     CURL * handle = curl_easy_init();
 
     if ( !handle ) {
-        pbpst_err(_("Failed to get CURL handle"));
+        pbpst_err(_("Could not get CURL handle"));
         return CURLE_FAILED_INIT;
     }
 
@@ -169,7 +169,7 @@ pb_shorten (const char * provider, const char * url, const uint16_t verb) {
     if ( status != CURLE_OK ) {
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, "pbpst: Shortening failed: %s\n",
+        fprintf(stderr, "pbpst: Could not create redirect: %s\n",
                 curl_easy_strerror(status)); goto cleanup;
         #pragma clang diagnostic pop
     }
@@ -214,7 +214,7 @@ pb_remove (const char * provider, const char * uuid, const uint16_t verb) {
     CURL * handle = curl_easy_init();
 
     if ( !handle ) {
-        pbpst_err(_("Failed to get CURL handle"));
+        pbpst_err(_("Could not get CURL handle"));
         return CURLE_FAILED_INIT;
     }
 
@@ -264,7 +264,7 @@ pb_remove (const char * provider, const char * uuid, const uint16_t verb) {
         } else {
             #pragma clang diagnostic push
             #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-            fprintf(stderr, "pbpst: Failed to delete paste: %d\n", resp_code);
+            fprintf(stderr, "pbpst: Could not delete paste: %d\n", resp_code);
             #pragma clang diagnostic pop
         }
     }
@@ -287,7 +287,7 @@ pb_list (const struct pbpst_state * s) {
     CURL * handle = curl_easy_init();
 
     if ( !handle ) {
-        pbpst_err(_("Failed to get CURL handle"));
+        pbpst_err(_("Could not get CURL handle"));
         return CURLE_FAILED_INIT;
     }
 
@@ -322,7 +322,7 @@ pb_list (const struct pbpst_state * s) {
     if ( status != CURLE_OK ) {
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, "pbpst: Listing failed: %s\n",
+        fprintf(stderr, "pbpst: Could not get list: %s\n",
                 curl_easy_strerror(status)); goto cleanup;
         #pragma clang diagnostic pop
     }
@@ -478,7 +478,7 @@ pb_prune (const struct pbpst_state * s) {
         size_t stclen = json_string_length(res);
 
         if ( stclen && sscanf(stc, "%" SCNd64, &stime) == EOF ) {
-            perror("pbpst: Failed to scan offset");
+            perror("pbpst: Could not scan offset");
             return EXIT_FAILURE;
         }
 

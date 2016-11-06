@@ -111,7 +111,7 @@ db_locate (const struct pbpst_state * s) {
         if ( errsv == EEXIST ) {
             return fdb;
         } else {
-            print_err3("Failed to open", fdb, strerror(errsv));
+            print_err3("Could not open", fdb, strerror(errsv));
             free(fdb);
             return 0;
         }
@@ -120,7 +120,7 @@ db_locate (const struct pbpst_state * s) {
     errno = 0;
     if ( close(fd) == -1 ) {
         errsv = errno;
-        print_err3("Failed to close", fdb, strerror(errsv));
+        print_err3("Could not close", fdb, strerror(errsv));
         free(fdb);
         return 0;
     } return fdb;
@@ -220,7 +220,7 @@ db_swp_cleanup (const char * restrict dbl, const char * restrict s_dbl) {
         signed errsv = errno;
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, "pbpst: Failed to save %s to %s: %s\n", s_dbl,
+        fprintf(stderr, "pbpst: Could not save %s to %s: %s\n", s_dbl,
                 dbl, strerror(errsv));
         #pragma clang diagnostic pop
         return -1;
@@ -249,7 +249,7 @@ db_read (const char * dbl) {
         errno = 0;
         if ( (fseek(f, 0, SEEK_END)) == -1 ) {
             errsv = errno;
-            print_err3("Failed to seek to end of", dbl, strerror(errsv));
+            print_err3("Could not seek to end of", dbl, strerror(errsv));
             goto cleanup;
         }
 
@@ -257,13 +257,13 @@ db_read (const char * dbl) {
         errno = 0;
         if ( (size = ftell(f)) == -1 ) {
             errsv = errno;
-            print_err3("Failed to check position in", dbl, strerror(errsv));
+            print_err3("Could not check position in", dbl, strerror(errsv));
             goto cleanup;
         }
 
         if ( size == 0 ) { mdb = DEF_DB(); goto cleanup; }
 
-        print_err3("Failed reading", dbl, err.text);
+        print_err3("Could not read", dbl, err.text);
         goto cleanup;
     }
 
@@ -329,7 +329,7 @@ db_set_default (const char * provider) {
         print_err2(_("New provider set"), provider);
         return EXIT_SUCCESS;
     } else {
-        print_err2(_("Setting new provider failed"), "unknown");
+        print_err2(_("Could not set new provider"), "unknown");
         return EXIT_FAILURE;
     }
 }
@@ -387,12 +387,12 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
         time_t curtime = time(NULL), offset = 0;
         if ( sscanf(s->secs, "%ld", &offset) == EOF ) {
             signed errsv = errno;
-            print_err2(_("Failed to scan offset"), strerror(errsv));
+            print_err2(_("Could not scan offset"), strerror(errsv));
             status = EXIT_FAILURE; goto cleanup;
         }
 
         if ( !(sunset = malloc(12)) ) {
-            print_err2(_("Failed to store sunset epoch"), _("Out of Memory"));
+            print_err2(_("Could not store sunset epoch"), _("Out of Memory"));
             status = EXIT_FAILURE; goto cleanup;
         } snprintf(sunset, 11, "%ld", curtime + offset);
     }
@@ -412,7 +412,7 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
                           "label", label, "sunset", sunset);
 
     if ( json_object_set(prov_pastes, uuid, new_paste) == -1 ) {
-        pbpst_err(_("Failed to save new paste object"));
+        pbpst_err(_("Could not save new paste object"));
         status = EXIT_FAILURE; goto cleanup;
     }
 
