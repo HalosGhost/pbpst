@@ -17,7 +17,7 @@ print_err3 (const char * restrict str1, const char * restrict str2,
 
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-    signed ret = fprintf(stderr, "pbpst: %s %s: %s\n", str1, str2, str3);
+    signed ret = fprintf(stderr, "pbpst: %s (%s): %s\n", str1, str2, str3);
     #pragma clang diagnostic pop
     return ret;
 }
@@ -51,7 +51,7 @@ db_locate (const struct pbpst_state * s) {
         errno = 0;
         if ( chdir(dbl) == -1 ) {
             errsv = errno;
-            print_err3("Could not cd to", dbl, strerror(errsv));
+            print_err3(_("Could not cd to directory"), dbl, strerror(errsv));
             return 0;
         }
 
@@ -66,19 +66,11 @@ db_locate (const struct pbpst_state * s) {
                     errno = 0;
                     if ( mkdir(str, 0777) == -1 ) {
                         errsv = errno;
-                        #pragma clang diagnostic push
-                        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-                        fprintf(stderr, "pbpst: Could not create %s/%s: %s\n",
-                                dbl, str, strerror(errsv));
-                        #pragma clang diagnostic pop
+                        print_err2(_("Could not create directory"), strerror(errsv));
                         return 0;
                     }
                 } else {
-                    #pragma clang diagnostic push
-                    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-                    fprintf(stderr, "pbpst: Could not cd to %s/%s: %s\n",
-                            dbl, str, strerror(errsv));
-                    #pragma clang diagnostic pop
+                    print_err2(_("Could not cd to directory"), strerror(errsv));
                     return 0;
                 }
             }
@@ -87,7 +79,7 @@ db_locate (const struct pbpst_state * s) {
         errno = 0;
         if ( chdir(cwd) == -1 ) {
             errsv = errno;
-            print_err3("Could not return to", cwd, strerror(errsv));
+            print_err3(_("Could not cd to directory"), cwd, strerror(errsv));
             return 0;
         }
 
@@ -111,7 +103,7 @@ db_locate (const struct pbpst_state * s) {
         if ( errsv == EEXIST ) {
             return fdb;
         } else {
-            print_err3("Could not open", fdb, strerror(errsv));
+            print_err3(_("Could not open file"), fdb, strerror(errsv));
             free(fdb);
             return 0;
         }
@@ -120,7 +112,7 @@ db_locate (const struct pbpst_state * s) {
     errno = 0;
     if ( close(fd) == -1 ) {
         errsv = errno;
-        print_err3("Could not close", fdb, strerror(errsv));
+        print_err3(_("Could not close file"), fdb, strerror(errsv));
         free(fdb);
         return 0;
     } return fdb;
@@ -181,24 +173,24 @@ db_swp_init (const char * dbl) {
     errno = 0;
     if ( (fd = open(swp_db_name, O_CREAT | O_EXCL, 0666)) == -1 ) {
         errsv = errno;
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, swp_db_err, strerror(errsv), swp_db_name);
-        #pragma clang diagnostic pop
+        print_err2(_("Could not create swap db"), strerror(errsv));
+        fputs(_("Ensure that pbpst is not already running and that all pastes have been saved"),
+              stderr);
+        print_err2(_("Please remove the swap database"), swp_db_name);
         fd = -1; goto cleanup;
     }
 
     errno = 0;
     if ( close(fd) == -1 ) {
         errsv = errno;
-        print_err3("Could not close", swp_db_name, strerror(errsv));
+        print_err3(_("Could not close file"), swp_db_name, strerror(errsv));
         fd = -1; goto cleanup;
     }
 
     errno = 0;
     if ( chdir(cwd) == -1 ) {
         errsv = errno;
-        print_err3("Could not return to", cwd, strerror(errsv));
+        print_err3(_("Could not cd to directory"), cwd, strerror(errsv));
     }
 
     cleanup:
@@ -218,11 +210,7 @@ db_swp_cleanup (const char * restrict dbl, const char * restrict s_dbl) {
     errno = 0;
     if ( rename(s_dbl, dbl) == -1 ) {
         signed errsv = errno;
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, "pbpst: Could not save %s to %s: %s\n", s_dbl,
-                dbl, strerror(errsv));
-        #pragma clang diagnostic pop
+        print_err2(_("Could not overwrite database"), strerror(errsv));
         return -1;
     } return 0;
 }
@@ -235,11 +223,7 @@ db_read (const char * dbl) {
     errno = 0;
     if ( !(f = fopen(dbl, "r")) ) {
         errsv = errno;
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, "pbpst: Could not open %s for reading: %s\n", dbl,
-                strerror(errsv));
-        #pragma clang diagnostic pop
+        print_err3(_("Could not open file for reading"), dbl, strerror(errsv));
         return 0;
     }
 
@@ -249,7 +233,7 @@ db_read (const char * dbl) {
         errno = 0;
         if ( (fseek(f, 0, SEEK_END)) == -1 ) {
             errsv = errno;
-            print_err3("Could not seek to end of", dbl, strerror(errsv));
+            print_err3(_("Could not seek to file end"), dbl, strerror(errsv));
             goto cleanup;
         }
 
@@ -257,13 +241,13 @@ db_read (const char * dbl) {
         errno = 0;
         if ( (size = ftell(f)) == -1 ) {
             errsv = errno;
-            print_err3("Could not check position in", dbl, strerror(errsv));
+            print_err3(_("Could not get file position"), dbl, strerror(errsv));
             goto cleanup;
         }
 
         if ( size == 0 ) { mdb = DEF_DB(); goto cleanup; }
 
-        print_err3("Could not read", dbl, err.text);
+        print_err3(_("Could not read file"), dbl, err.text);
         goto cleanup;
     }
 
@@ -271,7 +255,7 @@ db_read (const char * dbl) {
         errno = 0;
         if ( fclose(f) == -1 ) {
             errsv = errno;
-            print_err3("Could not close", dbl, strerror(errsv));
+            print_err3(_("Could not close file"), dbl, strerror(errsv));
             json_decref(mdb); mdb = 0;
         } return mdb;
 }
@@ -342,7 +326,7 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
     if ( !json ) {
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, "pbpst: %s at %d:%d\n", err.text, err.line, err.column);
+        fprintf(stderr, "pbpst: %s: %d,%d\n", err.text, err.line, err.column);
         #pragma clang diagnostic pop
         return EXIT_FAILURE;
     }
@@ -464,7 +448,7 @@ db_query (const struct pbpst_state * s) {
     json_incref(prov_pastes);
 
     if ( !prov_pastes ) {
-        print_err2("No pastes found for", s->provider);
+        print_err2(_("No pastes found for provider"), s->provider);
         status = EXIT_SUCCESS; goto cleanup;
     }
 

@@ -91,7 +91,7 @@ pb_paste (const struct pbpst_state * s) {
     if ( status != CURLE_OK ) {
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, "pbpst: Could not create paste: %s\n",
+        fprintf(stderr, "pbpst: %s: %s\n", _("Could not create paste"),
                 curl_easy_strerror(status)); goto cleanup;
         #pragma clang diagnostic pop
     }
@@ -169,7 +169,7 @@ pb_shorten (const char * provider, const char * url, const uint16_t verb) {
     if ( status != CURLE_OK ) {
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, "pbpst: Could not create redirect: %s\n",
+        fprintf(stderr, "pbpst: %s: %s\n", _("Could not create redirect")
                 curl_easy_strerror(status)); goto cleanup;
         #pragma clang diagnostic pop
     }
@@ -179,7 +179,7 @@ pb_shorten (const char * provider, const char * url, const uint16_t verb) {
     if ( !json ) {
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, "pbpst: %s at %d:%d\n", err.text, err.line, err.column);
+        fprintf(stderr, "pbpst: %s: %d,%d\n", err.text, err.line, err.column);
         #pragma clang diagnostic pop
         return EXIT_FAILURE;
     }
@@ -264,7 +264,8 @@ pb_remove (const char * provider, const char * uuid, const uint16_t verb) {
         } else {
             #pragma clang diagnostic push
             #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-            fprintf(stderr, "pbpst: Could not delete paste: %d\n", resp_code);
+            fprintf(stderr, "pbpst: %s: %d\n", _("Could not delete paste"),
+                    resp_code);
             #pragma clang diagnostic pop
         }
     }
@@ -322,7 +323,7 @@ pb_list (const struct pbpst_state * s) {
     if ( status != CURLE_OK ) {
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, "pbpst: Could not get list: %s\n",
+        fprintf(stderr, "pbpst: %s: %s\n", _("Could not get list")
                 curl_easy_strerror(status)); goto cleanup;
         #pragma clang diagnostic pop
     }
@@ -333,7 +334,7 @@ pb_list (const struct pbpst_state * s) {
     if ( !json ) {
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, "pbpst: %s at %d:%d\n", err.text, err.line, err.column);
+        fprintf(stderr, "pbpst: %s: %d,%d\n", err.text, err.line, err.column);
         #pragma clang diagnostic pop
         return EXIT_FAILURE;
     }
@@ -369,7 +370,7 @@ print_url (const struct pbpst_state * s, const char * userdata) {
     if ( !json ) {
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, "pbpst: %s at %d:%d\n", err.text, err.line, err.column);
+        fprintf(stderr, "pbpst: %s: %d,%d\n", err.text, err.line, err.column);
         #pragma clang diagnostic pop
         return EXIT_FAILURE;
     }
@@ -421,8 +422,8 @@ print_url (const struct pbpst_state * s, const char * userdata) {
             if ( !*mod_var ) {
                 #pragma clang diagnostic push
                 #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-                fprintf(stderr, "pbpst: Could not modify %s: Out of Memory\n",
-                                mod_names[i]);
+                fprintf(stderr, "pbpst: %s: %s\n",
+                        _("Could not modify variable"), _("Out of Memory"));
                 #pragma clang diagnostic pop
                 goto cleanup;
             } snprintf(*mod_var, tlen + 1, "%s%s", mod_fmts[i], state_mod);
@@ -462,7 +463,8 @@ pb_prune (const struct pbpst_state * s) {
     if ( !prov_pastes ) {
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, "pbpst: No pastes found for: %s\n", s->provider);
+        fprintf(stderr, "pbpst: %s: %s\n", _("No pastes found for provider"),
+                s->provider);
         #pragma clang diagnostic pop
         return EXIT_FAILURE;
     }

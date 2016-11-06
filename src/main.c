@@ -114,7 +114,8 @@ main (signed argc, char * argv []) {
         if ( !S_ISREG(st.st_mode) ) {
             #pragma clang diagnostic push
             #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-            fprintf(stderr, "pbpst: %s is not a regular file\n", state.path);
+            fprintf(stderr, "pbpst: %s: %s\n", _("File is not regular"),
+                    state.path);
             #pragma clang diagnostic pop
             exit_status = EXIT_FAILURE; goto cleanup;
         }
@@ -219,10 +220,7 @@ pbpst_test_options (const struct pbpst_state * s) {
     if ( cl == 'N' ) {
         print_usage(NON, EXIT_FAILURE);
     } else if ( cl != 0 ) {
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, "pbpst: erroneous option(s). See `pbpst -%ch`\n", cl);
-        #pragma clang diagnostic pop
+        pbpst_err(_("Passed erroneous option(s)"));
     } return cl == 0;
 }
 
