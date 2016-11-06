@@ -169,7 +169,7 @@ pb_shorten (const char * provider, const char * url, const uint16_t verb) {
     if ( status != CURLE_OK ) {
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, "pbpst: %s: %s\n", _("Could not create redirect")
+        fprintf(stderr, "pbpst: %s: %s\n", _("Could not create redirect"),
                 curl_easy_strerror(status)); goto cleanup;
         #pragma clang diagnostic pop
     }
@@ -323,7 +323,7 @@ pb_list (const struct pbpst_state * s) {
     if ( status != CURLE_OK ) {
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
-        fprintf(stderr, "pbpst: %s: %s\n", _("Could not get list")
+        fprintf(stderr, "pbpst: %s: %s\n", _("Could not get list"),
                 curl_easy_strerror(status)); goto cleanup;
         #pragma clang diagnostic pop
     }
