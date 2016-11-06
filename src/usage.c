@@ -55,7 +55,7 @@ enum_args (enum pb_cmd cmd, FILE * f) {
     signed status = 0;
     char longbuf [16] = "";
     size_t len = 0;
-    struct optdesc * opts = 0;
+    const struct optdesc * opts = 0;
     switch ( cmd ) {
         case SNC: len = optlen(SNC); opts = optarr(SNC); break;
         case UPD: len = optlen(UPD); opts = optarr(UPD); break;
