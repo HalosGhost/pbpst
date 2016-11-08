@@ -5,6 +5,7 @@ LIBDIR  ?= $(DESTDIR)$(PREFIX)/lib
 BINDIR  ?= $(DESTDIR)$(PREFIX)/bin
 ZSHDIR  ?= $(DESTDIR)$(PREFIX)/share/zsh
 BASHDIR ?= $(DESTDIR)$(PREFIX)/share/bash-completion
+LOCDIR  ?= $(DESTDIR)$(PREFIX)/share/locale
 
 .PHONY: all clean gen clang-analyze cov-build pot simple install uninstall
 
@@ -12,10 +13,11 @@ all: dist
 	@tup upd
 
 clean:
-	@rm -rf -- dist cov-int $(PROGNM).tgz make.sh ./src/*.plist ./po/$(PROGNM).pot
+	@rm -rf -- dist cov-int $(PROGNM).tgz make.sh ./src/*.plist \
+		./i18n/$(PROGNM).pot
 
 dist:
-	@mkdir -p ./dist
+	@mkdir -p ./dist/locale
 
 gen: clean
 	@tup generate make.sh
@@ -28,7 +30,7 @@ clang-analyze:
 	@(pushd ./src; clang-check -analyze ./*.c)
 
 pot:
-	@xgettext -k_ -d $(PROGNM) -o po/$(PROGNM).pot ./src/*.{c,h}
+	@xgettext -k_ -d $(PROGNM) -o i18n/$(PROGNM).pot ./src/*.{c,h}
 
 simple: gen dist
 	@./make.sh
@@ -39,6 +41,7 @@ install:
 	@install -Dm644 dist/pbpst_db.5  $(DOCDIR)/man5/pbpst_db.5
 	@install -Dm644 dist/zsh         $(ZSHDIR)/site-functions/_$(PROGNM)
 	@install -Dm644 dist/bash        $(BASHDIR)/completions/$(PROGNM)
+	@(for i in dist/locale/*.mo; do int=$${i/.mo/}; install -Dm644 $$i $(LOCDIR)/$${int#dist/locale/}/LC_MESSAGES/pbpst.mo; done)
 
 uninstall:
 	@rm -f $(BINDIR)/$(PROGNM)
@@ -46,5 +49,6 @@ uninstall:
 	@rm -f $(DOCDIR)/man5/pbpst_db.5
 	@rm -f $(ZSHDIR)/site-functions/_$(PROGNM)
 	@rm -f $(BASHDIR)/completions/$(PROGNM)
+	@rm -f $(LOCDIR)/*/LC_MESSAGES/pbpst.mo
 
 include Makeeaster

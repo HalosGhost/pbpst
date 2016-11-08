@@ -27,6 +27,10 @@ main (signed argc, char * argv []) {
 
     signed exit_status = EXIT_SUCCESS;
 
+    setlocale(LC_MESSAGES, "");
+    bindtextdomain("pbpst", PREFIX "/share/locale");
+    textdomain("pbpst");
+
     const char * vos = opts_for[NON];
     for ( signed oi = 0, c = getopt_long(argc, argv, vos, os, &oi);
           c != -1; c = getopt_long(argc, argv, vos, os, &oi) ) {
