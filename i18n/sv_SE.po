@@ -1,0 +1,387 @@
+# English translations for pbpst package.
+# Copyright (C) 2016 THE PBPST'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the pbpst package.
+#  <tmplt@dragons.rocks>, 2016.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pbpst 1.4.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-11-08 13:55+0100\n"
+"PO-Revision-Date: 2016-11-08 22:13+0100\n"
+"Last-Translator: Tmplt <tmplt@dragons.rocks>\n"
+"Language-Team: English\n"
+"Language: sv_SE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/callback.c:45
+msgid "Could not allocate memory for response"
+msgstr "Kunde inte allokera minne för svar"
+
+#: src/callback.c:50
+msgid "Could not write response to memory"
+msgstr "Kunde inte skriva svaret till minnet"
+
+#: src/main.c:47
+msgid "You can only run one operation at a time"
+msgstr "Du kan inte genomföra flera operationer samtidigt"
+
+#: src/main.c:76
+msgid "Could not store argument: Out of Memory"
+msgstr "Kunde inte lagra argumentet: slut på minne"
+
+#: src/main.c:114
+msgid "Error checking file"
+msgstr "Filkontrollen misslyckades"
+
+#: src/main.c:121
+msgid "File is not regular"
+msgstr "Ovanlig filtyp"
+
+#: src/main.c:128
+msgid "File too Large"
+msgstr "Filen är för stor"
+
+#: src/main.c:139
+msgid "Sunset must be a finite, positive value"
+msgstr "Sunset måste vara ett ändligt, positivt värde"
+
+#: src/main.c:177
+msgid "Could not store provider"
+msgstr "Kunde inte allokera minne för svar"
+
+#: src/main.c:189
+msgid "Only HTTPS providers are supported"
+msgstr "Endast HTTPS-leverantörer stöds"
+
+#: src/main.c:227
+msgid "Passed erroneous option(s)"
+msgstr "En eller flera inställningar existerar inte"
+
+#: src/main.c:288
+msgid "Removed empty swap flie (contingency)"
+msgstr "Raderade tom växlingsfil"
+
+#: src/main.c:289
+msgid "You need to manually check your swap db"
+msgstr "Du måste manuellt verifiera din växlingsdatabas"
+
+#: src/pb.c:13 src/pb.c:124 src/pb.c:217 src/pb.c:291
+msgid "Could not get CURL handle"
+msgstr "Kunde inte erhålla anslutning med CURL"
+
+#: src/pb.c:94
+msgid "Could not create paste"
+msgstr "Kunde inte ladda upp fil"
+
+#: src/pb.c:172
+msgid "Could not create redirect"
+msgstr "Kunde inte skapa omdirigering"
+
+#: src/pb.c:262
+msgid "Paste deleted"
+msgstr "Fil raderad"
+
+#: src/pb.c:267
+msgid "Could not delete paste"
+msgstr "Kunde inte radera fil"
+
+#: src/pb.c:326
+msgid "Could not get list"
+msgstr "Kunde inte erhålla lista"
+
+#: src/pb.c:426
+msgid "Could not modify variable"
+msgstr "Kunde ej modifiera variabel"
+
+#: src/pb.c:426 src/pbpst_db.c:89 src/pbpst_db.c:131 src/pbpst_db.c:137
+#: src/pbpst_db.c:167 src/pbpst_db.c:379 src/pbpst_db.c:477
+msgid "Out of Memory"
+msgstr "Slut på minne"
+
+#: src/pb.c:433
+msgid "Could not setup URL for printing"
+msgstr "Kunde inte inrätta URL för utskrift"
+
+#: src/pb.c:466 src/pbpst_db.c:451
+msgid "No pastes found for provider"
+msgstr "Inga filer hittades för leverantör"
+
+#: src/pbpst_db.c:36
+msgid "No valid location available for database"
+msgstr "Ingen giltig plats tillgänglig för databas"
+
+#: src/pbpst_db.c:47 src/pbpst_db.c:153
+msgid "Could not save working directory"
+msgstr "Kunde inte spara arbetskatalog"
+
+#: src/pbpst_db.c:54 src/pbpst_db.c:73 src/pbpst_db.c:82 src/pbpst_db.c:193
+msgid "Could not cd to directory"
+msgstr "Kunde inte byta arbetskatalog"
+
+#: src/pbpst_db.c:69
+msgid "Could not create directory"
+msgstr "Kunde inte skapa arbetskatalog"
+
+#: src/pbpst_db.c:89
+msgid "Could not save db path"
+msgstr "Kunde inte spara databasplats"
+
+#: src/pbpst_db.c:106
+msgid "Could not open file"
+msgstr "Kunde inte öppna fil"
+
+#: src/pbpst_db.c:115 src/pbpst_db.c:186 src/pbpst_db.c:258
+msgid "Could not close file"
+msgstr "Kunde inte stänga fil"
+
+#: src/pbpst_db.c:131
+msgid "Could not store db dirname"
+msgstr "Kunde inte lagra databasens arbetskatalog"
+
+#: src/pbpst_db.c:137
+msgid "Could not store db basename"
+msgstr "Kunde inte lagra databasens basnamn"
+
+#: src/pbpst_db.c:160
+msgid "Could not cd to database path"
+msgstr "Kunde inte byta arbetskatalog till detsamma som databas"
+
+#: src/pbpst_db.c:167
+msgid "Could not save swap db name"
+msgstr "Kunde inte lagra växlingsdatabasnamn"
+
+#: src/pbpst_db.c:176
+msgid "Could not create swap db"
+msgstr "Kunde inte skapa växlingsdatabas"
+
+#: src/pbpst_db.c:177
+msgid "Ensure that pbpst is not already running and that all pastes have been saved"
+msgstr "Se till att pbpst inte redan körs och att alla filer har sparats"
+
+#: src/pbpst_db.c:179
+msgid "Please remove the swap database"
+msgstr "Var vänlig radera växlingsdatabasen"
+
+#: src/pbpst_db.c:213
+msgid "Could not overwrite database"
+msgstr "Kunde inte skriva över databas"
+
+#: src/pbpst_db.c:226
+msgid "Could not open file for reading"
+msgstr "Kunde inte öppna fil för läsning"
+
+#: src/pbpst_db.c:236
+msgid "Could not seek to file end"
+msgstr "Kunde inte hitta filens slut"
+
+#: src/pbpst_db.c:244
+msgid "Could not get file position"
+msgstr "Kunde inte hitta filens position"
+
+#: src/pbpst_db.c:250
+msgid "Could not read file"
+msgstr "Kunde inte läsa filen"
+
+#: src/pbpst_db.c:271
+msgid "Could not open swap db"
+msgstr "Kunde inte öppna växlingsdatabas"
+
+#: src/pbpst_db.c:283 src/pbpst_db.c:290
+msgid "Could not flush memory to swap db"
+msgstr "Kunde inte spola minnet till växlingsdatabas"
+
+#: src/pbpst_db.c:313
+msgid "New provider set"
+msgstr "Inget leverantör inställd"
+
+#: src/pbpst_db.c:316
+msgid "Could not set new provider"
+msgstr "Kunde inte ställa in ny leverantör"
+
+#: src/pbpst_db.c:366
+msgid "Paste already existed"
+msgstr "Filen existerar redan"
+
+#: src/pbpst_db.c:374
+msgid "Could not scan offset"
+msgstr "Kunde inte skanna offset"
+
+#: src/pbpst_db.c:379
+msgid "Could not store sunset epoch"
+msgstr "Kunde inte lagra sunset-epok"
+
+#: src/pbpst_db.c:399
+msgid "Could not save new paste object"
+msgstr "Kunde inte spara nytt filobject"
+
+#: src/pbpst_db.c:426
+msgid "No pastes in-database found for provider"
+msgstr "Inga filer i databasen hittades för leverantör"
+
+#: src/pbpst_db.c:431
+msgid "No paste in-database found with uuid"
+msgstr "Inte filer i databasen hittade med uuid"
+
+#: src/pbpst_db.c:477
+msgid "Could not format output"
+msgstr "Kunde inte formatera utskrift"
+
+#: src/usage.c:14
+msgid "operation"
+msgstr "operation"
+
+#: src/usage.c:23
+msgid "Usage"
+msgstr "Användning"
+
+#: src/usage.c:23
+msgid "option"
+msgstr "alternativ"
+
+#: src/usage.c:24
+msgid "a simple tool to pastebin from the command-line"
+msgstr "ett enkelt verktyg för att ladda upp filer eller text från kommandotolken"
+
+#: src/usage.c:25
+msgid "Operations"
+msgstr "Operationer"
+
+#: src/usage.c:25 src/usage.c:29
+msgid "Options"
+msgstr "Alternativ"
+
+#: src/usage.c:36
+msgid "Use `-h` with an operation for more help"
+msgstr "Använd `-h` med en operation för mer hjälp"
+
+#: src/usage.h:12
+msgid "Create a paste"
+msgstr "Ladda upp en fil"
+
+#: src/usage.h:13
+msgid "Create a redirect to URL"
+msgstr "Skapa en omdirigation till URL"
+
+#: src/usage.h:14
+msgid "Remove a paste"
+msgstr "Radera en fil"
+
+#: src/usage.h:15
+msgid "Update a paste"
+msgstr "Uppdatera en fil"
+
+#: src/usage.h:16
+msgid "Operate on the database"
+msgstr "Operera på databasen"
+
+#: src/usage.h:19
+msgid "Use FILE to create paste"
+msgstr "Använd FILE för att skapa fil"
+
+#: src/usage.h:20
+msgid "Lex paste for LANG"
+msgstr "Lex:a fil för LANG"
+
+#: src/usage.h:21
+msgid "Use THEME for style"
+msgstr "Använd THEME för tema"
+
+#: src/usage.h:22
+msgid "Format paste for FORM"
+msgstr "Formatera fil för FORM"
+
+#: src/usage.h:23
+msgid "Specify file extension as EXT"
+msgstr "Specificera filtillägg som EXT"
+
+#: src/usage.h:24
+msgid "Highlight LINE in paste"
+msgstr "Markera LINE i fil"
+
+#: src/usage.h:25
+msgid "Return a less-guessable paste ID"
+msgstr "Returnera ett mindre gissningsbart fil-ID"
+
+#: src/usage.h:26
+msgid "Set the paste to auto-deletion in TIME"
+msgstr "Ställ in att automatiskt radera filen efter TIME"
+
+#: src/usage.h:27
+msgid "Render paste (from md or rst) to HTML"
+msgstr "Rendera fil (från md eller rst) till HTML"
+
+#: src/usage.h:28
+msgid "Show Asciinema presentation"
+msgstr "Visa Asciinema-presentation"
+
+#: src/usage.h:29
+msgid "Show an upload progress bar"
+msgstr "Visa status för uppladdning"
+
+#: src/usage.h:30
+msgid "Save MSG as a note for the paste"
+msgstr "Notera filen med MSG"
+
+#: src/usage.h:31
+msgid "Use NAME as a custom ID"
+msgstr "Använd NAME som ID"
+
+#: src/usage.h:34 src/usage.h:43
+msgid "Target paste with UUID"
+msgstr "Specificera fil med UUID"
+
+#: src/usage.h:37
+msgid "Delete all expired pastes"
+msgstr "Radera alla utgångna filer"
+
+#: src/usage.h:40
+msgid "Initialize a default database"
+msgstr "Initialisera en standarddatabas"
+
+#: src/usage.h:41
+msgid "List all providers in the database"
+msgstr "Skriv ut alla leverantörer i databasen"
+
+#: src/usage.h:42
+msgid "Search the database for a paste matching STR"
+msgstr "Sök i databasen efter en fil som matchar STR"
+
+#: src/usage.h:44
+msgid "Set provider (from `-P`) as default"
+msgstr "Ställ in leverantör (från `-P`) som standard"
+
+#: src/usage.h:47
+msgid "List this help and exit"
+msgstr "Skriv ut detta hjälpmeddelande och avsluta"
+
+#: src/usage.h:48
+msgid "Use the database at PATH"
+msgstr "Använd databasen som finns i PATH"
+
+#: src/usage.h:49
+msgid "Use HOST as the pb provider"
+msgstr "Använd HOST som leverantör"
+
+#: src/usage.h:50
+msgid "Output verbosely"
+msgstr "Skriv ut programspecifika detaljer"
+
+#: src/usage.h:51
+msgid "List the version and exit"
+msgstr "Skriv ut programmets version och avsluta"
+
+#: src/usage.h:52
+msgid "List available lexers and exit"
+msgstr "Skriv ut tillgängliga lex:are och avsluta"
+
+#: src/usage.h:53
+msgid "List available themes and exit"
+msgstr "Skriv ut tillgängliga teman och avsluta"
+
+#: src/usage.h:54
+msgid "List available formatters and exit"
+msgstr "Skriv ut tillgängliga formaterare och avsluta"
