@@ -41,7 +41,7 @@ install:
 	@install -Dm644 dist/pbpst_db.5  $(DOCDIR)/man5/pbpst_db.5
 	@install -Dm644 dist/zsh         $(ZSHDIR)/site-functions/_$(PROGNM)
 	@install -Dm644 dist/bash        $(BASHDIR)/completions/$(PROGNM)
-	#@(for i in dist/locale/*.mo; do int=$${i/.mo/}; install -Dm644 $$i $(LOCDIR)/$${int#dist/locale/}/LC_MESSAGES/pbpst.mo; done)
+	@(for i in dist/locale/*.mo; do int=$${i/.mo/}; install -Dm644 $$i $(LOCDIR)/$${int#dist/locale/}/LC_MESSAGES/pbpst.mo; done)
 
 uninstall:
 	@rm -f $(BINDIR)/$(PROGNM)
