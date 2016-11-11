@@ -18,9 +18,12 @@ bool point_of_no_return = false;
 signed
 main (signed argc, char * argv []) {
 
-    setlocale(LC_MESSAGES, "");
-    bindtextdomain("pbpst", PREFIX "/share/locale");
-    textdomain("pbpst");
+    if ( !setlocale(LC_MESSAGES, "") ||
+         !bindtextdomain("pbpst", PREFIX "/share/locale") ||
+         !textdomain("pbpst") ) {
+        pbpst_err("Failed to initialize internationalization");
+        return EXIT_FAILURE;
+    }
 
     if ( argc <= 1 ) {
         print_usage(NON, EXIT_FAILURE);
