@@ -76,7 +76,11 @@ main (signed argc, char * argv []) {
             svcase:
                 *state_var = (char * )malloc(l);
                 if ( !*state_var ) {
-                    pbpst_err(_("Could not store argument: Out of Memory"));
+                    #pragma clang diagnostic push
+                    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+                    fprintf(stderr, "pbpst: %s: %s\n",
+                            _("Could not store argument"), _("Out of Memory"));
+                    #pragma clang diagnostic pop
                     goto cleanup;
                 } snprintf(*state_var, l, "%s", optarg); break;
 
