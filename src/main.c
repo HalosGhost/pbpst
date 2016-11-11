@@ -249,12 +249,14 @@ pbpst_dispatch (const struct pbpst_state * s) {
 noreturn void
 signal_handler (signed signum) {
 
-    #define SIGMSG "\rpbpst: Caught \x1b[?25h"
     const char * const siglist [] = {
-        [SIGINT] = SIGMSG "Interrupt\n"
+        [SIGINT] = _("Caught Interrupt")
     };
 
-    fputs(siglist[signum], stderr);
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+    fprintf(stderr, "pbpst: %s\x1b[?25h\n", siglist[signum]);
+    #pragma clang diagnostic pop
     pbpst_cleanup();
     exit(EXIT_FAILURE);
 }
