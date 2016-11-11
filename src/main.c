@@ -18,6 +18,10 @@ bool point_of_no_return = false;
 signed
 main (signed argc, char * argv []) {
 
+    setlocale(LC_MESSAGES, "");
+    bindtextdomain("pbpst", PREFIX "/share/locale");
+    textdomain("pbpst");
+
     if ( argc <= 1 ) {
         print_usage(NON, EXIT_FAILURE);
         return EXIT_FAILURE;
@@ -26,10 +30,6 @@ main (signed argc, char * argv []) {
     signal(SIGINT, signal_handler);
 
     signed exit_status = EXIT_SUCCESS;
-
-    setlocale(LC_MESSAGES, "");
-    bindtextdomain("pbpst", PREFIX "/share/locale");
-    textdomain("pbpst");
 
     const char * vos = opts_for[NON];
     for ( signed oi = 0, c = getopt_long(argc, argv, vos, os, &oi);
