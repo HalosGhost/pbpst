@@ -20,7 +20,8 @@ main (signed argc, char * argv []) {
 
     if ( !setlocale(LC_MESSAGES, "") ||
          !bindtextdomain("pbpst", PREFIX "/share/locale") ||
-         !textdomain("pbpst") ) {
+         !textdomain("pbpst") ||
+         !bind_textdomain_codeset("pbpst", "utf-8") ) {
         pbpst_err("Failed to initialize internationalization");
         return EXIT_FAILURE;
     }
