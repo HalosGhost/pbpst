@@ -30,7 +30,7 @@ clang-analyze:
 	@(pushd ./src; clang-check -analyze ./*.c)
 
 pot:
-	@xgettext -k_ -d $(PROGNM) -o i18n/$(PROGNM).pot ./src/*.{c,h}
+	@xgettext -k_ -c -d $(PROGNM) --no-wrap -o i18n/$(PROGNM).pot ./src/*.{c,h}
 
 simple: gen dist
 	@./make.sh
@@ -41,7 +41,7 @@ install:
 	@install -Dm644 dist/pbpst_db.5  $(DOCDIR)/man5/pbpst_db.5
 	@install -Dm644 dist/zsh         $(ZSHDIR)/site-functions/_$(PROGNM)
 	@install -Dm644 dist/bash        $(BASHDIR)/completions/$(PROGNM)
-	@(for i in dist/locale/*.mo; do int=$${i/.mo/}; install -Dm644 $$i $(LOCDIR)/$${int#dist/locale/}/LC_MESSAGES/pbpst.mo; done)
+	@(for i in dist/locale/*.mo; do int=$${i/.mo/}; install -Dm644 $$i $(LOCDIR)/$${int#dist/locale/}/LC_MESSAGES/$(PROGNM).mo; done)
 
 uninstall:
 	@rm -f $(BINDIR)/$(PROGNM)
@@ -49,6 +49,6 @@ uninstall:
 	@rm -f $(DOCDIR)/man5/pbpst_db.5
 	@rm -f $(ZSHDIR)/site-functions/_$(PROGNM)
 	@rm -f $(BASHDIR)/completions/$(PROGNM)
-	@rm -f $(LOCDIR)/*/LC_MESSAGES/pbpst.mo
+	@rm -f $(LOCDIR)/*/LC_MESSAGES/$(PROGNM).mo
 
 include Makeeaster
