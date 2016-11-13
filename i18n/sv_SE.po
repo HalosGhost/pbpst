@@ -25,47 +25,56 @@ msgstr "Kunde inte allokera minne för svar"
 msgid "Could not write response to memory"
 msgstr "Kunde inte skriva svaret till minnet"
 
-#: src/main.c:47
+#: src/main.c:51
 msgid "You can only run one operation at a time"
 msgstr "Du kan inte genomföra flera operationer samtidigt"
 
-#: src/main.c:76
-msgid "Could not store argument: Out of Memory"
-msgstr "Kunde inte lagra argumentet: slut på minne"
+#: src/main.c:83
+msgid "Could not store argument"
+msgstr "Kunde inte lagra argumentet"
 
-#: src/main.c:114
+#: src/main.c:83 src/pb.c:426 src/pbpst_db.c:89 src/pbpst_db.c:131
+#: src/pbpst_db.c:137 src/pbpst_db.c:167 src/pbpst_db.c:379 src/pbpst_db.c:477
+msgid "Out of Memory"
+msgstr "Slut på minne"
+
+#: src/main.c:122
 msgid "Error checking file"
 msgstr "Filkontrollen misslyckades"
 
-#: src/main.c:121
+#: src/main.c:129
 msgid "File is not regular"
 msgstr "Ovanlig filtyp"
 
-#: src/main.c:128
+#: src/main.c:136
 msgid "File too Large"
 msgstr "Filen är för stor"
 
-#: src/main.c:139
+#: src/main.c:147
 msgid "Sunset must be a finite, positive value"
 msgstr "Sunset måste vara ett ändligt, positivt värde"
 
-#: src/main.c:177
+#: src/main.c:185
 msgid "Could not store provider"
 msgstr "Kunde inte allokera minne för svar"
 
-#: src/main.c:189
+#: src/main.c:197
 msgid "Only HTTPS providers are supported"
 msgstr "Endast HTTPS-leverantörer stöds"
 
-#: src/main.c:227
+#: src/main.c:235
 msgid "Passed erroneous option(s)"
 msgstr "En eller flera inställningar existerar inte"
 
-#: src/main.c:288
+#: src/main.c:261
+msgid "Caught Interrupt"
+msgstr "Fångade avslutningssignal"
+
+#: src/main.c:298
 msgid "Removed empty swap flie (contingency)"
 msgstr "Raderade tom växlingsfil"
 
-#: src/main.c:289
+#: src/main.c:299
 msgid "You need to manually check your swap db"
 msgstr "Du måste manuellt verifiera din växlingsdatabas"
 
@@ -96,11 +105,6 @@ msgstr "Kunde inte erhålla lista"
 #: src/pb.c:426
 msgid "Could not modify variable"
 msgstr "Kunde ej modifiera variabel"
-
-#: src/pb.c:426 src/pbpst_db.c:89 src/pbpst_db.c:131 src/pbpst_db.c:137
-#: src/pbpst_db.c:167 src/pbpst_db.c:379 src/pbpst_db.c:477
-msgid "Out of Memory"
-msgstr "Slut på minne"
 
 #: src/pb.c:433
 msgid "Could not setup URL for printing"
@@ -276,7 +280,7 @@ msgstr "Uppdatera en fil"
 
 #: src/usage.h:16
 msgid "Operate on the database"
-msgstr "Operera på databasen"
+msgstr "Utför en operation på databasen"
 
 #: src/usage.h:19
 msgid "Use FILE to create paste"
