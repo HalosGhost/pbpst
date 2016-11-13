@@ -295,7 +295,7 @@ pbpst_cleanup (void) {
         struct stat st;
         if ( stat(swp_db_loc, &st) == 0 && st.st_size == 0 ) {
             pbpst_err( !point_of_no_return && !remove(swp_db_loc)
-                     ? _("Removed empty swap flie (contingency)")
+                     ? _("Removed empty swap file (contingency)")
                      : _("You need to manually check your swap db"));
         } free(swp_db_loc);
     }
