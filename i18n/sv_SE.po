@@ -71,7 +71,7 @@ msgid "Caught Interrupt"
 msgstr "Fångade avslutningssignal"
 
 #: src/main.c:298
-msgid "Removed empty swap flie (contingency)"
+msgid "Removed empty swap file (contingency)"
 msgstr "Raderade tom växlingsfil"
 
 #: src/main.c:299
