@@ -1,5 +1,5 @@
 # Swedish translations for pbpst package.
-# Copyright (C) 2016 PBPST'S COPYRIGHT HOLDER
+# Copyright (C) 2016 Sam Stuewe
 # This file is distributed under the same license as the pbpst package.
 #  <tmplt@dragons.rocks>, 2016.
 #
