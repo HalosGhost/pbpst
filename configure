@@ -67,10 +67,16 @@ update () {
     sed -i ./src/main.h -re "s|(define $1) (.*)$|\\1 $2|"
 }
 
+update_makevar () {
+    sed -i ./Makefile -re "1s|$1\\s?(.?=).*|$1  \\1 $2|;t" \
+                       -e "1,/$1\\s?(.?=).*/s||$1  \\1 $2|"
+}
+
 default_config () {
     update FALLBACK_PROVIDER '"https://ptpb.pw/"'
     update PB_FILE_MAX '67108864'
     update PREFIX '"/usr/local"'
+    update_makevar PREFIX '/usr/local'
     update_tuprule CFLAGS "${def_cflags[*]}"
     update_tuprule CC 'clang'
 }
@@ -99,7 +105,10 @@ for i in "$@"; do
         --file-max=*)   update PB_FILE_MAX "${i#*=}"; shift;;
         --help)         usage; exit 0;;
         --provider=*)   update FALLBACK_PROVIDER "\"${i#*=}\""; shift;;
-        --prefix=*)     update PREFIX "\"${i#*=}\""; shift;;
+        --prefix=*)     pref="${i#*=}"
+                        update PREFIX "\"$pref\""
+                        update_makevar PREFIX "$pref"
+                        shift;;
         --reset-config) default_config; break;
     esac
 done
