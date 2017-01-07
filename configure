@@ -68,8 +68,8 @@ update () {
 }
 
 update_makevar () {
-    sed -i ./Makefile -re "1s|$1\\s?(.?=).*|$1  \\1 $2|;t" \
-                       -e "1,/$1\\s?(.?=).*/s||$1  \\1 $2|"
+    sed -i ./Makefile -re "1s|$1((\\s+)?.?=).*|$1\\1 $2|;t" \
+                       -e "1,/$1((\\s+)?.?=).*/s||$1\\1 $2|"
 }
 
 default_config () {
