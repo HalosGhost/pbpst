@@ -14,10 +14,7 @@ print_usage (const enum pb_cmd command, signed status) {
         case NON: op = _("operation");  break;
     }
 
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
     FILE * f = status ? stderr : stdout;
-    #pragma clang diagnostic pop
 
     status = fprintf(f, "%s: pbpst <%s> [%s ...]\npbpst -- %s\n\n%s:\n",
                      _("Usage"), op, _("option"),

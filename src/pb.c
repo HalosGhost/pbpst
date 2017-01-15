@@ -14,10 +14,7 @@ pb_paste (const struct pbpst_state * s) {
         return CURLE_FAILED_INIT;
     }
 
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
     curl_easy_setopt(handle, CURLOPT_VERBOSE, s->verb >= 2);
-    #pragma clang diagnostic pop
 
     struct curl_httppost * post = NULL, * last = NULL;
     size_t tlen = strlen(s->provider) + (
@@ -26,10 +23,7 @@ pb_paste (const struct pbpst_state * s) {
 
     struct curl_slist * list = NULL;
     list = curl_slist_append(list, "Accept: application/json");
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
     curl_easy_setopt(handle, CURLOPT_HTTPHEADER, list);
-    #pragma clang diagnostic pop
 
     struct CurlResponse * response_data = malloc(sizeof(struct CurlResponse));
     char * target = malloc(tlen);
@@ -55,10 +49,7 @@ pb_paste (const struct pbpst_state * s) {
         }
     } else if ( s->cmd == UPD && s->uuid ) {
         snprintf(target, tlen, "%s%s", s->provider, s->uuid);
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "PUT");
-        #pragma clang diagnostic pop
     }
 
     fc = curl_formadd(&post,                &last,
@@ -76,8 +67,6 @@ pb_paste (const struct pbpst_state * s) {
         if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
     }
 
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
     curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
     curl_easy_setopt(handle, CURLOPT_FAILONERROR, 1L);
     curl_easy_setopt(handle, CURLOPT_URL, target);
@@ -85,15 +74,11 @@ pb_paste (const struct pbpst_state * s) {
     curl_easy_setopt(handle, CURLOPT_NOPROGRESS, (long )false);
     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &pb_write_cb);
     curl_easy_setopt(handle, CURLOPT_WRITEDATA, response_data);
-    #pragma clang diagnostic pop
 
     status = curl_easy_perform(handle);
     if ( status != CURLE_OK ) {
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         fprintf(stderr, "pbpst: %s: %s\n", _("Could not create paste"),
                 curl_easy_strerror(status)); goto cleanup;
-        #pragma clang diagnostic pop
     }
 
     status = db_add_entry(s, response_data->mem) == EXIT_SUCCESS
@@ -125,20 +110,14 @@ pb_shorten (const char * provider, const char * url, const uint16_t verb) {
         return CURLE_FAILED_INIT;
     }
 
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
     curl_easy_setopt(handle, CURLOPT_VERBOSE, verb >= 2);
-    #pragma clang diagnostic pop
 
     struct curl_httppost * post = NULL, * last = NULL;
     size_t tlen = strlen(provider) + 6;
 
     struct curl_slist * list = NULL;
     list = curl_slist_append(list, "Accept: application/json");
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
     curl_easy_setopt(handle, CURLOPT_HTTPHEADER, list);
-    #pragma clang diagnostic pop
 
     struct CurlResponse * response_data = malloc(sizeof(struct CurlResponse));
     char * target = malloc(tlen);
@@ -155,32 +134,23 @@ pb_shorten (const char * provider, const char * url, const uint16_t verb) {
     if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
 
     snprintf(target, tlen, "%s%c", provider, 'u');
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
     curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
     curl_easy_setopt(handle, CURLOPT_URL, target);
     curl_easy_setopt(handle, CURLOPT_XFERINFOFUNCTION, &pb_progress_cb);
     curl_easy_setopt(handle, CURLOPT_NOPROGRESS, (long )false);
     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &pb_write_cb);
     curl_easy_setopt(handle, CURLOPT_WRITEDATA, response_data);
-    #pragma clang diagnostic pop
 
     status = curl_easy_perform(handle);
     if ( status != CURLE_OK ) {
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         fprintf(stderr, "pbpst: %s: %s\n", _("Could not create redirect"),
                 curl_easy_strerror(status)); goto cleanup;
-        #pragma clang diagnostic pop
     }
 
     json_error_t err;
     json_t * json = json_loads(response_data->mem, 0, &err);
     if ( !json ) {
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         fprintf(stderr, "pbpst: %s: %d,%d\n", err.text, err.line, err.column);
-        #pragma clang diagnostic pop
         return EXIT_FAILURE;
     }
 
@@ -218,18 +188,12 @@ pb_remove (const char * provider, const char * uuid, const uint16_t verb) {
         return CURLE_FAILED_INIT;
     }
 
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
     curl_easy_setopt(handle, CURLOPT_VERBOSE, verb >= 2);
-    #pragma clang diagnostic pop
 
     struct curl_slist * list = NULL;
     list = curl_slist_append(list, "Accept: application/json");
 
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
     curl_easy_setopt(handle, CURLOPT_HTTPHEADER, list);
-    #pragma clang diagnostic pop
 
     struct CurlResponse * response_data = malloc(sizeof(struct CurlResponse));
     size_t target_len = strlen(provider) + strlen(uuid) + 1;
@@ -241,32 +205,23 @@ pb_remove (const char * provider, const char * uuid, const uint16_t verb) {
 
     snprintf(target, target_len, "%s%s", provider, uuid);
 
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
     curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "DELETE");
     curl_easy_setopt(handle, CURLOPT_URL, target);
     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &pb_write_cb);
     curl_easy_setopt(handle, CURLOPT_WRITEDATA, response_data);
-    #pragma clang diagnostic pop
 
     status = curl_easy_perform(handle);
     if ( status == CURLE_OK ) {
         long resp_code = 0;
 
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         curl_easy_getinfo(handle, CURLINFO_RESPONSE_CODE, &resp_code);
-        #pragma clang diagnostic pop
 
         if ( resp_code == 200 ) {
             pbpst_err(_("Paste deleted"));
             db_remove_entry(provider, uuid);
         } else {
-            #pragma clang diagnostic push
-            #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
             fprintf(stderr, "pbpst: %s: %d\n", _("Could not delete paste"),
                     resp_code);
-            #pragma clang diagnostic pop
         }
     }
 
@@ -295,11 +250,8 @@ pb_list (const struct pbpst_state * s) {
     struct curl_slist * list = NULL;
     list = curl_slist_append(list, "Accept: application/json");
 
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
     curl_easy_setopt(handle, CURLOPT_HTTPHEADER, list);
     curl_easy_setopt(handle, CURLOPT_VERBOSE, s->verb >= 2);
-    #pragma clang diagnostic pop
 
     struct CurlResponse * response_data = malloc(sizeof(struct CurlResponse));
     size_t target_len = strlen(s->provider) + 3;
@@ -312,30 +264,21 @@ pb_list (const struct pbpst_state * s) {
     const char route [] = { 'l', s->lthm ? 's' : s->lfrm ? 'f' : 0, 0 };
     snprintf(target, target_len, "%s%s", s->provider, route);
 
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
     curl_easy_setopt(handle, CURLOPT_URL, target);
     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &pb_write_cb);
     curl_easy_setopt(handle, CURLOPT_WRITEDATA, response_data);
-    #pragma clang diagnostic pop
 
     status = curl_easy_perform(handle);
     if ( status != CURLE_OK ) {
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         fprintf(stderr, "pbpst: %s: %s\n", _("Could not get list"),
                 curl_easy_strerror(status)); goto cleanup;
-        #pragma clang diagnostic pop
     }
 
     size_t idx;
     json_error_t err;
     json_t * value, * json = json_loads(response_data->mem, 0, &err);
     if ( !json ) {
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         fprintf(stderr, "pbpst: %s: %d,%d\n", err.text, err.line, err.column);
-        #pragma clang diagnostic pop
         return EXIT_FAILURE;
     }
 
@@ -368,10 +311,7 @@ print_url (const struct pbpst_state * s, const char * userdata) {
     json_error_t err;
     json_t * json = json_loads(userdata, 0, &err);
     if ( !json ) {
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         fprintf(stderr, "pbpst: %s: %d,%d\n", err.text, err.line, err.column);
-        #pragma clang diagnostic pop
         return EXIT_FAILURE;
     }
 
@@ -420,11 +360,8 @@ print_url (const struct pbpst_state * s, const char * userdata) {
             size_t tlen = strlen(state_mod) + strlen(mod_fmts[i]);
             *mod_var = malloc(tlen + 2);
             if ( !*mod_var ) {
-                #pragma clang diagnostic push
-                #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
                 fprintf(stderr, "pbpst: %s: %s\n",
                         _("Could not modify variable"), _("Out of Memory"));
-                #pragma clang diagnostic pop
                 goto cleanup;
             } snprintf(*mod_var, tlen + 1, "%s%s", mod_fmts[i], state_mod);
         } else if ( mod_var ) {
@@ -461,11 +398,8 @@ pb_prune (const struct pbpst_state * s) {
     json_incref(prov_pastes);
 
     if ( !prov_pastes ) {
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         fprintf(stderr, "pbpst: %s: %s\n", _("No pastes found for provider"),
                 s->provider);
-        #pragma clang diagnostic pop
         return EXIT_FAILURE;
     }
 

@@ -4,10 +4,7 @@
 signed
 print_err2 (const char * restrict action, const char * restrict explanation) {
 
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
     signed ret = fprintf(stderr, "pbpst: %s: %s\n", action, explanation);
-    #pragma clang diagnostic pop
     return ret;
 }
 
@@ -15,10 +12,7 @@ signed
 print_err3 (const char * restrict str1, const char * restrict str2,
             const char * restrict str3) {
 
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
     signed ret = fprintf(stderr, "pbpst: %s (%s): %s\n", str1, str2, str3);
-    #pragma clang diagnostic pop
     return ret;
 }
 
@@ -324,10 +318,7 @@ db_add_entry (const struct pbpst_state * s, const char * userdata) {
     json_error_t err;
     json_t * json = json_loads(userdata, 0, &err);
     if ( !json ) {
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
         fprintf(stderr, "pbpst: %s: %d,%d\n", err.text, err.line, err.column);
-        #pragma clang diagnostic pop
         return EXIT_FAILURE;
     }
 

@@ -77,11 +77,8 @@ main (signed argc, char * argv []) {
             svcase:
                 *state_var = (char * )malloc(l);
                 if ( !*state_var ) {
-                    #pragma clang diagnostic push
-                    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
                     fprintf(stderr, "pbpst: %s: %s\n",
                             _("Could not store argument"), _("Out of Memory"));
-                    #pragma clang diagnostic pop
                     goto cleanup;
                 } snprintf(*state_var, l, "%s", optarg); break;
 
@@ -124,11 +121,8 @@ main (signed argc, char * argv []) {
         }
 
         if ( !S_ISREG(st.st_mode) ) {
-            #pragma clang diagnostic push
-            #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
             fprintf(stderr, "pbpst: %s: %s\n", _("File is not regular"),
                     state.path);
-            #pragma clang diagnostic pop
             exit_status = EXIT_FAILURE; goto cleanup;
         }
 
@@ -261,10 +255,7 @@ signal_handler (signed signum) {
         [SIGINT] = _("Caught Interrupt")
     };
 
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
     fprintf(stderr, "pbpst: %s\x1b[?25h\n", siglist[signum]);
-    #pragma clang diagnostic pop
     pbpst_cleanup();
     exit(EXIT_FAILURE);
 }
@@ -307,10 +298,7 @@ pbpst_cleanup (void) {
 signed
 pbpst_err (const char * explanation) {
 
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
     signed ret = fprintf(stderr, "pbpst: %s\n", explanation);
-    #pragma clang diagnostic pop
     return ret;
 }
 
