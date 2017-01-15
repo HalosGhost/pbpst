@@ -220,7 +220,7 @@ pb_remove (const char * provider, const char * uuid, const uint16_t verb) {
             pbpst_err(_("Paste deleted"));
             db_remove_entry(provider, uuid);
         } else {
-            fprintf(stderr, "pbpst: %s: %d\n", _("Could not delete paste"),
+            fprintf(stderr, "pbpst: %s: %ld\n", _("Could not delete paste"),
                     resp_code);
         }
     }

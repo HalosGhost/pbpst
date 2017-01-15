@@ -65,7 +65,7 @@ enum_args (enum pb_cmd cmd, FILE * f) {
     for ( size_t i = 0 ; i < len; ++ i ) {
         if ( !opts[i].flag ) { break; }
         if ( opts[i].flag < 256 ) {
-            status += fprintf(f, "  -%c, ", opts[i].flag);
+            status += fprintf(f, "  -%c, ", (char )opts[i].flag);
         } else {
             status += fputs("      ", f);
         }
