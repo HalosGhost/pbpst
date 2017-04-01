@@ -64,7 +64,7 @@ update_tuprule () {
 }
 
 update () {
-    sed -i ./src/main.h -re "s|(define $1) (.*)$|\\1 $2|"
+    sed -i ./src/main.h -re "s|(define $1)(\s*)(.*)$|\\1\\2$2|"
 }
 
 update_makevar () {
@@ -87,7 +87,7 @@ show_tuprule () {
 
 show_value () {
     printf "$1: %s\n" \
-       "$('grep' "#define $2" ./src/main.h | sed -re "s/#define $2 (.*)$/\\1/")"
+        "$('grep' "#define $2" ./src/main.h | sed -re "s/#define $2(\s*)(.*)$/\\2/")"
 }
 
 show_config () {
