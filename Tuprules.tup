@@ -1,4 +1,4 @@
 VERSION = `git describe --long --tags`
 CFLAGS = -g -O3 -fPIE -pie -Weverything -Werror -Wno-disabled-macro-expansion -std=c11 -ggdb -D_FORTIFY_SOURCE=2 -fstack-protector-strong -march=native --param=ssp-buffer-size=1 -Wl,-z,relro,-z,now -flto -fsanitize=undefined -fsanitize-trap=undefined
-LDFLAGS = `pkg-config --libs-only-l libcurl jansson`
+LDFLAGS = `pkg-config --libs-only-l libcurl jansson` -lm
 CC = clang
