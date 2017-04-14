@@ -16,7 +16,7 @@ const char * def_provider = 0;
 bool point_of_no_return = false;
 
 signed
-main (signed argc, const char * argv []) {
+main (signed argc, char *const argv []) {
 
     if ( !setlocale(LC_MESSAGES, "") ||
          !bindtextdomain("pbpst", PREFIX "/share/locale") ||
