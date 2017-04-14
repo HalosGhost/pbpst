@@ -137,7 +137,11 @@ main (signed argc, char *const argv []) {
         char unit = 0;
         sscanf(state.secs, "%lf%c", &count, &unit);
 
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wconversion"
+        #pragma clang diagnostic ignored "-Wdouble-promotion"
         if ( !isfinite(count) && count > 0 ) {
+        #pragma clang diagnostic pop
             pbpst_err(_("Sunset must be a finite, positive value"));
             exit_status = EXIT_FAILURE; goto cleanup;
         }
