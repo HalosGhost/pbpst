@@ -172,7 +172,9 @@ Database Options
     List all providers currently in the database (one per line).
 
 -q, --query=STR
-    Search each paste in the pastes object for text matching STR. Matches will be printed to :file:`stdout` with the form ``<uuid>\t<provider>/<id>\t<msg>\t<sunset>`` where ``<id>`` is either the long id or a vanity label if one exists.
+    Search each field of each paste in the pastes object for text partially matching STR.
+    Matches will be printed to :file:`stdout` with the form ``<uuid>\t<provider>/<id>\t<msg>\t<sunset>`` where ``<id>`` is either the long id or a vanity label if one exists.
+    Note: This option will respect the default provider and the ``-P`` option.
 
 -d, --delete=UUID
     Remove (locally) the paste from the pastes object specified by UUID.
@@ -200,6 +202,9 @@ pbpst -Ru <UUID>
 
 pbpst -Uu <UUID> -f <filepath>
     update a paste to the file at <filepath> using <UUID> for authentication
+
+pbpst -Dq '<search>'
+    search for a paste matching <search>
 
 for i in "$(pbpst -DH)"; do pbpst -Dq '<search>' -P "$i"; done
     search for a paste matching <search> regardless of provider
