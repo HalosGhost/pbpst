@@ -18,11 +18,23 @@ bool point_of_no_return = false;
 signed
 main (signed argc, char *const argv []) {
 
-    if ( !setlocale(LC_MESSAGES, "") ||
-         !bindtextdomain("pbpst", PREFIX "/share/locale") ||
-         !textdomain("pbpst") ||
-         !bind_textdomain_codeset("pbpst", "utf-8") ) {
-        pbpst_err("Failed to initialize internationalization");
+    if ( !setlocale(LC_MESSAGES, "") ) {
+        pbpst_err("Failed to set locale");
+        return EXIT_FAILURE;
+    }
+
+    if ( !bindtextdomain("pbpst", PREFIX "/share/locale") ) {
+        pbpst_err("Failed to bind text domain");
+        return EXIT_FAILURE;
+    }
+
+    if ( !textdomain("pbpst") ) {
+        pbpst_err("Failed to set text domain");
+        return EXIT_FAILURE;
+    }
+
+    if ( !bind_textdomain_codeset("pbpst", "utf-8") ) {
+        pbpst_err("Failed to set text domain codeset");
         return EXIT_FAILURE;
     }
 
