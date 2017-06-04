@@ -24,17 +24,20 @@ main (signed argc, char *const argv []) {
     }
 
     if ( !bindtextdomain("pbpst", PREFIX "/share/locale") ) {
-        pbpst_err("Failed to bind text domain");
+        fprintf(stderr, "pbpst: %s: %s\n", "Failed to bind text domain",
+                                           strerror(errno));
         return EXIT_FAILURE;
     }
 
     if ( !textdomain("pbpst") ) {
-        pbpst_err("Failed to set text domain");
+        fprintf(stderr, "pbpst: %s: %s\n", "Failed to set text domain",
+                                           strerror(errno));
         return EXIT_FAILURE;
     }
 
     if ( !bind_textdomain_codeset("pbpst", "utf-8") ) {
-        pbpst_err("Failed to set text domain codeset");
+        fprintf(stderr, "pbpst: %s: %s\n", "Failed to bind text domain codeset",
+                                           strerror(errno));
         return EXIT_FAILURE;
     }
 
