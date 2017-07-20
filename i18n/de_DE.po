@@ -1,0 +1,392 @@
+# German translations for pbpst package
+# Copyright (C) 2017 Sam Stuewe
+# This file is distributed under the same license as the pbpst package.
+#  <khorne@khorne.me>, 2017.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pbpst 1.4.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-08 12:08+0200\n"
+"PO-Revision-Date: 2017-07-08 12:55+0200\n"
+"Last-Translator: khorne@khorne.me\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.0.2\n"
+
+#: src/callback.c:42
+msgid "Could not allocate memory for response"
+msgstr "Speicher für Antwort konnte nicht zugewiesen werden"
+
+#: src/callback.c:47
+msgid "Could not write response to memory"
+msgstr "Antwort kann nicht in Speicher geschrieben werden"
+
+#: src/main.c:66
+msgid "You can only run one operation at a time"
+msgstr "Nur eine Operation kann gleichzeitig ausgeführt werden"
+
+#: src/main.c:96
+msgid "Could not store argument"
+msgstr "Konnte Argument nicht speichern"
+
+#: src/main.c:96 src/pb.c:364 src/pbpst_db.c:83 src/pbpst_db.c:125
+#: src/pbpst_db.c:131 src/pbpst_db.c:161 src/pbpst_db.c:370 src/pbpst_db.c:468
+msgid "Out of Memory"
+msgstr "Speicher nicht ausreichend"
+
+#: src/main.c:134
+msgid "Error checking file"
+msgstr "Fehler beim Prüfen der Datei"
+
+#: src/main.c:139
+msgid "File is not regular"
+msgstr "Datei ist nicht regulär"
+
+#: src/main.c:145
+msgid "File too Large"
+msgstr "Datei ist zu groß"
+
+#: src/main.c:160
+msgid "Sunset must be a finite, positive value"
+msgstr "TIME muss ein endlicher, positiver Wert sein"
+
+#: src/main.c:198
+msgid "Could not store provider"
+msgstr "Konnte Instanz nicht speichern"
+
+#: src/main.c:210
+msgid "Only HTTPS providers are supported"
+msgstr "Nur HTTPS Instanzen sind erlaubt"
+
+#: src/main.c:248
+msgid "Passed erroneous option(s)"
+msgstr "Fehlerhafte Optionen übergeben"
+
+#: src/main.c:274
+msgid "Caught Interrupt"
+msgstr "Interrupt abgefangen"
+
+#: src/main.c:308
+msgid "Removed empty swap file (contingency)"
+msgstr "Leere Swapdatei wurde entfernt"
+
+#: src/main.c:309
+msgid "You need to manually check your swap db"
+msgstr "Manuelles Prüfen der Swap Datenbank erforderlich"
+
+#: src/pb.c:13 src/pb.c:109 src/pb.c:187 src/pb.c:246
+msgid "Could not get CURL handle"
+msgstr "cURL Handle konnte nicht gelesen werden"
+
+#: src/pb.c:80
+msgid "Could not create paste"
+msgstr "Eintrag konnte nicht erstellt werden"
+
+#: src/pb.c:146
+msgid "Could not create redirect"
+msgstr "Weiterleitung konnte nicht erstellt werden"
+
+#: src/pb.c:220
+msgid "Paste deleted"
+msgstr "Eintrag wurde gelöscht"
+
+#: src/pb.c:223
+msgid "Could not delete paste"
+msgstr "Eintrag konnte nicht gelöscht werden"
+
+#: src/pb.c:273
+msgid "Could not get list"
+msgstr "Liste nicht erhalten"
+
+#: src/pb.c:364
+msgid "Could not modify variable"
+msgstr "Variable konnte nicht geändert werden"
+
+#: src/pb.c:370
+msgid "Could not setup URL for printing"
+msgstr "URL für Drucken ko"
+
+#: src/pb.c:401 src/pbpst_db.c:442
+msgid "No pastes found for provider"
+msgstr "Keine Einträge für Instanz gefunden"
+
+#: src/pbpst_db.c:30
+msgid "No valid location available for database"
+msgstr "Kein gültiger Ort für Datenbank verfügbar"
+
+#: src/pbpst_db.c:41 src/pbpst_db.c:147
+msgid "Could not save working directory"
+msgstr "Arbeitsverzeichnis konnte nicht gespeichert werden"
+
+#: src/pbpst_db.c:48 src/pbpst_db.c:67 src/pbpst_db.c:76 src/pbpst_db.c:187
+msgid "Could not cd to directory"
+msgstr "Konnte nicht zu Verzeichnis wechseln"
+
+#: src/pbpst_db.c:63
+msgid "Could not create directory"
+msgstr "Verzeichnis konnte nicht erstellt werden"
+
+#: src/pbpst_db.c:83
+msgid "Could not save db path"
+msgstr "Datenbankpfad konnte nicht gespeichert werden"
+
+#: src/pbpst_db.c:100
+msgid "Could not open file"
+msgstr "Datei konnte nicht geöffnet werden"
+
+#: src/pbpst_db.c:109 src/pbpst_db.c:180 src/pbpst_db.c:252
+msgid "Could not close file"
+msgstr "Datei konnte nicht geschlossen werden"
+
+#: src/pbpst_db.c:125
+msgid "Could not store db dirname"
+msgstr "Datenbankverzeichnisname konnte nicht gespeichert werden"
+
+#: src/pbpst_db.c:131
+msgid "Could not store db basename"
+msgstr "Datenbankname konnte nicht gespeichert werden"
+
+#: src/pbpst_db.c:154
+msgid "Could not cd to database path"
+msgstr "Konnte nicht zu Datenbankpfad wechseln"
+
+#: src/pbpst_db.c:161
+msgid "Could not save swap db name"
+msgstr "Swapdatenbankname konnte nicht gespeichert werden"
+
+#: src/pbpst_db.c:170
+msgid "Could not create swap db"
+msgstr "Swapdatenbank konnte nicht erstellt werden"
+
+#: src/pbpst_db.c:171
+msgid "Ensure that pbpst is not already running and that all pastes have been saved"
+msgstr "Stellen Sie sicher, dass pbpst nicht bereits ausgeführt wird und alle Einträge gespeichert wurden"
+
+#: src/pbpst_db.c:173
+msgid "Please remove the swap database"
+msgstr "Bitte entfernen Sie die Swapdatenbank"
+
+#: src/pbpst_db.c:207
+msgid "Could not overwrite database"
+msgstr "Datenbank konnte nicht überschrieben werden"
+
+#: src/pbpst_db.c:220
+msgid "Could not open file for reading"
+msgstr "Datei konnte nicht zum Lesen geöffnet werden"
+
+#: src/pbpst_db.c:230
+msgid "Could not seek to file end"
+msgstr "Datei konnte nicht zu Ende gelesen werden"
+
+#: src/pbpst_db.c:238
+msgid "Could not get file position"
+msgstr "Dateiposition konnte nicht gelesen werden"
+
+#: src/pbpst_db.c:244
+msgid "Could not read file"
+msgstr "Datei konnte nicht gelesen werden"
+
+#: src/pbpst_db.c:265
+msgid "Could not open swap db"
+msgstr "Swapdatenbank konnte nicht geöffnet werden"
+
+#: src/pbpst_db.c:277 src/pbpst_db.c:284
+msgid "Could not flush memory to swap db"
+msgstr "Speicher konnte nicht in Swapdatenbank geschrieben werden"
+
+#: src/pbpst_db.c:307
+msgid "New provider set"
+msgstr "Neue Instanz gespeichert"
+
+#: src/pbpst_db.c:310
+msgid "Could not set new provider"
+msgstr "Neue Instanz konnte nicht gespeichert werden"
+
+#: src/pbpst_db.c:357
+msgid "Paste already existed"
+msgstr "Paste existiert bereits"
+
+#: src/pbpst_db.c:365
+msgid "Could not scan offset"
+msgstr "Offset konnte nicht gelesen werden"
+
+#: src/pbpst_db.c:370
+msgid "Could not store sunset epoch"
+msgstr "Sunset Epoch konnte nicht gespeichert werden"
+
+#: src/pbpst_db.c:390
+msgid "Could not save new paste object"
+msgstr "Neuer Eintrag konnte nicht gespeichert werden"
+
+#: src/pbpst_db.c:417
+msgid "No pastes in-database found for provider"
+msgstr "Keine Einträge von der Instanz wurden in der Datenbank gefunden"
+
+#: src/pbpst_db.c:422
+msgid "No paste in-database found with uuid"
+msgstr "Keine Einträge mit UUID wurden in der Datenbank gefunden"
+
+#: src/pbpst_db.c:468
+msgid "Could not format output"
+msgstr "Ausgabe konnte nicht formatiert werden"
+
+#: src/usage.c:14
+msgid "operation"
+msgstr "Operation"
+
+#: src/usage.c:20
+msgid "Usage"
+msgstr "Benutzung"
+
+#: src/usage.c:20
+msgid "option"
+msgstr "Option"
+
+#: src/usage.c:21
+msgid "a simple tool to pastebin from the command-line"
+msgstr "ein einfaches Tool um Pastebins aus der Kommandozeile zu benutzen"
+
+#: src/usage.c:22
+msgid "Operations"
+msgstr "Operationen"
+
+#: src/usage.c:22 src/usage.c:26
+msgid "Options"
+msgstr "Optionen"
+
+#: src/usage.c:33
+msgid "Use `-h` with an operation for more help"
+msgstr "Verwende '-h' mit einer Operation für detaillierte Hilfe"
+
+#: src/usage.h:12
+msgid "Create a paste"
+msgstr "Erstellt ein Paste"
+
+#: src/usage.h:13
+msgid "Create a redirect to URL"
+msgstr "Erstellt eine Weiterleitung zu einer URL"
+
+#: src/usage.h:14
+msgid "Remove a paste"
+msgstr "Löscht ein Paste"
+
+#: src/usage.h:15
+msgid "Update a paste"
+msgstr "Aktualisiert ein Paste"
+
+#: src/usage.h:16
+msgid "Operate on the database"
+msgstr "Führt Operationen an der Datenbank aus"
+
+#: src/usage.h:19
+msgid "Use FILE to create paste"
+msgstr "Erstellt Eintrag aus FILE"
+
+#: src/usage.h:20
+msgid "Lex paste for LANG"
+msgstr "Verwendet LANG als Lexer"
+
+#: src/usage.h:21
+msgid "Use THEME for style"
+msgstr "Verwendet THEME als Stil"
+
+#: src/usage.h:22
+msgid "Format paste for FORM"
+msgstr "Verwendet Formatierer in FORM"
+
+#: src/usage.h:23
+msgid "Specify file extension as EXT"
+msgstr "Setzt die Dateierweiterung als EXT"
+
+#: src/usage.h:24
+msgid "Highlight LINE in paste"
+msgstr "Hebt LINE im Eintrag hervor"
+
+#: src/usage.h:25
+msgid "Return a less-guessable paste ID"
+msgstr "Gibt eine komplexere ID für den Eintrag zurück"
+
+#: src/usage.h:26
+msgid "Set the paste to auto-deletion in TIME"
+msgstr "Stellt das automatische Löschen des Eintrags zu TIME ein"
+
+#: src/usage.h:27
+msgid "Render paste (from md or rst) to HTML"
+msgstr "Stellt Eintrag (md oder rst) als HTML dar"
+
+#: src/usage.h:28
+msgid "Show Asciinema presentation"
+msgstr "Zeigt eine Asciinema Darstellung"
+
+#: src/usage.h:29
+msgid "Show an upload progress bar"
+msgstr "Zeigt einen Fortschrittsbalken für den Upload"
+
+#: src/usage.h:30
+msgid "Save MSG as a note for the paste"
+msgstr "Speichert MSG als Notiz zum Eintrag"
+
+#: src/usage.h:31
+msgid "Use NAME as a custom ID"
+msgstr "Verwendet NAME als benutzerdefinierte ID"
+
+#: src/usage.h:34 src/usage.h:43
+msgid "Target paste with UUID"
+msgstr "Selektiert Eintrag mit UUID"
+
+#: src/usage.h:37
+msgid "Delete all expired pastes"
+msgstr "Löscht alle abgelaufenen Einträge"
+
+#: src/usage.h:40
+msgid "Initialize a default database"
+msgstr "Erstellt eine Standarddatenbank"
+
+#: src/usage.h:41
+msgid "List all providers in the database"
+msgstr "Zeigt alle Instanzen in der Datenbank"
+
+#: src/usage.h:42
+msgid "Search the database for a paste matching STR"
+msgstr "Sucht in der Datenbank nach einem Paste, das STR enthält"
+
+#: src/usage.h:44
+msgid "Set provider (from `-P`) as default"
+msgstr "Verwendet Instanz (via '-P') als Standard"
+
+#: src/usage.h:47
+msgid "List this help and exit"
+msgstr "Zeigt diese Hilfe an"
+
+#: src/usage.h:48
+msgid "Use the database at PATH"
+msgstr "Verwendet die Datenbank in PATH"
+
+#: src/usage.h:49
+msgid "Use HOST as the pb provider"
+msgstr "Verwendet HOST als pb Instanz"
+
+#: src/usage.h:50
+msgid "Output verbosely"
+msgstr "Detaillierte Ausgabe"
+
+#: src/usage.h:51
+msgid "List the version and exit"
+msgstr "Zeigt Version an"
+
+#: src/usage.h:52
+msgid "List available lexers and exit"
+msgstr "Zeigt verfügbare Lexer an"
+
+#: src/usage.h:53
+msgid "List available themes and exit"
+msgstr "Zeigt verfügbare Themen an"
+
+#: src/usage.h:54
+msgid "List available formatters and exit"
+msgstr "Zeigt verfügbare Formate an"
