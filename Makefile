@@ -7,7 +7,7 @@ ZSHDIR  ?= $(DESTDIR)$(PREFIX)/share/zsh
 BASHDIR ?= $(DESTDIR)$(PREFIX)/share/bash-completion
 LOCDIR  ?= $(DESTDIR)$(PREFIX)/share/locale
 
-.PHONY: all clean gen clang-analyze cov-build pot simple install uninstall
+.PHONY: all clean gen complexity clang-analyze cov-build pot simple install uninstall
 
 all: dist
 	@tup upd
@@ -21,6 +21,9 @@ dist:
 
 gen: clean
 	@tup generate make.sh
+
+complexity:
+	@complexity -h ./src/*
 
 cov-build: gen dist
 	@cov-build --dir cov-int ./make.sh
