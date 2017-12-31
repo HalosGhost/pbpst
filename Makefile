@@ -7,36 +7,58 @@ ZSHDIR  ?= $(DESTDIR)$(PREFIX)/share/zsh
 BASHDIR ?= $(DESTDIR)$(PREFIX)/share/bash-completion
 LOCDIR  ?= $(DESTDIR)$(PREFIX)/share/locale
 
-.PHONY: all clean gen complexity clang-analyze cov-build pot simple install uninstall
+CC = clang
+CFLAGS = -g -O3 -fPIE -pie -Weverything -Werror -Wno-disabled-macro-expansion -std=c11 -ggdb -D_FORTIFY_SOURCE=2 -fstack-protector-strong -march=native --param=ssp-buffer-size=1 -Wl,-z,relro,-z,now -flto -fsanitize=undefined -fsanitize-trap=undefined
+LDFLAGS = `pkg-config --libs-only-l libcurl jansson`
+SOURCES = main.c callback.c pb.c pbpst_db.c usage.c
+VER = `git describe --long --tags`
 
-all: dist
-	@tup upd
+.PHONY: all bin clean complexity clang-analyze cmp cov-build doc i18n pot install uninstall
+
+all: dist bin cmp doc i18n
+
+clang-analyze:
+	@(cd ./src; clang-check -analyze ./*.c)
 
 clean:
 	@rm -rf -- dist cov-int $(PROGNM).tgz make.sh ./src/*.plist \
 		./i18n/$(PROGNM).pot
 
-dist:
-	@mkdir -p ./dist/locale
-
-gen: clean
-	@tup generate make.sh
-
 complexity:
 	@complexity -h ./src/*
 
-cov-build: gen dist
+cov-build: clean dist
 	@cov-build --dir cov-int ./make.sh
 	@tar czvf $(PROGNM).tgz cov-int
 
-clang-analyze:
-	@(pushd ./src; clang-check -analyze ./*.c)
+cmp: dist
+	@(for i in cmp/*sh*; do \
+		cp "$$i" dist/; \
+	done);
+
+bin: dist
+	@(cd src; \
+		$(CC) $(CFLAGS) $(LDFLAGS) $(SOURCES) -o ../dist/pbpst \
+	)
+
+dist:
+	@mkdir -p dist/locale
+
+doc: dist
+	@(cd doc; \
+		sphinx-build -b man -Dversion=$(VER) \
+					-d doctree -E . ../dist $(PROGNM).rst $(PROGNM)_db.rst; \
+		rm -r -- doctree; \
+	)
+
+i18n: dist
+	@(cd i18n; \
+	for i in *.po; do \
+		msgfmt "$$i" -o ../dist/locale/"$${i%.po}".mo; \
+	done)
 
 pot:
 	@xgettext -k_ -c -d $(PROGNM) --no-wrap -o i18n/$(PROGNM).pot ./src/*.{c,h}
-
-simple: gen dist
-	@./make.sh
 
 install:
 	@install -Dm755 dist/$(PROGNM)   $(BINDIR)/$(PROGNM)

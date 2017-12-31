@@ -1,3 +1,0 @@
-include_rules
-
-: *.c | *.h |> $(CC) $(CFLAGS) $(LDFLAGS) %f -o %o |> ../dist/pbpst

@@ -1,4 +1,0 @@
-include_rules
-SHELLS = zsh bash
-
-: foreach $(SHELLS) |> cp %f %o |> ../dist/%B
