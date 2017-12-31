@@ -1,7 +1,13 @@
 #pragma once
 
 #include "main.h"
+
+#ifdef __APPLE__
+#include <sys/syslimits.h>
+#else
 #include <linux/limits.h>
+#endif
+
 #include <libgen.h>
 
 #define DEF_DB() json_pack("{s:s,s:{}}", "default_provider",\
