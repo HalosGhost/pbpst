@@ -4,7 +4,7 @@ usage () {
     printf "Usage: ./configure [options]\n\n"
     printf "Options:\n"
     printf "  --cc='COMP'       Use COMP for compiler (default: clang)\n"
-    printf "  --cflags='FLAGS'  Set CFLAGS (cf. Tuprules.tup for defaults)\n"
+    printf "  --cflags='FLAGS'  Set CFLAGS (cf. Makefile for defaults)\n"
     printf "  --file-max='BTS'  Set max file size to BTS Bytes (default: 67108864)\n"
     printf "  --provider='URL'  Set fallback provider (default: 'https://ptpb.pw/')\n"
     printf "  --prefix='PATH'   Set prefix (default: '/usr/local')\n"
@@ -17,14 +17,14 @@ check_file () {
     [[ -f "$1" ]] || exit 1
 }
 
-def_cflags=(-g -O3 -fPIE -pie -Weverything -Werror -std=c11 -ggdb
-            -D_FORTIFY_SOURCE=2 -fstack-protector-strong -march=native
-            --param=ssp-buffer-size=1 -Wl,-z,relro,-z,now -flto
+def_cflags=(-g -O3 -fPIE -pie -Weverything -Werror -Wno-disabled-macro-expansion
+            -std=c11 -ggdb -D_FORTIFY_SOURCE=2 -fstack-protector-strong
+            -march=native --param=ssp-buffer-size=1 -Wl,-z,relro,-z,now -flto
             -fsanitize=undefined -fsanitize-trap=undefined)
 
 check_deps () {
-    i_cc=$(show_tuprule CC | cut -d' ' -f3)
-    for i in make tup pkg-config "$(which "$i_cc")" mkdir install rm; do
+    i_cc=$(show_makerule CC | cut -d' ' -f3)
+    for i in make pkg-config "$(which "$i_cc")" mkdir install rm; do
         [[ "$(which "$i" &> /dev/null; echo $?)" == 0 ]] && {
             check_file "$(which "$i")"
         } || check_file "$i"
@@ -59,8 +59,8 @@ check_deps () {
     done
 }
 
-update_tuprule () {
-    sed -i ./Tuprules.tup -re "s/$1.*/$1 = $2/"
+update_makerule () {
+    sed -i ./Makerules -re "s/$1.*/$1 = $2/"
 }
 
 update () {
@@ -77,12 +77,12 @@ default_config () {
     update PB_FILE_MAX '67108864'
     update PREFIX '"/usr/local"'
     update_makevar PREFIX '/usr/local'
-    update_tuprule CFLAGS "${def_cflags[*]}"
-    update_tuprule CC 'clang'
+    update_makerule CFLAGS "${def_cflags[*]}"
+    update_makerule CC 'clang'
 }
 
-show_tuprule () {
-    grep --color=never "$1" ./Tuprules.tup
+show_makerule () {
+    grep --color=never "^$1" ./Makerules
 }
 
 show_value () {
@@ -91,8 +91,8 @@ show_value () {
 }
 
 show_config () {
-    show_tuprule CFLAGS
-    show_tuprule CC
+    show_makerule CFLAGS
+    show_makerule CC
     show_value 'Fallback Provider' FALLBACK_PROVIDER
     show_value 'Max File Size' PB_FILE_MAX
     show_value 'Prefix' PREFIX
@@ -100,8 +100,8 @@ show_config () {
 
 for i in "$@"; do
     case "$i" in
-        --cc=*)         update_tuprule CC "${i#*=}"; shift;;
-        --cflags=*)     update_tuprule CFLAGS "${i#*=}"; shift;;
+        --cc=*)         update_makerule CC "${i#*=}"; shift;;
+        --cflags=*)     update_makerule CFLAGS "${i#*=}"; shift;;
         --file-max=*)   update PB_FILE_MAX "${i#*=}"; shift;;
         --help)         usage; exit 0;;
         --provider=*)   update FALLBACK_PROVIDER "\"${i#*=}\""; shift;;

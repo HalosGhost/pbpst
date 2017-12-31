@@ -7,11 +7,7 @@ ZSHDIR  ?= $(DESTDIR)$(PREFIX)/share/zsh
 BASHDIR ?= $(DESTDIR)$(PREFIX)/share/bash-completion
 LOCDIR  ?= $(DESTDIR)$(PREFIX)/share/locale
 
-CC = clang
-CFLAGS = -g -O3 -fPIE -pie -Weverything -Werror -Wno-disabled-macro-expansion -std=c11 -ggdb -D_FORTIFY_SOURCE=2 -fstack-protector-strong -march=native --param=ssp-buffer-size=1 -Wl,-z,relro,-z,now -flto -fsanitize=undefined -fsanitize-trap=undefined
-LDFLAGS = `pkg-config --libs-only-l libcurl jansson`
-SOURCES = main.c callback.c pb.c pbpst_db.c usage.c
-VER = `git describe --long --tags`
+include Makerules
 
 .PHONY: all bin clean complexity clang-analyze cmp cov-build doc i18n pot install uninstall
 
