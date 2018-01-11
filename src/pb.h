@@ -1,5 +1,7 @@
 #pragma once
 
+#include <curl/curl.h>
+
 CURLcode
 pb_paste (const struct pbpst_state *);
 

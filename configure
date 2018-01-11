@@ -13,49 +13,57 @@ usage () {
 
 check_file () {
     [[ -f "$1" ]] && fnd='\x1b[32mY' || fnd='\x1b[31m\x1b[1mN';
-    printf 'Found %-34s\t[ %b\x1b[0m ]\n' "$1:" "$fnd"
+    printf 'Found %-*s\t[ %b\x1b[0m ]\n' "$2" "$1:" "$fnd"
     [[ -f "$1" ]] || exit 1
 }
 
-def_cflags=(-g -O3 -fPIE -pie -Weverything -Werror -Wno-disabled-macro-expansion
-            -std=c11 -ggdb -D_FORTIFY_SOURCE=2 -fstack-protector-strong
-            -march=native --param=ssp-buffer-size=1 -Wl,-z,relro,-z,now -flto
-            -fsanitize=undefined -fsanitize-trap=undefined)
-
 check_deps () {
     i_cc=$(show_makerule CC | cut -d' ' -f3)
-    for i in make pkg-config "$(which "$i_cc")" mkdir install rm; do
-        [[ "$(which "$i" &> /dev/null; echo $?)" == 0 ]] && {
-            check_file "$(which "$i")"
-        } || check_file "$i"
+    cur_cflags=($(grep --color=never CFLAGS Makerules | sed 's/CFLAGS = //'))
+
+    pushd ./src &> /dev/null
+    hdrs=($("$i_cc" -M main.c | sed -e 's|.*:||' -e 's|\\||' | tr -d '\n'))
+
+    len=0
+    for i in make "$i_cc" mkdir install rm "${hdrs[@]}" "$cur_cflags[@]"; do
+        if (( "${#i}" > len )); then
+            len="${#i}"
+        fi
     done
 
-    hdrs=(getopt stdio signal stdint inttypes stdlib 'curl/curl' 'sys/stat'
-          string fcntl unistd errno time jansson 'linux/limits' libgen stdbool
-          stdnoreturn)
+    for i in make pkg-config "$(which "$i_cc")" mkdir install rm; do
+        [[ "$(which "$i" &> /dev/null; echo $?)" == 0 ]] && {
+            check_file "$(which "$i")" "$len"
+        } || check_file "$i" "$len"
+    done
 
     for i in "${hdrs[@]}"; do
-        fh=$($i_cc -c -o tm -x c - <<< "#include <$i.h>" &> /dev/null; echo $?)
+        if [[ "$i" != *'.h' || "$i" == *'bits'*  || "$i" == *'curl/easy'* ]]; then
+            continue
+        fi
+
+        fh=$($i_cc -c -o tm -x c - <<< "#include \"$i\"" &> /dev/null; echo $?)
         [[ "$fh" == 0 ]] && {
             fnd='\x1b[32mY'; [[ -f "tm" ]] && rm -- tm
         } || fnd='\x1b[31m\x1b[1mN'
 
-        printf 'Found %-34s\t[ %b\x1b[0m ]\n' "$i.h:" "$fnd"
+        printf 'Found %-*s\t[ %b\x1b[0m ]\n' "$len" "$i:" "$fnd"
         [[ "$fh" != 0 ]] && exit 1
     done
+    popd &> /dev/null
 
-    for i in "${def_cflags[@]}"; do
+    for i in "${cur_cflags[@]}"; do
         fc=$($i_cc -c -o tm -x c - "$i" <<< "#include <time.h>" &> /dev/null; echo $?)
         [[ "$fc" == 0 ]] && {
             fnd='\x1b[32mY'; [[ -f "tm" ]] && rm -- tm
         } || fnd='\x1b[31m\x1b[1mN'
 
-        printf 'Found %-34s\t[ %b\x1b[0m ]\n' "$i:" "$fnd"
+        printf 'Found %-*s\t[ %b\x1b[0m ]\n' "$len" "$i:" "$fnd"
         [[ "$fc" != 0 ]] && exit 1
     done
 
     for i in curl jansson; do
-        check_file "/usr/lib/lib$i.so"
+        check_file "/usr/lib/lib$i.so" "$len"
     done
 }
 
@@ -73,6 +81,12 @@ update_makevar () {
 }
 
 default_config () {
+    def_cflags=(-g -O3 -fPIE -pie -Weverything -Werror -std=c11 -ggdb -flto
+                -Wno-disabled-macro-expansion -D_FORTIFY_SOURCE=2
+                -fstack-protector-strong -march=native
+                --param=ssp-buffer-size=1 -Wl,-z,relro,-z,now
+                -fsanitize=undefined -fsanitize-trap=undefined)
+
     update FALLBACK_PROVIDER '"https://ptpb.pw/"'
     update PB_FILE_MAX '67108864'
     update PREFIX '"/usr/local"'
