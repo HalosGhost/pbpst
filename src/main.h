@@ -36,7 +36,8 @@
 
 #define BUFFER_SIZE 256
 
-static const char version_str [] = "pbpst 1.4.1\n";
+#define VERSION "1.4.1"
+static const char version_str [] = "pbpst " VERSION "\n";
 
 static struct option os [] = {
     #define X(sh, ln, arg, desc) { ln, (bool )arg, 0, sh },
