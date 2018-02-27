@@ -16,7 +16,6 @@ pb_paste (const struct pbpst_state * s) {
 
     curl_easy_setopt(handle, CURLOPT_VERBOSE, s->verb >= 2);
 
-    struct curl_httppost * post = NULL, * last = NULL;
     size_t tlen = strlen(s->provider) + (
                   s->vanity                ? strlen(s->vanity) + 2 :
                   s->cmd == UPD && s->uuid ? strlen(s->uuid)   + 1 : 2);
@@ -32,7 +31,9 @@ pb_paste (const struct pbpst_state * s) {
     response_data->mem = 0;
     if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
 
-    CURLFORMcode fc;
+    CURLcode cc;
+    curl_mime * mime = curl_mime_init(handle);
+    curl_mimepart * part;
     if ( s->cmd == SNC ) {
         if ( s->vanity ) {
             snprintf(target, tlen, "%s~%s", s->provider, s->vanity);
@@ -41,33 +42,33 @@ pb_paste (const struct pbpst_state * s) {
         }
 
         if ( s->priv ) {
-            fc = curl_formadd(&post,                 &last,
-                              CURLFORM_COPYNAME,     "p",
-                              CURLFORM_COPYCONTENTS, "1",
-                              CURLFORM_END);
-            if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
+            part = curl_mime_addpart(mime);
+            curl_mime_data(part, "1", CURL_ZERO_TERMINATED);
+            cc = curl_mime_name(part,"p");
+            if ( cc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
         }
     } else if ( s->cmd == UPD && s->uuid ) {
         snprintf(target, tlen, "%s%s", s->provider, s->uuid);
         curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "PUT");
     }
 
-    fc = curl_formadd(&post,                &last,
-                      CURLFORM_COPYNAME,    "c",
-                      CURLFORM_FILE,        s->path ? s->path : "-",
-                      CURLFORM_CONTENTTYPE, "application/octet-stream",
-                      CURLFORM_END);
-    if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
+    part = curl_mime_addpart(mime);
+    if ( s->path ){
+      curl_mime_filedata(part, s->path);
+      curl_mime_filename(part, "file"); // Do not disclose file names
+      cc = curl_mime_name(part, "c");
+      if ( cc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
+    }
+    else {} //TODO stdin
 
     if ( s->secs ) {
-        fc = curl_formadd(&post,                 &last,
-                          CURLFORM_COPYNAME,     "s",
-                          CURLFORM_COPYCONTENTS, s->secs,
-                          CURLFORM_END);
-        if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
+        part = curl_mime_addpart(mime);
+        curl_mime_data(part, s->secs, CURL_ZERO_TERMINATED);
+        cc = curl_mime_name(part, "s");
+        if ( cc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
     }
 
-    curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
+    curl_easy_setopt(handle, CURLOPT_MIMEPOST, mime);
     curl_easy_setopt(handle, CURLOPT_FAILONERROR, 1L);
     curl_easy_setopt(handle, CURLOPT_URL, target);
     curl_easy_setopt(handle, CURLOPT_XFERINFOFUNCTION, &pb_progress_cb);
@@ -90,7 +91,6 @@ pb_paste (const struct pbpst_state * s) {
     cleanup:
         if ( list ) { curl_slist_free_all(list); }
         curl_easy_cleanup(handle);
-        curl_formfree(post);
         if ( response_data ) {
             if ( response_data->mem ) { free(response_data->mem); }
             free(response_data);
@@ -112,7 +112,6 @@ pb_shorten (const char * provider, const char * url, const uint16_t verb) {
 
     curl_easy_setopt(handle, CURLOPT_VERBOSE, verb >= 2);
 
-    struct curl_httppost * post = NULL, * last = NULL;
     size_t tlen = strlen(provider) + 6;
 
     struct curl_slist * list = NULL;
@@ -126,15 +125,17 @@ pb_shorten (const char * provider, const char * url, const uint16_t verb) {
     response_data->mem = 0;
     if ( !target ) { status = CURLE_OUT_OF_MEMORY; goto cleanup; }
 
-    CURLFORMcode fc;
-    fc = curl_formadd(&post,                &last,
-                      CURLFORM_COPYNAME,    "c",
-                      CURLFORM_PTRCONTENTS, url,
-                      CURLFORM_END);
-    if ( fc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
+    CURLcode cc;
+    curl_mime * mime = curl_mime_init(handle);
+    curl_mimepart * part;
+    part = curl_mime_addpart(mime);
+    curl_mime_data(part, url, CURL_ZERO_TERMINATED);
+    cc = curl_mime_name(part, "c");
+
+    if ( cc ) { status = CURLE_HTTP_POST_ERROR; goto cleanup; }
 
     snprintf(target, tlen, "%s%c", provider, 'u');
-    curl_easy_setopt(handle, CURLOPT_HTTPPOST, post);
+    curl_easy_setopt(handle, CURLOPT_MIMEPOST, mime);
     curl_easy_setopt(handle, CURLOPT_URL, target);
     curl_easy_setopt(handle, CURLOPT_XFERINFOFUNCTION, &pb_progress_cb);
     curl_easy_setopt(handle, CURLOPT_NOPROGRESS, (long )false);
@@ -168,7 +169,6 @@ pb_shorten (const char * provider, const char * url, const uint16_t verb) {
     cleanup:
         if ( list ) { curl_slist_free_all(list); }
         curl_easy_cleanup(handle);
-        curl_formfree(post);
         if ( response_data ) {
             if ( response_data->mem ) { free(response_data->mem); }
             free(response_data);
