@@ -10,7 +10,7 @@ peace:
 	@printf '☮\n'
 
 sandwich:
-	@[[ "$(USER)" == "root" ]] && printf 'Okay\n' || printf '[sudo] password for %s: █\n' "$(USER)"
+	@[ "$(USER)" = "root" ] && printf 'Okay\n' || printf '[sudo] password for %s: █\n' "$(USER)"
 
 tea:
 	@printf 'Lemon or Milk?\n'

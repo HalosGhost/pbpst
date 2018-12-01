@@ -63,7 +63,7 @@ install:
 	@install -Dm644 dist/zsh         $(ZSHDIR)/site-functions/_$(PROGNM)
 	@install -Dm644 dist/bash        $(BASHDIR)/completions/$(PROGNM)
 	@(for i in dist/locale/*.mo; do \
-		int="$${i/.mo/}"; int="$${int#dist/locale/}"; \
+		int="$$(basename "$$i" .mo)"; \
 		install -Dm644 $$i "$(LOCDIR)/$$int/LC_MESSAGES/$(PROGNM).mo"; \
 	done)
 
