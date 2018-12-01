@@ -17,7 +17,7 @@ print_url (const struct pbpst_state *, const char *);
 CURLcode
 pb_list (const struct pbpst_state *);
 
-signed
+CURLcode
 pb_prune (const struct pbpst_state * s);
 
 // vim: set ts=4 sw=4 et:

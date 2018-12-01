@@ -48,7 +48,7 @@ main (signed argc, char *const argv []) {
 
     signal(SIGINT, signal_handler);
 
-    signed exit_status = EXIT_SUCCESS;
+    CURLcode exit_status = EXIT_SUCCESS;
 
     const char * vos = opts_for[NON];
     for ( signed oi = 0, c = getopt_long(argc, argv, vos, os, &oi);
@@ -62,7 +62,7 @@ main (signed argc, char *const argv []) {
                 if ( !state.cmd ) {
                     vos = opts_for[(state.cmd = (enum pb_cmd )c)];
                     optind = 1;
-                } else if ( state.cmd != c ) {
+                } else if ( state.cmd != (enum pb_cmd )c ) {
                     pbpst_err(_("You can only run one operation at a time"));
                     exit_status = EXIT_FAILURE; goto cleanup;
                 } break;
@@ -116,7 +116,7 @@ main (signed argc, char *const argv []) {
     }
 
     if ( state.help ) {
-        print_usage(state.cmd, exit_status);
+        print_usage(state.cmd, (signed )exit_status);
         goto cleanup;
     }
 
@@ -130,7 +130,7 @@ main (signed argc, char *const argv []) {
 
         errno = 0;
         if ( stat(state.path, &st) ) {
-            exit_status = errno;
+            exit_status = (CURLcode )errno;
             pbpst_err(_("Error checking file"));
             goto cleanup;
         }
@@ -226,7 +226,7 @@ main (signed argc, char *const argv []) {
 
     cleanup:
         pbpst_cleanup();
-        return exit_status;
+        return (signed )exit_status;
 }
 
 bool
@@ -249,7 +249,7 @@ pbpst_test_options (const struct pbpst_state * s) {
     } return cl == 0;
 }
 
-signed
+CURLcode
 pbpst_dispatch (const struct pbpst_state * s) {
 
     if ( s->llex || s->lthm || s->lfrm ) { return pb_list(s); }
@@ -262,7 +262,7 @@ pbpst_dispatch (const struct pbpst_state * s) {
         case SHR: return pb_shorten(s->provider, s->url, s->verb);
         case RMV: return (s->prun ? pb_prune(s)
                                   : pb_remove(s->provider, uuid, s->verb));
-        case DBS: return pbpst_db(s);
+        case DBS: return pbpst_db(s) != CURLE_OK;
         case NON: return EXIT_FAILURE; // should never get here
     }
 }

@@ -70,7 +70,7 @@ extern struct pbpst_state {
 bool ATTR_PURE
 pbpst_test_options (const struct pbpst_state *);
 
-signed
+CURLcode
 pbpst_dispatch (const struct pbpst_state *);
 
 noreturn void

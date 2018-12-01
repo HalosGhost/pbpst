@@ -294,7 +294,7 @@ pbpst_db (const struct pbpst_state * s) {
            s->query ? db_query(s)                          :
            s->del   ? db_remove_entry(s->provider, s->del) :
            s->dfpv  ? db_set_default(s->provider)          :
-           s->prun  ? pb_prune(s)                          :
+           s->prun  ? pb_prune(s) != CURLE_OK              :
                       EXIT_FAILURE                         ;
 }
 

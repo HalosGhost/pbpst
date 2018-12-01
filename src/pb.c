@@ -387,7 +387,7 @@ print_url (const struct pbpst_state * s, const char * userdata) {
         return status;
 }
 
-signed
+CURLcode
 pb_prune (const struct pbpst_state * s) {
 
     pastes = json_object_get(mem_db, "pastes");
